@@ -14,7 +14,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Cpath%20d='M16%2027C7%2021%203%2015%203%2010%203%206.7%205.7%204%209%204c2.1%200%204%201.1%205%202.8C15%205.1%2016.9%204%2019%204c3.3%200%206%202.7%206%206%200%205-4%2011-9%2017z'%20fill='%23df6e79'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Kiwi+Maru:wght@400;500;700&family=Zen+Old+Mincho:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --sky-1: #cbdcf4;        /* Soft watercolor blue */
@@ -45,7 +45,7 @@
     margin: 0;
     color: var(--ink);
     line-height: 1.8;
-    font-family: "Zen Kaku Gothic New", system-ui, sans-serif;
+    font-family: "Kiwi Maru", "Zen Old Mincho", system-ui, sans-serif;
     background: radial-gradient(circle at top, var(--sky-2) 0%, var(--sky-3) 40%, var(--sky-2) 100%);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
@@ -60,6 +60,18 @@
     z-index: 10;
   }
   
+  /* Tactile paper texture overlay */
+  .paper-texture-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+  
   a { color: inherit; }
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
 
@@ -70,14 +82,14 @@
     border-radius: 8px;
   }
 
-  /* ---- decorative gold frame (flyer homage) ---- */
+  /* ---- decorative gold double-line frame (flyer homage) ---- */
   .frame {
     position: fixed;
     top: max(14px, env(safe-area-inset-top));
     left: max(14px, env(safe-area-inset-left));
     right: max(14px, env(safe-area-inset-right));
     bottom: max(14px, env(safe-area-inset-bottom));
-    border: 1.5px solid rgba(202, 176, 131, 0.55);
+    border: 2px solid #8c6c39;
     border-radius: 16px;
     pointer-events: none;
     z-index: 40;
@@ -85,8 +97,8 @@
   .frame::after {
     content: "";
     position: absolute;
-    inset: 5px;
-    border: 1px solid rgba(202, 176, 131, 0.32);
+    inset: 4px;
+    border: 1px solid #cab083;
     border-radius: 11px;
   }
   
@@ -145,6 +157,38 @@
   .charm .heart { transform-box: fill-box; transform-origin: center; animation: beat 2.6s ease-in-out infinite; }
   .charm .sparkle { animation: tw 2.8s ease-in-out infinite; }
   
+  /* Steam micro-animations */
+  .charm .steam {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: rise 6s infinite linear;
+    transform-origin: bottom;
+    filter: blur(1px);
+    opacity: 0;
+  }
+  .charm .steam.s1 { animation-delay: 0s; }
+  .charm .steam.s2 { animation-delay: 2s; }
+  .charm .steam.s3 { animation-delay: 4s; }
+
+  @keyframes rise {
+    0% {
+      stroke-dashoffset: 200;
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+    }
+    15% {
+      opacity: 0.5;
+    }
+    80% {
+      opacity: 0.3;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+      transform: translateY(-80px) scale(1.1);
+    }
+  }
+
   @keyframes bob {
     0%, 100% { transform: translateY(0) rotate(-1.1deg); }
     50% { transform: translateY(-13px) rotate(1.1deg); }
@@ -155,7 +199,7 @@
   }
 
   .eyebrow {
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     letter-spacing: .32em;
     font-size: .82rem;
@@ -182,8 +226,8 @@
   }
   .title .jp {
     display: block;
-    font-family: "Zen Maru Gothic";
-    font-weight: 900;
+    font-family: "Kiwi Maru", serif;
+    font-weight: 700;
     font-size: clamp(1.3rem, 5.4vw, 2rem);
     color: var(--coral);
     margin-top: .28em;
@@ -195,7 +239,7 @@
        1.5px  1.5px 0 var(--pill-ink);
   }
   .lead {
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     font-size: clamp(1rem, 3.6vw, 1.24rem);
     color: var(--ink);
@@ -205,7 +249,7 @@
   }
   .when {
     display: inline-block;
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     color: var(--pill-ink);
     background: linear-gradient(120deg, var(--pill-1), var(--pill-2));
@@ -236,7 +280,7 @@
   /* ---------------- sections ---------------- */
   section { padding: 64px 0; scroll-margin-top: 24px; }
   .kicker {
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     letter-spacing: .26em;
     font-size: .78rem;
@@ -246,7 +290,7 @@
   }
   .kicker::before, .kicker::after { content: "✦"; margin: 0 .6em; color: var(--pink); opacity: .85; }
   .h {
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     color: var(--coral-deep);
     text-align: center;
@@ -268,6 +312,7 @@
     position: relative;
     padding: 28px;
     overflow: hidden;
+    transition: background 0.5s, border-color 0.5s, box-shadow 0.5s;
   }
   .card::before {
     content: "";
@@ -276,6 +321,7 @@
     border: 1px solid rgba(202, 176, 131, 0.4);
     border-radius: 20px;
     pointer-events: none;
+    transition: border-color 0.5s;
   }
 
   /* schedule */
@@ -284,7 +330,7 @@
   .cal h4 {
     margin: 0 0 10px;
     text-align: center;
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     color: var(--ink);
     font-size: .95rem;
@@ -312,8 +358,8 @@
     text-shadow: 0 2px 8px rgba(226, 106, 138, 0.5);
   }
 
-  .sched-info h3 { margin: 0 0 10px; font-family: "Zen Maru Gothic"; font-weight: 700; color: var(--coral-deep); font-size: 1.18rem; }
-  .sched-info .next { font-family: "Zen Maru Gothic"; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
+  .sched-info h3 { margin: 0 0 10px; font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.18rem; }
+  .sched-info .next { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
   .sched-info .rec { color: var(--ink-soft); font-size: .9rem; margin: 6px 0 0; }
   .sched-info .place { margin: 12px 0 0; font-size: .96rem; color: var(--ink); }
 
@@ -356,14 +402,19 @@
     width: 100%;
     height: 100%;
     text-align: center;
-    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.6s;
     transform-style: preserve-3d;
     border-radius: 12px;
     box-shadow: 0 8px 16px -6px rgba(74, 59, 99, 0.25);
   }
   .tarot-card:focus-visible .card-inner { outline: 3px solid #7fa8e6; outline-offset: 3px; border-radius: 12px; }
   .tarot-card:hover .card-inner { transform: translateY(-8px) rotate(1deg); }
-  .tarot-card.flipped .card-inner { transform: rotateY(180deg); }
+  
+  /* Tarot Card Flip Shadow Shift: moves shadow dynamically as the card flips */
+  .tarot-card.flipped .card-inner {
+    transform: rotateY(180deg);
+    box-shadow: 0 -8px 16px -6px rgba(74, 59, 99, 0.25);
+  }
   
   .card-back, .card-front {
     position: absolute;
@@ -425,7 +476,7 @@
   }
   .card-front .illust { font-size: 2.2rem; margin-bottom: 5px; }
   .card-front .name-en { font-family: "Fredoka", sans-serif; font-size: 0.8rem; color: var(--kicker); font-weight: 600; }
-  .card-front .name-jp { font-family: "Zen Maru Gothic", sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--coral-deep); }
+  .card-front .name-jp { font-family: "Kiwi Maru", serif; font-weight: 700; font-size: 0.95rem; color: var(--coral-deep); }
   
   .tarot-result { max-width: 440px; margin: 30px auto 0; animation: fadeIn 0.6s ease forwards; }
   .result-card {
@@ -459,10 +510,10 @@
     border-radius: 99px;
     margin-bottom: 10px;
   }
-  .result-title { font-family: "Zen Maru Gothic", sans-serif; font-weight: 700; color: var(--coral-deep); font-size: 1.3rem; margin: 0 0 12px; }
+  .result-title { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.3rem; margin: 0 0 12px; }
   .result-text { font-size: 0.96rem; line-height: 1.8; color: var(--ink); margin: 0 0 20px; text-align: center; }
   .reset-btn {
-    font-family: "Zen Maru Gothic", sans-serif;
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     background: linear-gradient(135deg, var(--coral), #d46f1d);
     color: #fff;
@@ -487,7 +538,7 @@
   /* price */
   .price-card { max-width: 460px; margin: 0 auto; padding: 10px 28px; }
   .prow { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 20px 0; }
-  .prow .l { font-family: "Zen Maru Gothic"; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
+  .prow .l { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
   .prow .l small { display: block; color: var(--ink-soft); font-weight: 500; font-size: .8rem; letter-spacing: .02em; margin-top: 2px; }
   .prow .p { font-family: "Fredoka", sans-serif; font-weight: 700; color: var(--coral-deep); font-size: 1.45rem; white-space: nowrap; }
   
@@ -498,18 +549,18 @@
     margin-top: 14px;
     padding-top: 12px;
     border-top: 1px dashed var(--line);
-    font-family: "Zen Maru Gothic", sans-serif;
+    font-family: "Kiwi Maru", serif;
     font-weight: 500;
   }
 
   /* access */
   .access .card { text-align: center; max-width: 460px; margin: 0 auto; }
-  .access .name { font-family: "Zen Maru Gothic"; font-weight: 700; color: var(--coral-deep); font-size: 1.1rem; margin: 0 0 8px; }
+  .access .name { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.1rem; margin: 0 0 8px; }
   .access .addr { color: var(--ink); font-size: .98rem; margin: 0 0 12px; }
   
   .addr-box { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 10px 0; }
   .copy-btn {
-    font-family: "Zen Maru Gothic", sans-serif;
+    font-family: "Kiwi Maru", serif;
     font-weight: 500;
     background: none;
     border: 1.5px solid var(--gold);
@@ -528,7 +579,7 @@
     gap: 7px;
     margin-top: 12px;
     text-decoration: none;
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 500;
     color: var(--ink);
     border: 1.5px solid var(--gold);
@@ -547,7 +598,7 @@
     gap: 10px;
     text-decoration: none;
     color: #fff;
-    font-family: "Zen Maru Gothic";
+    font-family: "Kiwi Maru", serif;
     font-weight: 700;
     font-size: 1.06rem;
     letter-spacing: .04em;
@@ -568,6 +619,62 @@
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.in { opacity: 1; transform: none; }
 
+  /* ---------------- CANDLELIGHT EVENT DARK THEME OVERRIDES ---------------- */
+  body.live-event {
+    background: radial-gradient(circle at top, #1e1829 0%, #2e211a 60%, #16121f 100%);
+    color: #fdfbf7;
+  }
+  body.live-event::before {
+    background: radial-gradient(circle at center, transparent 30%, rgba(22, 18, 31, 0.4) 100%);
+  }
+  body.live-event .title .jp {
+    color: #ffd699; /* Golden-warm text */
+    text-shadow: 
+      -1.5px -1.5px 0 #2b221e,  
+       1.5px -1.5px 0 #2b221e,
+      -1.5px  1.5px 0 #2b221e,
+       1.5px  1.5px 0 #2b221e;
+  }
+  body.live-event .eyebrow { color: #ffccd5; }
+  body.live-event .lead { color: #fbe2b5; }
+  body.live-event .scroll { color: #ffd699; }
+  
+  body.live-event .card {
+    background: rgba(43, 34, 30, 0.92); /* Deep warm amber/charcoal card */
+    border-color: #ffd699;
+    color: #fdfbf7;
+    box-shadow: 0 16px 36px -12px rgba(22, 18, 31, 0.45);
+  }
+  body.live-event .card::before {
+    border-color: rgba(255, 214, 153, 0.35);
+  }
+  body.live-event .cal h4 { color: #ffd699; }
+  body.live-event .cal td { color: #fdfbf7; }
+  body.live-event .cal .sun { color: #ff99aa; }
+  body.live-event .cal .sat { color: #99ccff; }
+  
+  body.live-event .sched-info h3 { color: #ffd699; }
+  body.live-event .sched-info .rec { color: #ffccd5; }
+  body.live-event .prow .l { color: #fdfbf7; }
+  body.live-event .prow .p { color: #ffd699; }
+  body.live-event .price-notice { color: #ffccd5; border-color: rgba(255, 214, 153, 0.2); }
+  body.live-event .access .name { color: #ffd699; }
+  body.live-event .access .addr { color: #fdfbf7; }
+  body.live-event .copy-btn { border-color: #ffd699; color: #ffd699; }
+  body.live-event .copy-btn:hover { background: rgba(255, 214, 153, 0.15); }
+  body.live-event .maplink { border-color: #ffd699; color: #fdfbf7; }
+  body.live-event .maplink:hover { background: rgba(255, 214, 153, 0.15); }
+  body.live-event .kicker { color: #ffccd5; }
+  body.live-event .h { color: #ffd699; }
+  body.live-event .about p { color: #fdfbf7; }
+  body.live-event .stars i { background: #ffd699; opacity: 0.35; }
+  body.live-event .frame { border-color: rgba(255, 214, 153, 0.4); }
+  body.live-event .frame::after { border-color: rgba(255, 214, 153, 0.2); }
+  body.live-event .corner path[fill="#a5bdd8"] { fill: #4a384a; }
+  body.live-event .corner path[stroke="#cab083"] { stroke: #ffd699; }
+  body.live-event .corner path[stroke="#48536b"] { stroke: #ffd699; }
+  body.live-event .tarot-intro { color: #ffccd5; }
+
   @media(max-width: 560px) {
     .sched { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 20px; }
     .sched-info { text-align: center; }
@@ -585,6 +692,9 @@
 <script id="jsonLdSchema" type="application/ld+json"></script>
 </head>
 <body>
+
+<!-- Tactile paper texture overlay -->
+<div class="paper-texture-overlay" aria-hidden="true"></div>
 
 <div class="frame" aria-hidden="true"></div>
 
@@ -647,6 +757,13 @@
     <!-- shadow of the grill and mochi -->
     <ellipse cx="220" cy="425" rx="100" ry="15" fill="#a5bdd8" opacity="0.3" filter="url(#soft)"/>
 
+    <!-- Steam rising from grill (micro-animation) -->
+    <g stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.6" stroke-linecap="round">
+      <path d="M 170,360 Q 165,330 175,300 T 170,230" class="steam s1"/>
+      <path d="M 220,350 Q 225,320 215,290 T 220,220" class="steam s2"/>
+      <path d="M 270,360 Q 260,330 270,300 T 265,230" class="steam s3"/>
+    </g>
+
     <!-- wire grill (yaki-ami) -->
     <g stroke="#48536b" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85">
       <!-- diagonal lines 1 -->
@@ -705,13 +822,13 @@
       <!-- Hand-drawn Sparkles & Stars -->
       <g stroke="#48536b" stroke-width="1.8" stroke-linecap="round" fill="none">
         <!-- Star 1 (left) -->
-        <path d="M 150,130 L 160,130 M 155,125 L 155,135 M 151,126 L 159,134 M 151,134 L 159,126" class="sparkle" style="animation-delay:0s"/>
+        <path d="M 142,122 L 152,122 M 147,117 L 147,127 M 143,118 L 151,126 M 143,126 L 151,118" class="sparkle" style="animation-delay:0s"/>
         <!-- Star 2 (right) -->
-        <path d="M 285,150 L 295,150 M 290,145 L 290,155 M 286,146 L 294,154 M 286,154 L 294,146" class="sparkle" style="animation-delay:0.8s"/>
+        <path d="M 288,142 L 298,142 M 293,137 L 293,147 M 289,138 L 297,146 M 289,146 L 297,138" class="sparkle" style="animation-delay:0.8s"/>
         <!-- Crosses -->
         <path d="M 190,75 L 196,75 M 193,72 L 193,78" class="sparkle" style="animation-delay:0.4s"/>
         <path d="M 247,75 L 253,75 M 250,72 L 250,78" class="sparkle" style="animation-delay:1.2s"/>
-        <path d="M 217,50 L 223,50 M 220,47 L 220,53" class="sparkle" style="animation-delay:1.6s"/>
+        <path d="M 217,45 L 223,45 M 220,42 L 220,48" class="sparkle" style="animation-delay:1.6s"/>
       </g>
       <!-- Dots -->
       <g fill="#48536b" class="sparkle" style="animation-delay:0.2s">
@@ -724,7 +841,10 @@
   </svg>
  
   <p class="eyebrow">渋谷・道玄坂　天井裏 “M”</p>
-  <h1 class="title"><span class="en">OMOCHI&nbsp;TUNE</span><span class="jp">おもちちゃん</span></h1>
+  <h1 class="title">
+    <span class="en">OMOCHI&nbsp;TUNE</span>
+    <span class="jp">おもちちゃん</span>
+  </h1>
   <p class="lead">月に一度、天井裏でタロットを。</p>
   <span class="when">毎月 第一木曜日　20:00 OPEN</span>
   <div><a class="scroll" href="#about" aria-label="下へスクロール">▾</a></div>
@@ -950,11 +1070,18 @@
 
   if (calTitle) calTitle.textContent = y + '年 ' + (m + 1) + '月';
 
+  var isToday = now.getFullYear() === ft.getFullYear() && 
+                now.getMonth() === ft.getMonth() && 
+                now.getDate() === ft.getDate();
+
+  // Dynamic Theme Time 연동: candlelight theme during active event hours
+  var isLiveHours = isToday && now.getHours() >= 20 && now.getHours() < 23;
+  if (isLiveHours && !reduce) {
+    document.body.classList.add('live-event');
+  }
+
   if (nextDate) {
     var formattedDate = y + '年' + (m + 1) + '月' + ft.getDate() + '日（木）';
-    var isToday = now.getFullYear() === ft.getFullYear() && 
-                  now.getMonth() === ft.getMonth() && 
-                  now.getDate() === ft.getDate();
     
     if (isToday) {
       if (now.getHours() >= 20 && now.getHours() < 23) {
