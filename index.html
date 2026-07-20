@@ -102,7 +102,7 @@
     border-radius: 11px;
   }
   
-  /* Corner Ornaments: Acanthus scrolls with blue fill and dark outline */
+  /* Corner Ornaments */
   .corner { position: fixed; width: 58px; height: 58px; z-index: 41; pointer-events: none; }
   .corner.tl { top: 12px; left: 12px; }
   .corner.tr { top: 12px; right: 12px; transform: scaleX(-1); }
@@ -116,7 +116,6 @@
     padding: 80px 0 40px;
     overflow: hidden;
   }
-  /* Soft watercolor glow behind hero */
   .hero::before {
     content: "";
     position: absolute;
@@ -157,7 +156,6 @@
   .charm .heart { transform-box: fill-box; transform-origin: center; animation: beat 2.6s ease-in-out infinite; }
   .charm .sparkle { animation: tw 2.8s ease-in-out infinite; }
   
-  /* Steam micro-animations */
   .charm .steam {
     stroke-dasharray: 200;
     stroke-dashoffset: 200;
@@ -171,24 +169,11 @@
   .charm .steam.s3 { animation-delay: 4s; }
 
   @keyframes rise {
-    0% {
-      stroke-dashoffset: 200;
-      opacity: 0;
-      transform: translateY(10px) scale(0.9);
-    }
-    15% {
-      opacity: 0.5;
-    }
-    80% {
-      opacity: 0.3;
-    }
-    100% {
-      stroke-dashoffset: 0;
-      opacity: 0;
-      transform: translateY(-80px) scale(1.1);
-    }
+    0% { stroke-dashoffset: 200; opacity: 0; transform: translateY(10px) scale(0.9); }
+    15% { opacity: 0.5; }
+    80% { opacity: 0.3; }
+    100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-80px) scale(1.1); }
   }
-
   @keyframes bob {
     0%, 100% { transform: translateY(0) rotate(-1.1deg); }
     50% { transform: translateY(-13px) rotate(1.1deg); }
@@ -210,7 +195,6 @@
   }
   .title { margin: 0; z-index: 2; position: relative; }
   
-  /* Orange bubble logotype with dark brown outline */
   .title .en {
     display: block;
     font-family: "Fredoka", sans-serif;
@@ -335,7 +319,6 @@
 
   .about p { max-width: 32em; margin: 0 auto; text-align: center; color: var(--ink); font-size: 1.05rem; }
 
-  /* Card Vibe: physical double borders like a tarot card */
   .card {
     background: var(--card);
     border: 2px solid var(--gold);
@@ -376,7 +359,6 @@
   .cal .sun { color: #c4536a; }
   .cal .sat { color: #4f7fbf; }
   
-  /* Highlight event day with heart */
   .cal .ev { position: relative; color: #fff; font-weight: 700; z-index: 1; }
   .cal .ev span { position: relative; z-index: 2; }
   .cal .ev::before {
@@ -397,7 +379,6 @@
   .sched-info .rec { color: var(--ink-soft); font-size: .9rem; margin: 6px 0 0; }
   .sched-info .place { margin: 12px 0 0; font-size: .96rem; color: var(--ink); }
 
-  /* Live & Today badges */
   .live-badge {
     background: #e2f8eb;
     color: #0e6231;
@@ -455,10 +436,17 @@
     transform: translateY(-4px);
     box-shadow: 0 20px 40px -12px rgba(74, 87, 113, 0.2);
   }
-  .gallery-card svg {
+  .gallery-image {
     width: 100%;
-    height: auto;
-    max-height: 180px;
+    height: 180px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 12px;
+    border-radius: 8px;
+  }
+  .gallery-placeholder {
+    width: 100%;
+    height: 180px;
     display: block;
     margin: 0 auto 12px;
   }
@@ -469,11 +457,7 @@
     color: var(--coral-deep);
     margin: 0 0 6px;
   }
-  .gallery-desc {
-    font-size: 0.84rem;
-    color: var(--ink-soft);
-    margin: 0;
-  }
+  .gallery-desc { font-size: 0.84rem; color: var(--ink-soft); margin: 0; }
 
   /* Column Grid styles */
   .column-grid {
@@ -514,11 +498,7 @@
     border-radius: 99px;
     margin-bottom: 12px;
   }
-  .card-date {
-    float: right;
-    font-size: 0.78rem;
-    color: var(--ink-soft);
-  }
+  .card-date { float: right; font-size: 0.78rem; color: var(--ink-soft); }
   .column-card h3 {
     font-family: "Kiwi Maru", serif;
     font-weight: 700;
@@ -528,17 +508,8 @@
     line-height: 1.4;
     clear: both;
   }
-  .column-card p {
-    font-size: 0.88rem;
-    color: var(--ink);
-    margin: 0 0 14px;
-    line-height: 1.6;
-  }
-  .card-more {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--gold-text);
-  }
+  .column-card p { font-size: 0.88rem; color: var(--ink); margin: 0 0 14px; line-height: 1.6; }
+  .card-more { font-size: 0.8rem; font-weight: 700; color: var(--gold-text); }
 
   /* Modal reader styles */
   .modal-overlay {
@@ -638,8 +609,6 @@
   }
   .tarot-card:focus-visible .card-inner { outline: 3px solid #7fa8e6; outline-offset: 3px; border-radius: 12px; }
   .tarot-card:hover .card-inner { transform: translateY(-8px) rotate(1deg); }
-  
-  /* Tarot Card Flip Shadow Shift: moves shadow dynamically as the card flips */
   .tarot-card.flipped .card-inner {
     transform: rotateY(180deg);
     box-shadow: 0 -8px 16px -6px rgba(74, 59, 99, 0.25);
@@ -830,12 +799,108 @@
   .ig svg { width: 22px; height: 22px; }
   .follow .note { color: var(--ink-soft); font-size: .86rem; margin-top: 14px; }
 
-  footer { text-align: center; padding: 40px 0 60px; color: var(--ink-soft); font-size: .78rem; letter-spacing: .08em; }
+  footer { text-align: center; padding: 40px 0 60px; color: var(--ink-soft); font-size: .78rem; letter-spacing: .08em; position: relative; }
   footer .lg { font-family: "Fredoka", sans-serif; color: var(--coral); font-weight: 600; font-size: 1rem; letter-spacing: .02em; }
 
   /* reveal */
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------------- EDITOR DRAWER STYLES ---------------- */
+  .editor-drawer {
+    position: fixed;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    background: #fdfbf7;
+    border: 3px solid #8c6c39;
+    border-radius: 24px 24px 14px 14px;
+    z-index: 200;
+    box-shadow: 0 -20px 60px rgba(77, 43, 26, 0.25);
+    transform: translateY(115%);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    color: var(--ink);
+  }
+  .editor-drawer.active { transform: translateY(0); }
+  .editor-drawer::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(202, 176, 131, 0.4);
+    border-radius: 20px;
+    pointer-events: none;
+  }
+  .editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 2px solid var(--gold);
+    background: #fbf8f2;
+    border-radius: 20px 20px 0 0;
+    z-index: 10;
+  }
+  .editor-header h3 { margin: 0; font-family: "Kiwi Maru", serif; color: var(--coral-deep); }
+  .editor-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--ink-soft); }
+  .editor-body { padding: 24px; overflow-y: auto; flex-grow: 1; display: grid; grid-template-columns: 1fr 1.3fr; gap: 28px; }
+  .editor-col { display: flex; flex-direction: column; gap: 20px; }
+  
+  .editor-section-card { background: #fff; border: 1px solid var(--gold); border-radius: 12px; padding: 16px; }
+  .editor-section-card h4 {
+    margin: 0 0 12px;
+    font-family: "Kiwi Maru", serif;
+    color: var(--coral-deep);
+    border-bottom: 1px dashed var(--gold);
+    padding-bottom: 6px;
+  }
+  .editor-form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .editor-form-group label { font-size: 0.82rem; font-weight: 700; color: var(--ink-soft); }
+  .editor-form-group input, .editor-form-group textarea, .editor-form-group select {
+    font-family: inherit;
+    font-size: 0.88rem;
+    padding: 8px 12px;
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    background: #fdfbf7;
+    color: var(--ink);
+  }
+  .editor-form-group input:focus, .editor-form-group textarea:focus, .editor-form-group select:focus { outline: 2px solid var(--coral); }
+  
+  .editor-btn-primary {
+    background: linear-gradient(135deg, var(--coral), #d46f1d);
+    color: #fff;
+    border: none;
+    border-radius: 99px;
+    padding: 10px 24px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+    width: 100%;
+  }
+  .editor-btn-primary:hover { transform: translateY(-2px); }
+  .editor-btn-secondary {
+    background: none;
+    border: 1.5px solid var(--gold);
+    color: var(--gold-text);
+    border-radius: 99px;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.84rem;
+    transition: background 0.2s;
+  }
+  .editor-btn-secondary:hover { background: #fbf8f2; }
+  .editor-item-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; max-height: 200px; overflow-y: auto; }
+  .editor-item-row { display: flex; justify-content: space-between; align-items: center; background: #fbf8f2; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; }
+  .editor-item-actions { display: flex; gap: 6px; }
+  .editor-small-btn { background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--ink-soft); }
+  .editor-small-btn:hover { color: var(--pink); }
+  .editor-instruction { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.5; margin: 8px 0; }
 
   /* ---------------- CANDLELIGHT EVENT DARK THEME OVERRIDES ---------------- */
   body.live-event {
@@ -857,7 +922,7 @@
     color: #4d2b1a;
   }
   body.live-event .title .jp {
-    color: #ffd699; /* Golden-warm text */
+    color: #ffd699;
     text-shadow: 
       -1.5px -1.5px 0 #2b221e,  
        1.5px -1.5px 0 #2b221e,
@@ -869,7 +934,7 @@
   body.live-event .scroll { color: #ffd699; }
   
   body.live-event .card, body.live-event .gallery-card, body.live-event .column-card {
-    background: rgba(43, 34, 30, 0.92); /* Deep warm amber/charcoal card */
+    background: rgba(43, 34, 30, 0.92);
     border-color: #ffd699;
     color: #fdfbf7;
     box-shadow: 0 16px 36px -12px rgba(22, 18, 31, 0.45);
@@ -911,32 +976,28 @@
   body.live-event .card-more { color: #ffd699; }
   body.live-event .card-date { color: #ffccd5; }
 
-  body.live-event .modal-overlay {
-    background: rgba(22, 18, 31, 0.7);
+  body.live-event .modal-overlay { background: rgba(22, 18, 31, 0.7); }
+  body.live-event .modal-card { background: rgba(43, 34, 30, 0.98); border-color: #ffd699; color: #fdfbf7; }
+  body.live-event .modal-card::before { border-color: rgba(255, 214, 153, 0.35); }
+  body.live-event .modal-close-btn { color: #ffd699; }
+  body.live-event .modal-content-wrap { border-color: rgba(255, 214, 153, 0.4); background: rgba(0,0,0,0.2); }
+  body.live-event .modal-meta { color: #ffccd5; }
+  body.live-event .modal-title { color: #ffd699; }
+  body.live-event .modal-body { color: #fdfbf7; }
+
+  @media(max-width: 560px) {
+    .sched { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 20px; }
+    .sched-info { text-align: center; }
+    .corner { width: 44px; height: 44px; }
+    .frame { top: 9px; left: 9px; right: 9px; bottom: 9px; }
+    .corner.tl, .corner.tr { top: 8px; } .corner.tl, .corner.bl { left: 8px; }
+    .corner.tr, .corner.br { right: 8px; } .corner.bl, .corner.br { bottom: 8px; }
+    .editor-body { grid-template-columns: 1fr; }
   }
-  body.live-event .modal-card {
-    background: rgba(43, 34, 30, 0.98);
-    border-color: #ffd699;
-    color: #fdfbf7;
-  }
-  body.live-event .modal-card::before {
-    border-color: rgba(255, 214, 153, 0.35);
-  }
-  body.live-event .modal-close-btn {
-    color: #ffd699;
-  }
-  body.live-event .modal-content-wrap {
-    border-color: rgba(255, 214, 153, 0.4);
-    background: rgba(0,0,0,0.2);
-  }
-  body.live-event .modal-meta {
-    color: #ffccd5;
-  }
-  body.live-event .modal-title {
-    color: #ffd699;
-  }
-  body.live-event .modal-body {
-    color: #fdfbf7;
+  @media(prefers-reduced-motion: reduce) {
+    * { animation: none !important; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
   }
 </style>
 <script id="jsonLdSchema" type="application/ld+json"></script>
@@ -948,7 +1009,7 @@
 
 <div class="frame" aria-hidden="true"></div>
 
-<!-- Classic Art-Nouveau Acanthus Corner Ornaments (Dark outline, blue fill, gold border) -->
+<!-- Corner Ornaments -->
 <svg class="corner tl" viewBox="0 0 58 58" aria-hidden="true">
   <path d="M5,5 L52,5 M5,5 L5,52" stroke="#cab083" stroke-width="2.5" stroke-linecap="round" fill="none"/>
   <path d="M 5,5 C 16,5 24,10 26,18 C 28,26 20,32 14,32 C 10,32 6,28 6,22 C 6,14 12,10 18,12 C 22,14 20,20 16,18 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
@@ -984,12 +1045,9 @@
 
 <header class="hero">
   <div class="stars" id="stars" aria-hidden="true"></div>
-
-  <!-- ===== 焼き網の上の切り餅天使 （OMOCHI TUNE キャラクター） ===== -->
   <svg class="charm" viewBox="0 0 440 560" role="img" aria-label="焼き網の上に座る、翼の生えた切り餅のおもちちゃん">
     <defs>
       <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>
-      <!-- body gradient: soft white to light blue shadow -->
       <linearGradient id="mochiTop" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#ffffff"/>
         <stop offset="100%" stop-color="#fafbfc"/>
@@ -1003,89 +1061,49 @@
         <stop offset="100%" stop-color="#d3deed"/>
       </linearGradient>
     </defs>
-
-    <!-- shadow of the grill and mochi -->
     <ellipse cx="220" cy="425" rx="100" ry="15" fill="#a5bdd8" opacity="0.3" filter="url(#soft)"/>
-
-    <!-- Steam rising from grill (micro-animation) -->
     <g stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.6" stroke-linecap="round">
       <path d="M 170,360 Q 165,330 175,300 T 170,230" class="steam s1"/>
       <path d="M 220,350 Q 225,320 215,290 T 220,220" class="steam s2"/>
       <path d="M 270,360 Q 260,330 270,300 T 265,230" class="steam s3"/>
     </g>
-
-    <!-- wire grill (yaki-ami) -->
     <g stroke="#48536b" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85">
-      <!-- diagonal lines 1 -->
       <line x1="90" y1="390" x2="310" y2="455"/>
       <line x1="120" y1="375" x2="330" y2="435"/>
       <line x1="150" y1="360" x2="350" y2="415"/>
-      <!-- diagonal lines 2 -->
       <line x1="350" y1="390" x2="130" y2="455"/>
       <line x1="320" y1="375" x2="110" y2="435"/>
       <line x1="290" y1="360" x2="90" y2="415"/>
     </g>
-
-    <!-- floating charm (body + wings + heart + sparkles bob together) -->
     <g class="float">
-      <!-- Wings (Behind Body) -->
-      <!-- Left wing -->
       <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-      <!-- Right wing (Mirrored) -->
       <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="translate(440,0) scale(-1,1)"/>
-
-      <!-- 3D Kiri-Mochi Body -->
       <g stroke="#48536b" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
-        <!-- Front-Left Face -->
         <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="url(#mochiLeft)"/>
-        <!-- Front-Right Face -->
         <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="url(#mochiRight)"/>
-        <!-- Top Face -->
         <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="url(#mochiTop)"/>
       </g>
-
-      <!-- Face Details (On the Top Face) -->
-      <!-- Dot Eyes -->
       <circle cx="195" cy="308" r="3.2" fill="#48536b"/>
       <circle cx="245" cy="308" r="3.2" fill="#48536b"/>
-      <!-- Smile mouth -->
       <path d="M 213,316 Q 220,323 227,316" fill="none" stroke="#48536b" stroke-width="3" stroke-linecap="round"/>
-      
-      <!-- Blush Hatch Lines -->
-      <!-- Left blush -->
       <g stroke="#df6e79" stroke-width="2.2" stroke-linecap="round">
-        <line x1="172" y1="318" x2="177" y2="308"/>
-        <line x1="178" y1="318" x2="183" y2="308"/>
-        <line x1="184" y1="318" x2="189" y2="308"/>
+        <line x1="172" y1="318" x2="177" y2="308"/><line x1="178" y1="318" x2="183" y2="308"/><line x1="184" y1="318" x2="189" y2="308"/>
       </g>
-      <!-- Right blush -->
       <g stroke="#df6e79" stroke-width="2.2" stroke-linecap="round">
-        <line x1="251" y1="318" x2="256" y2="308"/>
-        <line x1="257" y1="318" x2="262" y2="308"/>
-        <line x1="263" y1="318" x2="268" y2="308"/>
+        <line x1="251" y1="318" x2="256" y2="308"/><line x1="257" y1="318" x2="262" y2="308"/><line x1="263" y1="318" x2="268" y2="308"/>
       </g>
-
-      <!-- Hand-drawn Heart outline (Floating) -->
       <g class="heart" fill="none" stroke="#df6e79" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M220,135 C208,118 178,110 178,88 C178,72 192,68 202,76 C210,82 220,94 220,94 C220,94 230,82 238,76 C248,68 262,72 262,88 C262,110 232,118 220,135 Z"/>
       </g>
-      <!-- Hand-drawn Sparkles & Stars -->
       <g stroke="#48536b" stroke-width="1.8" stroke-linecap="round" fill="none">
-        <!-- Star 1 (left) -->
         <path d="M 142,122 L 152,122 M 147,117 L 147,127 M 143,118 L 151,126 M 143,126 L 151,118" class="sparkle" style="animation-delay:0s"/>
-        <!-- Star 2 (right) -->
         <path d="M 288,142 L 298,142 M 293,137 L 293,147 M 289,138 L 297,146 M 289,146 L 297,138" class="sparkle" style="animation-delay:0.8s"/>
-        <!-- Crosses -->
         <path d="M 190,75 L 196,75 M 193,72 L 193,78" class="sparkle" style="animation-delay:0.4s"/>
         <path d="M 247,75 L 253,75 M 250,72 L 250,78" class="sparkle" style="animation-delay:1.2s"/>
         <path d="M 217,45 L 223,45 M 220,42 L 220,48" class="sparkle" style="animation-delay:1.6s"/>
       </g>
-      <!-- Dots -->
       <g fill="#48536b" class="sparkle" style="animation-delay:0.2s">
-        <circle cx="160" cy="85" r="2.5"/>
-        <circle cx="280" cy="95" r="2"/>
-        <circle cx="178" cy="155" r="2"/>
-        <circle cx="262" cy="155" r="2"/>
+        <circle cx="160" cy="85" r="2.5"/><circle cx="280" cy="95" r="2"/><circle cx="178" cy="155" r="2"/><circle cx="262" cy="155" r="2"/>
       </g>
     </g>
   </svg>
@@ -1100,14 +1118,14 @@
   <div><a class="scroll" href="#about" aria-label="下へスクロール">▾</a></div>
 </header>
 
-<!-- Sticky Navigation Bar -->
+<!-- Navigation Bar -->
 <nav class="sticky-nav" id="mainNav">
   <div class="nav-wrap">
     <a href="#about" class="nav-item active">Home</a>
-    <a href="#tarot-section" class="nav-item">占い</a>
-    <a href="#gallery-section" class="nav-item">ギャラリー</a>
-    <a href="#column-section" class="nav-item">コラム</a>
-    <a href="#schedule" class="nav-item">日程</a>
+    <a href="#tarot-section" class="nav-item" id="navTarot">占い</a>
+    <a href="#gallery-section" class="nav-item" id="navGallery">ギャラリー</a>
+    <a href="#column-section" class="nav-item" id="navColumn">コラム</a>
+    <a href="#schedule" class="nav-item" id="navSchedule">日程</a>
     <a href="#access" class="nav-item">アクセス</a>
   </div>
 </nav>
@@ -1121,7 +1139,7 @@
     </div>
   </section>
 
-  <!-- Project 01 / Tarot Reading Section -->
+  <!-- Tarot Section -->
   <section id="tarot-section" class="reveal">
     <div class="wrap">
       <p class="kicker">PROJECT 01</p>
@@ -1198,7 +1216,6 @@
           </div>
         </div>
 
-        <!-- Result message details -->
         <div class="tarot-result" id="tarotResult" aria-live="polite" style="display: none;">
           <div class="result-card">
             <div class="result-badge" id="resultCardType">The Star / 星</div>
@@ -1216,107 +1233,26 @@
     <div class="wrap">
       <p class="kicker">GALLERY</p>
       <h2 class="h">おもちギャラリー</h2>
-      <p class="tarot-intro" style="margin-bottom: 20px;">新しい「おもちちゃん」たちをご紹介します。お気に入りを見つけてみてください。</p>
-      
+      <p class="tarot-intro" style="margin-bottom: 20px;">新しい「おもちちゃん」たちをご紹介します。</p>
       <div class="gallery-grid">
-        <!-- Card 1: Classic -->
-        <div class="gallery-card">
-          <!-- Classic Angel SVG -->
-          <svg viewBox="0 0 440 560" aria-hidden="true">
-            <ellipse cx="220" cy="425" rx="100" ry="15" fill="#a5bdd8" opacity="0.3" filter="url(#soft)"/>
-            <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="6"/>
-            <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="6" transform="translate(440,0) scale(-1,1)"/>
-            <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="#f5f7fa" stroke="#48536b" stroke-width="6"/>
-            <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="#d3deed" stroke="#48536b" stroke-width="6"/>
-            <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#48536b" stroke-width="6"/>
-            <circle cx="195" cy="308" r="4" fill="#48536b"/><circle cx="245" cy="308" r="4" fill="#48536b"/>
-            <path d="M 213,316 Q 220,323 227,316" fill="none" stroke="#48536b" stroke-width="3" stroke-linecap="round"/>
-            <path d="M220,135 C208,118 178,110 178,88 C178,72 192,68 202,76 C210,82 220,94 220,94 C220,94 230,82 238,76 C248,68 262,72 262,88 C262,110 232,118 220,135 Z" fill="#df6e79" stroke="#48536b" stroke-width="5"/>
-          </svg>
-          <h3 class="gallery-title">おもち天使 (Classic)</h3>
-          <p class="gallery-desc">夕暮れ空に浮かぶ、おもち天使の基本形です。</p>
-        </div>
-        <!-- Card 2: Starry -->
-        <div class="gallery-card">
-          <!-- Starry Night SVG -->
-          <svg viewBox="0 0 440 560" aria-hidden="true">
-            <circle cx="220" cy="280" r="160" fill="#181e35"/>
-            <path d="M 310,180 A 65,65 0 1,0 230,275 A 50,50 0 1,1 310,180 Z" fill="#ffe699"/>
-            <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6"/>
-            <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6" transform="translate(440,0) scale(-1,1)"/>
-            <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="#e1e8f2" stroke="#48536b" stroke-width="5"/>
-            <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="#d3deed" stroke="#48536b" stroke-width="5"/>
-            <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#48536b" stroke-width="5"/>
-            <circle cx="195" cy="308" r="3.2" fill="#48536b"/><circle cx="245" cy="308" r="3.2" fill="#48536b"/>
-            <path d="M 213,316 Q 220,323 227,316" fill="none" stroke="#48536b" stroke-width="2.5" stroke-linecap="round"/>
-            <g fill="#ffffff" opacity="0.8">
-              <circle cx="100" cy="180" r="3"/><circle cx="340" cy="280" r="2.5"/><circle cx="120" cy="320" r="2"/>
-            </g>
-          </svg>
-          <h3 class="gallery-title">星空おもち (Starry)</h3>
-          <p class="gallery-desc">夜空で三日月と星たちに囲まれて浮かびます。</p>
-        </div>
-        <!-- Card 3: Toasty -->
-        <div class="gallery-card">
-          <!-- Toasty Grill SVG -->
-          <svg viewBox="0 0 440 560" aria-hidden="true">
-            <defs>
-              <radialGradient id="fire" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ff6600" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="#ffcc00" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <ellipse cx="220" cy="400" rx="110" ry="40" fill="url(#fire)"/>
-            <g stroke="#48536b" stroke-width="2.5" stroke-linecap="round" fill="none">
-              <line x1="100" y1="380" x2="340" y2="380"/><line x1="120" y1="360" x2="320" y2="400"/>
-              <line x1="110" y1="400" x2="330" y2="360"/>
-            </g>
-            <path d="M 135,315 L 135,370 C 135,375 140,380 148,382 L 220,402 L 220,343 Z" fill="#e1e8f2" stroke="#48536b" stroke-width="6"/>
-            <path d="M 220,343 L 220,402 L 292,382 C 300,380 305,375 305,370 L 305,315 Z" fill="#d3deed" stroke="#48536b" stroke-width="6"/>
-            <path d="M 140,300 C 133,300 133,310 138,313 L 210,338 C 215,341 225,341 230,338 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#48536b" stroke-width="6"/>
-            <ellipse cx="265" cy="295" rx="14" ry="7" fill="#b06526" opacity="0.7"/>
-            <path d="M 258,295 L 272,295 M 265,290 L 265,300" stroke="#4d2b1a" stroke-width="1.5"/>
-            <circle cx="195" cy="308" r="3.2" fill="#48536b"/><circle cx="245" cy="308" r="3.2" fill="#48536b"/>
-            <path d="M 213,316 Q 220,323 227,316" fill="none" stroke="#48536b" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          <h3 class="gallery-title">焼き網おもち (Toasty)</h3>
-          <p class="gallery-desc">網の上でこんがりと美味しそうな焼き目がつきました。</p>
-        </div>
-        <!-- Card 4: Love -->
-        <div class="gallery-card">
-          <!-- Love Heart SVG -->
-          <svg viewBox="0 0 440 560" aria-hidden="true">
-            <ellipse cx="220" cy="425" rx="100" ry="15" fill="#a5bdd8" opacity="0.3" filter="url(#soft)"/>
-            <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="6"/>
-            <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="6" transform="translate(440,0) scale(-1,1)"/>
-            <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="#e1e8f2" stroke="#48536b" stroke-width="6"/>
-            <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="#d3deed" stroke="#48536b" stroke-width="6"/>
-            <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#48536b" stroke-width="6"/>
-            <!-- hugging a big heart -->
-            <path d="M220,360 C200,335 170,325 170,295 C170,270 190,265 205,277 C214,285 220,295 220,295 C220,295 226,285 235,277 C250,265 270,270 270,295 C270,325 240,335 220,360 Z" fill="#df6e79" stroke="#48536b" stroke-width="4.5" stroke-linejoin="round"/>
-            <circle cx="195" cy="308" r="3.2" fill="#48536b"/><circle cx="245" cy="308" r="3.2" fill="#48536b"/>
-            <path d="M 213,316 Q 220,323 227,316" fill="none" stroke="#48536b" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          <h3 class="gallery-title">お届けおもち (Love)</h3>
-          <p class="gallery-desc">大きなハートを抱えて、大好きな気持ちを運びます。</p>
-        </div>
+        <!-- Rendered dynamically -->
       </div>
     </div>
   </section>
 
-  <!-- Column (Blog) Section -->
+  <!-- Column Section -->
   <section id="column-section" class="reveal">
     <div class="wrap">
       <p class="kicker">COLUMN</p>
       <h2 class="h">おもちコラム</h2>
       <p class="tarot-intro" style="margin-bottom: 20px;">日々の気づき、占いのヒント、天井裏での出来事などをお話しします。</p>
-      
       <div class="column-grid" id="columnGrid">
-        <!-- Injected dynamically via JS -->
+        <!-- Rendered dynamically -->
       </div>
     </div>
   </section>
 
+  <!-- Schedule Section -->
   <section id="schedule" class="reveal">
     <div class="wrap">
       <p class="kicker">SCHEDULE</p>
@@ -1393,7 +1329,234 @@
       <span class="modal-meta" id="modalDate">2026.07.20</span>
       <h3 class="modal-title" id="modalTitle">コラムタイトル</h3>
       <div class="modal-body" id="modalBody">
-        <!-- Content will be injected -->
+        <!-- Content injected dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------------- CONTENT DATABASE (JSON) ---------------- -->
+<script id="dataColumns" type="application/json">
+[
+  {
+    "id": 1,
+    "title": "はじめまして、おもちちゃんです",
+    "date": "2026.07.20",
+    "tag": "自己紹介",
+    "readTime": "3分",
+    "summary": "おもちちゃんが誕生したきっかけや、これからの活動についての想いをつづります。",
+    "content": "<p>こんにちは、おもちちゃんです！</p><p>私は渋谷・道玄坂教会の天井裏にある小さな部屋“M”にひっそり住んでいます。普段はお餅を焼きながら、ふらりと訪れた人にタロットカードをめくって、心に寄り添う言葉を届けています。</p><p>このホームページは、タロット占いだけでなく、おもちちゃんの活動全般のホームグラウンドにしていきたいと思っています。</p><p>今、新しいおもちちゃんの絵もたくさん作っているので、ギャラリーに飾っていきますね。これからコラムやギャラリーなど、やれることを少しずつ増やしていければ嬉しいです。どうぞのんびりとお付き合いください。</p>"
+  },
+  {
+    "id": 2,
+    "title": "天井裏のひみつの時間",
+    "date": "2026.07.18",
+    "tag": "日常",
+    "readTime": "2分",
+    "summary": "道玄坂教会 天井裏 “M” で過ごす、月に一度の特別な夜についてお話しします。",
+    "content": "<p>渋谷の賑やかなスクランブル交差点を抜け、坂をのぼると現れる、クラシカルな道玄坂教会。</p><p>その教会の奥にある小さなハシゴを登ると、私の暮らす天井裏 “M” があります。</p><p>毎月第一木曜日の夜だけ、そこにぽっとあたたかいロウソクを灯して、占いのお部屋を開いています。誰にも秘密の、屋根裏の隠れ家のようなこの場所で、お餅を焼く香りに包まれながらカードを引く時間は、私にとっても非常に特別なひとときです。皆さんもぜひ遊びにきてくださいね。</p>"
+  },
+  {
+    "id": 3,
+    "title": "タロットカードが教えてくれること",
+    "date": "2026.07.15",
+    "tag": "占い",
+    "readTime": "3分",
+    "summary": "タロット占いは怖くない？おもちちゃんの占いのこだわりについてご紹介します。",
+    "content": "<p>「タロット占いって、悪いカードが出たら怖いな…」と思われる方も多いかもしれません。</p><p>でも、私のタロット占いでは、難しい言葉や脅かすような解釈は一切使いません。どんなカードが出ても、それは『今のあなたに優しく寄り添うためのヒント』です。</p><p>心がちょっと疲れてしまったときや、どっちに進めばいいか迷ったとき、そっと背中をなでてくれるような、そんな優しい時間をお届けできたらと思っています。10分だけの小さな旅を、一緒に楽しみましょう。</p>"
+  }
+]
+</script>
+
+<script id="dataGallery" type="application/json">
+[
+  {
+    "id": 1,
+    "title": "おもち天使",
+    "desc": "夕暮れ空に浮かび、みんなの幸せを願うおもち天使の基本形です。",
+    "image": ""
+  },
+  {
+    "id": 2,
+    "title": "星空おもち",
+    "desc": "夜空で三日月と星たちに囲まれてふわふわと浮かびます。",
+    "image": ""
+  },
+  {
+    "id": 3,
+    "title": "焼き網おもち",
+    "desc": "網の上でこんがりと美味しそうな焼き目がつきました。",
+    "image": ""
+  },
+  {
+    "id": 4,
+    "title": "お届けおもち",
+    "desc": "大きなハートを抱えて、大切な気持ちを届けにいきます。",
+    "image": ""
+  }
+]
+</script>
+
+<script id="dataTarot" type="application/json">
+[
+  {
+    "nameEn": "The Fool",
+    "nameJp": "おもちの旅立ち",
+    "illust": "🌱",
+    "desc": "新しいことをはじめるのにぴったりの日。失敗をおそれず、ふわふわと軽やかに一歩を踏み出してみてね。"
+  },
+  {
+    "nameEn": "The Magician",
+    "nameJp": "おもちのひらめき",
+    "illust": "🪄",
+    "desc": "あなたの中のアイデアが形になりそう。自信を持って、あなたのワクワクをみんなに見せてあげて。"
+  },
+  {
+    "nameEn": "The Empress",
+    "nameJp": "おもちのぬくもり",
+    "illust": "🍵",
+    "desc": "まわりの人にも、自分自身にも、たっぷり優しくしてあげてね。おいしいお茶を飲んで、のんびり過ごすのが吉。"
+  },
+  {
+    "nameEn": "The Chariot",
+    "nameJp": "おもちのダッシュ",
+    "illust": "🏃‍♂️",
+    "desc": "目標に向かってまっすぐ進めるパワーがみなぎっています。勢いにのって、やりたかったことを一気に進めちゃおう！"
+  },
+  {
+    "nameEn": "The Star",
+    "nameJp": "おもちのねがい",
+    "illust": "🌟",
+    "desc": "あなたの願いはちゃんと届いています。未来を信じて、リラックスして過ごしてね。今夜は星空を見上げてみて。"
+  },
+  {
+    "nameEn": "The Sun",
+    "nameJp": "おもちのえがお",
+    "illust": "☀️",
+    "desc": "エネルギー満タン！すべてが明るく照らされる日。あなたの笑顔が、まわりの人たちもあたたかく幸せにします。"
+  }
+]
+</script>
+
+<script id="dataSettings" type="application/json">
+{
+  "showTarot": true,
+  "showGallery": true,
+  "showColumn": true,
+  "showSchedule": true
+}
+</script>
+
+<!-- ---------------- CONTENT EDITOR PANEL (DRAWER) ---------------- -->
+<div class="editor-drawer" id="editorDrawer" aria-hidden="true">
+  <div class="editor-header">
+    <h3>⚙️ OMOCHI TUNE 編集・管理パネル</h3>
+    <button class="editor-close" id="editorCloseBtn" aria-label="編集パネルを閉じる">&times;</button>
+  </div>
+  <div class="editor-body">
+    <!-- Left Column: Settings and Export -->
+    <div class="editor-col">
+      <div class="editor-section-card">
+        <h4>1. セクション表示設定</h4>
+        <div class="editor-form-group" style="flex-direction:row; gap:10px; align-items:center;">
+          <input type="checkbox" id="chkShowTarot" checked="checked">
+          <label for="chkShowTarot">占いセクションを表示する</label>
+        </div>
+        <div class="editor-form-group" style="flex-direction:row; gap:10px; align-items:center;">
+          <input type="checkbox" id="chkShowGallery" checked="checked">
+          <label for="chkShowGallery">ギャラリーを表示する</label>
+        </div>
+        <div class="editor-form-group" style="flex-direction:row; gap:10px; align-items:center;">
+          <input type="checkbox" id="chkShowColumn" checked="checked">
+          <label for="chkShowColumn">コラムを表示する</label>
+        </div>
+        <div class="editor-form-group" style="flex-direction:row; gap:10px; align-items:center;">
+          <input type="checkbox" id="chkShowSchedule" checked="checked">
+          <label for="chkShowSchedule">カレンダー日程を表示する</label>
+        </div>
+      </div>
+
+      <div class="editor-section-card">
+        <h4>2. サイトの保存・公開</h4>
+        <p class="editor-instruction">※ブラウザ上での編集は一時保存です。変更を全世界に公開するには、以下のボタンからファイルをダウンロードし、GitHubのリポジトリへアップロード（上書き保存）してください。</p>
+        <button class="editor-btn-primary" id="btnExportHtml">Save & index.html をダウンロード 💾</button>
+      </div>
+    </div>
+
+    <!-- Right Column: Content CRUD Forms -->
+    <div class="editor-col">
+      <div class="editor-section-card">
+        <h4>3. コンテンツの追加・編集</h4>
+        <div class="editor-form-group">
+          <label for="editorModeSelect">編集する対象を選択：</label>
+          <select id="editorModeSelect">
+            <option value="column">コラム記事の管理</option>
+            <option value="gallery">ギャラリーキャラクターの管理</option>
+            <option value="tarot">タロットカード解説の管理</option>
+          </select>
+        </div>
+
+        <!-- CRUD Form: Column -->
+        <div id="formColumn" class="editor-content-form">
+          <div class="editor-form-group">
+            <label for="colTitleInput">タイトル</label>
+            <input type="text" id="colTitleInput" placeholder="コラムのタイトル">
+          </div>
+          <div class="editor-form-group">
+            <label for="colTagInput">カテゴリタグ</label>
+            <input type="text" id="colTagInput" placeholder="日常, 自己紹介, 占い など">
+          </div>
+          <div class="editor-form-group">
+            <label for="colSummaryInput">要約（カード表示用）</label>
+            <textarea id="colSummaryInput" rows="2" placeholder="カード一覧に表示される短い文章"></textarea>
+          </div>
+          <div class="editor-form-group">
+            <label for="colContentInput">本文（HTML対応）</label>
+            <textarea id="colContentInput" rows="5" placeholder="本文（&lt;p&gt;段落タグなどを使用できます）"></textarea>
+          </div>
+          <button class="editor-btn-secondary" id="btnSaveColumn">コラムを追加 / 更新</button>
+          <div class="editor-item-list" id="listColumns"></div>
+        </div>
+
+        <!-- CRUD Form: Gallery -->
+        <div id="formGallery" class="editor-content-form" style="display:none;">
+          <div class="editor-form-group">
+            <label for="galTitleInput">名前（キャラクター名）</label>
+            <input type="text" id="galTitleInput" placeholder="例: おもち天使">
+          </div>
+          <div class="editor-form-group">
+            <label for="galDescInput">説明</label>
+            <input type="text" id="galDescInput" placeholder="例: 空に浮かび、みんなの幸せを願う...">
+          </div>
+          <div class="editor-form-group">
+            <label for="galImageInput">画像パス / URL</label>
+            <input type="text" id="galImageInput" placeholder="例: images/character.png（空白時はプレースホルダーを表示）">
+          </div>
+          <button class="editor-btn-secondary" id="btnSaveGallery">キャラクターを追加 / 更新</button>
+          <div class="editor-item-list" id="listGallery"></div>
+        </div>
+
+        <!-- CRUD Form: Tarot -->
+        <div id="formTarot" class="editor-content-form" style="display:none;">
+          <div class="editor-form-group">
+            <label for="tarotCardSelect">編集するカードを選択：</label>
+            <select id="tarotCardSelect"></select>
+          </div>
+          <div class="editor-form-group">
+            <label for="tarotJpInput">カードの和名</label>
+            <input type="text" id="tarotJpInput">
+          </div>
+          <div class="editor-form-group">
+            <label for="tarotEmojiInput">イラスト絵文字</label>
+            <input type="text" id="tarotEmojiInput">
+          </div>
+          <div class="editor-form-group">
+            <label for="tarotDescInput">占い解説メッセージ</label>
+            <textarea id="tarotDescInput" rows="4"></textarea>
+          </div>
+          <button class="editor-btn-secondary" id="btnSaveTarot">カードメッセージを更新</button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1402,6 +1565,9 @@
 <footer>
   <div class="lg">OMOCHI TUNE</div>
   おもちちゃん ・ タロット占い ・ 渋谷 道玄坂
+  <div style="margin-top: 14px;">
+    <button id="adminToggleBtn" style="background:none;border:none;color:var(--ink-soft);font-size:0.92rem;cursor:pointer;opacity:0.6;transition:opacity 0.2s;" aria-label="管理・編集モードを開く">⚙️ 編集パネルを開く</button>
+  </div>
 </footer>
 
 <script>
@@ -1539,16 +1705,147 @@
     calBody.innerHTML = rows;
   }
 
-  // Interactive Tarot Game Logic
-  var tarotCards = [
-    { nameEn: "The Fool", nameJp: "おもちの旅立ち", illust: "🌱", desc: "新しいことをはじめるのにぴったりの日。失敗をおそれず、ふわふわと軽やかに一歩を踏み出してみてね。" },
-    { nameEn: "The Magician", nameJp: "おもちのひらめき", illust: "🪄", desc: "あなたの中のアイデアが形になりそう。自信を持って、あなたのワクワクをみんなに見せてあげて。" },
-    { nameEn: "The Empress", nameJp: "おもちのぬくもり", illust: "🍵", desc: "まわりの人にも、自分自身にも、たっぷり優しくしてあげてね。おいしいお茶を飲んで、のんびり過ごすのが吉。" },
-    { nameEn: "The Chariot", nameJp: "おもちのダッシュ", illust: "🏃‍♂️", desc: "目標に向かってまっすぐ進めるパワーがみなぎっています。勢いにのって、やりたかったことを一気に進めちゃおう！" },
-    { nameEn: "The Star", nameJp: "おもちのねがい", illust: "🌟", desc: "あなたの願いはちゃんと届いています。未来を信じて、リラックスして過ごしてね。今夜は星空を見上げてみて。" },
-    { nameEn: "The Sun", nameJp: "おもちのえがお", illust: "☀️", desc: "エネルギー満タン！すべてが明るく照らされる日。あなたの笑顔が、まわりの人たちもあたたかく幸せにします。" }
-  ];
+  // ---------------- DATA SOURCE HANDLING & SYNC ----------------
+  var OMOCHI_COLUMNS = [];
+  var OMOCHI_GALLERY = [];
+  var OMOCHI_TAROT = [];
+  var OMOCHI_SETTINGS = { showTarot: true, showGallery: true, showColumn: true, showSchedule: true };
 
+  function loadData() {
+    // Read directly from JSON script tags
+    try {
+      OMOCHI_COLUMNS = JSON.parse(document.getElementById('dataColumns').textContent);
+      OMOCHI_GALLERY = JSON.parse(document.getElementById('dataGallery').textContent);
+      OMOCHI_TAROT = JSON.parse(document.getElementById('dataTarot').textContent);
+      OMOCHI_SETTINGS = JSON.parse(document.getElementById('dataSettings').textContent);
+    } catch(e) {
+      console.error("JSON parsing error on load", e);
+    }
+
+    // Overlay LocalStorage edits if present
+    if (localStorage.getItem('omochi_columns')) {
+      OMOCHI_COLUMNS = JSON.parse(localStorage.getItem('omochi_columns'));
+    }
+    if (localStorage.getItem('omochi_gallery')) {
+      OMOCHI_GALLERY = JSON.parse(localStorage.getItem('omochi_gallery'));
+    }
+    if (localStorage.getItem('omochi_tarot')) {
+      OMOCHI_TAROT = JSON.parse(localStorage.getItem('omochi_tarot'));
+    }
+    if (localStorage.getItem('omochi_settings')) {
+      OMOCHI_SETTINGS = JSON.parse(localStorage.getItem('omochi_settings'));
+    }
+  }
+
+  function syncDataTags() {
+    // Write back to the DOM script elements
+    document.getElementById('dataColumns').textContent = JSON.stringify(OMOCHI_COLUMNS, null, 2);
+    document.getElementById('dataGallery').textContent = JSON.stringify(OMOCHI_GALLERY, null, 2);
+    document.getElementById('dataTarot').textContent = JSON.stringify(OMOCHI_TAROT, null, 2);
+    document.getElementById('dataSettings').textContent = JSON.stringify(OMOCHI_SETTINGS, null, 2);
+
+    // Save to LocalStorage for tab state persistence
+    localStorage.setItem('omochi_columns', JSON.stringify(OMOCHI_COLUMNS));
+    localStorage.setItem('omochi_gallery', JSON.stringify(OMOCHI_GALLERY));
+    localStorage.setItem('omochi_tarot', JSON.stringify(OMOCHI_TAROT));
+    localStorage.setItem('omochi_settings', JSON.stringify(OMOCHI_SETTINGS));
+  }
+
+  // ---------------- RENDER DYNAMIC PAGES ----------------
+  function renderAll() {
+    // Check Visibility Settings
+    var secTarot = document.getElementById('tarot-section');
+    var secGallery = document.getElementById('gallery-section');
+    var secColumn = document.getElementById('column-section');
+    var secSchedule = document.getElementById('schedule');
+    
+    var navTarot = document.getElementById('navTarot');
+    var navGallery = document.getElementById('navGallery');
+    var navColumn = document.getElementById('navColumn');
+    var navSchedule = document.getElementById('navSchedule');
+
+    if (secTarot) {
+      secTarot.style.display = OMOCHI_SETTINGS.showTarot ? 'block' : 'none';
+      if(navTarot) navTarot.style.display = OMOCHI_SETTINGS.showTarot ? 'inline-block' : 'none';
+    }
+    if (secGallery) {
+      secGallery.style.display = OMOCHI_SETTINGS.showGallery ? 'block' : 'none';
+      if(navGallery) navGallery.style.display = OMOCHI_SETTINGS.showGallery ? 'inline-block' : 'none';
+    }
+    if (secColumn) {
+      secColumn.style.display = OMOCHI_SETTINGS.showColumn ? 'block' : 'none';
+      if(navColumn) navColumn.style.display = OMOCHI_SETTINGS.showColumn ? 'inline-block' : 'none';
+    }
+    if (secSchedule) {
+      secSchedule.style.display = OMOCHI_SETTINGS.showSchedule ? 'block' : 'none';
+      if(navSchedule) navSchedule.style.display = OMOCHI_SETTINGS.showSchedule ? 'inline-block' : 'none';
+    }
+
+    renderGallery();
+    renderColumns();
+  }
+
+  function renderGallery() {
+    var galleryGrid = document.querySelector('.gallery-grid');
+    if (!galleryGrid) return;
+    
+    var html = '';
+    OMOCHI_GALLERY.forEach(function(item) {
+      var imageHtml = '';
+      if (item.image) {
+        imageHtml = '<img src="' + item.image + '" alt="' + item.title + '" class="gallery-image">';
+      } else {
+        // Fallback to silhouette SVG placeholder
+        imageHtml = '<svg class="gallery-placeholder" viewBox="0 0 440 560" aria-hidden="true" style="opacity:0.6; max-height: 180px;">' +
+          '<path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#a5bdd8" stroke="#48536b" stroke-width="6"/>' +
+          '<path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#a5bdd8" stroke="#48536b" stroke-width="6" transform="translate(440,0) scale(-1,1)"/>' +
+          '<path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="#e1e8f2" stroke="#48536b" stroke-width="5"/>' +
+          '<path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="#d3deed" stroke="#48536b" stroke-width="5"/>' +
+          '<path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#48536b" stroke-width="5"/>' +
+          '<circle cx="220" cy="180" r="15" fill="#ffeeba" opacity="0.6"/>' +
+          '</svg>';
+      }
+      
+      html += '<div class="gallery-card">' +
+        imageHtml +
+        '<h3 class="gallery-title">' + item.title + '</h3>' +
+        '<p class="gallery-desc">' + item.desc + '</p>' +
+        '</div>';
+    });
+    galleryGrid.innerHTML = html;
+  }
+
+  function renderColumns() {
+    var columnGrid = document.getElementById('columnGrid');
+    if (!columnGrid) return;
+    
+    var colsHtml = '';
+    OMOCHI_COLUMNS.forEach(function(col) {
+      colsHtml += '<div class="column-card" data-col-id="' + col.id + '" tabindex="0" role="button" aria-label="' + col.title + 'を読む">' +
+        '<span class="card-tag">' + col.tag + '</span>' +
+        '<span class="card-date">' + col.date + '</span>' +
+        '<h3>' + col.title + '</h3>' +
+        '<p>' + col.summary + '</p>' +
+        '<span class="card-more">詳しく読む →</span>' +
+        '</div>';
+    });
+    columnGrid.innerHTML = colsHtml || '<p style="text-align:center;color:var(--ink-soft);grid-column:1/-1;">コラムはまだありません</p>';
+
+    // Attach click listeners to cards
+    document.querySelectorAll('.column-card').forEach(function(card) {
+      card.addEventListener('click', function() {
+        openModal(card.getAttribute('data-col-id'));
+      });
+      card.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(card.getAttribute('data-col-id'));
+        }
+      });
+    });
+  }
+
+  // ---------------- TAROT GAME DRAW ----------------
   var tarotDeck = document.getElementById('tarotDeck');
   var tarotResult = document.getElementById('tarotResult');
   var resultCardType = document.getElementById('resultCardType');
@@ -1561,8 +1858,8 @@
     btn.addEventListener('click', function() {
       if (btn.classList.contains('flipped') || tarotResult.style.display === 'block') return;
 
-      var randomIdx = Math.floor(Math.random() * tarotCards.length);
-      var cardData = tarotCards[randomIdx];
+      var randomIdx = Math.floor(Math.random() * OMOCHI_TAROT.length);
+      var cardData = OMOCHI_TAROT[randomIdx];
 
       var containerIndex = btn.closest('.tarot-card-container').getAttribute('data-index');
       var frontDiv = document.getElementById('front-' + containerIndex);
@@ -1607,109 +1904,7 @@
     });
   }
 
-  // Address Clipboard Copy Utility
-  var copyBtn = document.getElementById('copyBtn');
-  if (copyBtn) {
-    copyBtn.addEventListener('click', function() {
-      var addrText = document.getElementById('addressText').innerText;
-      navigator.clipboard.writeText(addrText).then(function() {
-        copyBtn.textContent = '✅ コピーしました！';
-        setTimeout(function() { copyBtn.textContent = '📋 住所をコピー'; }, 2000);
-      }).catch(function() {
-        var textarea = document.createElement('textarea');
-        textarea.value = addrText;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        copyBtn.textContent = '✅ コピーしました！';
-        setTimeout(function() { copyBtn.textContent = '📋 住所をコピー'; }, 2000);
-      });
-    });
-  }
-
-  // Set Google Maps Link
-  var map=document.getElementById('mapLink');
-  if(map) map.href='https://www.google.com/maps/search/?api=1&query='+
-    encodeURIComponent('東京都渋谷区道玄坂2丁目16-5 セントラル共立ビル');
-
-  // Fade-in Reveal on Scroll
-  var items=document.querySelectorAll('.reveal');
-  if(reduce||!('IntersectionObserver' in window)){
-    items.forEach(function(el){el.classList.add('in');});
-  }else{
-    var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-    },{threshold:.16});
-    items.forEach(function(el){io.observe(el);});
-  }
-
-  // ---------------- Sticky Navigation & Scroll Spy ----------------
-  var navItems = document.querySelectorAll('.nav-item');
-  var sections = document.querySelectorAll('section');
-  window.addEventListener('scroll', function() {
-    var scrollPos = window.scrollY || document.documentElement.scrollTop;
-    sections.forEach(function(sec) {
-      if (sec.offsetTop - 120 <= scrollPos && (sec.offsetTop + sec.offsetHeight - 120) > scrollPos) {
-        var id = sec.getAttribute('id');
-        navItems.forEach(function(item) {
-          if (item.getAttribute('href') === '#' + id) {
-            item.classList.add('active');
-          } else {
-            item.classList.remove('active');
-          }
-        });
-      }
-    });
-  });
-
-  // ---------------- Column Blog Array Data & Render ----------------
-  var OMOCHI_COLUMNS = [
-    {
-      id: 1,
-      title: "はじめまして、おもちちゃんです",
-      date: "2026.07.20",
-      tag: "自己紹介",
-      readTime: "3分",
-      summary: "おもちちゃんが誕生したきっかけや、これからの活動についての想いをつづります。",
-      content: "<p>こんにちは、おもちちゃんです！</p><p>私は渋谷・道玄坂教会の天井裏にある小さな部屋“M”にひっそり住んでいます。普段はお餅を焼きながら、ふらりと訪れた人にタロットカードをめくって、心に寄り添う言葉を届けています。</p><p>このホームページは、タロット占いだけでなく、おもちちゃんの活動全般のホームグラウンドにしていきたいと思っています。</p><p>今、新しいおもちちゃんの絵もたくさん描いているので、ギャラリーに飾っていきますね。これからコラムやギャラリーなど、やれることを少しずつ増やしていければ嬉しいです。どうぞのんびりとお付き合いください。</p>"
-    },
-    {
-      id: 2,
-      title: "天井裏のひみつの時間",
-      date: "2026.07.18",
-      tag: "日常",
-      readTime: "2分",
-      summary: "道玄坂教会 天井裏 “M” で過ごす、月に一度の特別な夜についてお話しします。",
-      content: "<p>渋谷の賑やかなスクランブル交差点を抜け、坂をのぼると現れる、クラシカルな道玄坂教会。</p><p>その教会の奥にある小さなハシゴを登ると、私の暮らす天井裏 “M” があります。</p><p>毎月第一木曜日の夜だけ、そこにぽっとあたたかいロウソクを灯して、占いのお部屋を開いています。誰にも秘密の、屋根裏の隠れ家のようなこの場所で、お餅を焼く香りに包まれながらカードを引く時間は、私にとっても非常に特別なひとときです。皆さんもぜひ遊びにきてくださいね。</p>"
-    },
-    {
-      id: 3,
-      title: "タロットカードが教えてくれること",
-      date: "2026.07.15",
-      tag: "占い",
-      readTime: "3分",
-      summary: "タロット占いは怖くない？おもちちゃんの占いのこだわりについてご紹介します。",
-      content: "<p>「タロット占いって、悪いカードが出たら怖いな…」と思われる方も多いかもしれません。</p><p>でも、私のタロット占いでは、難しい言葉や脅かすような解釈は一切使いません。どんなカードが出ても、それは『今のあなたに優しく寄り添うためのヒント』です。</p><p>心がちょっと疲れてしまったときや、どっちに進めばいいか迷ったとき、そっと背中をなでてくれるような、そんな優しい時間をお届けできたらと思っています。10分だけの小さな旅を、一緒に楽しみましょう。</p>"
-    }
-  ];
-
-  var columnGrid = document.getElementById('columnGrid');
-  if (columnGrid) {
-    var colsHtml = '';
-    OMOCHI_COLUMNS.forEach(function(col) {
-      colsHtml += '<div class="column-card" data-col-id="' + col.id + '" tabindex="0" role="button" aria-label="' + col.title + 'を読む">' +
-        '<span class="card-tag">' + col.tag + '</span>' +
-        '<span class="card-date">' + col.date + '</span>' +
-        '<h3>' + col.title + '</h3>' +
-        '<p>' + col.summary + '</p>' +
-        '<span class="card-more">詳しく読む →</span>' +
-        '</div>';
-    });
-    columnGrid.innerHTML = colsHtml;
-  }
-
-  // ---------------- Modal Logic ----------------
+  // ---------------- MODAL ARTICLE PLAYER ----------------
   var modal = document.getElementById('articleModal');
   var modalCloseBtn = document.getElementById('modalCloseBtn');
   var modalTag = document.getElementById('modalTag');
@@ -1730,45 +1925,405 @@
 
     modal.style.display = 'flex';
     modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden'; // Lock background scroll
+    document.body.style.overflow = 'hidden';
     modalCloseBtn.focus();
   }
 
   function closeModal() {
     modal.style.display = 'none';
     modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = ''; // Unlock scroll
+    document.body.style.overflow = '';
     if (lastFocusedEl) lastFocusedEl.focus();
   }
 
-  // Attach click listener to dynamic column cards
-  document.querySelectorAll('.column-card').forEach(function(card) {
-    card.addEventListener('click', function() {
-      openModal(card.getAttribute('data-col-id'));
-    });
-    card.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openModal(card.getAttribute('data-col-id'));
-      }
-    });
-  });
-
   if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
-  
-  // Close modal when clicking background overlay
   if (modal) {
     modal.addEventListener('click', function(e) {
       if (e.target === modal) closeModal();
     });
   }
-
-  // Handle ESC key to close modal
   window.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && modal.style.display === 'flex') {
       closeModal();
     }
   });
+
+  // ---------------- ADRES UTILITIES ----------------
+  var copyBtn = document.getElementById('copyBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function() {
+      var addrText = document.getElementById('addressText').innerText;
+      navigator.clipboard.writeText(addrText).then(function() {
+        copyBtn.textContent = '✅ コピーしました！';
+        setTimeout(function() { copyBtn.textContent = '📋 住所をコピー'; }, 2000);
+      }).catch(function() {
+        var textarea = document.createElement('textarea');
+        textarea.value = addrText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        copyBtn.textContent = '✅ コピーしました！';
+        setTimeout(function() { copyBtn.textContent = '📋 住所をコピー'; }, 2000);
+      });
+    });
+  }
+  var map=document.getElementById('mapLink');
+  if(map) map.href='https://www.google.com/maps/search/?api=1&query='+
+    encodeURIComponent('東京都渋谷区道玄坂2丁目16-5 セントラル共立ビル');
+
+  // Fade-in Reveal
+  var items=document.querySelectorAll('.reveal');
+  if(reduce||!('IntersectionObserver' in window)){
+    items.forEach(function(el){el.classList.add('in');});
+  }else{
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{threshold:.16});
+    items.forEach(function(el){io.observe(el);});
+  }
+
+  // Navigation active links
+  var navItems = document.querySelectorAll('.nav-item');
+  var sections = document.querySelectorAll('section');
+  window.addEventListener('scroll', function() {
+    var scrollPos = window.scrollY || document.documentElement.scrollTop;
+    sections.forEach(function(sec) {
+      if (sec.offsetTop - 120 <= scrollPos && (sec.offsetTop + sec.offsetHeight - 120) > scrollPos) {
+        var id = sec.getAttribute('id');
+        navItems.forEach(function(item) {
+          if (item.getAttribute('href') === '#' + id) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      }
+    });
+  });
+
+  // -------------------------------------------------------------
+  // ---------------- INTERACTIVE CUSTOMIZER EDITOR ----------------
+  // -------------------------------------------------------------
+  var editorDrawer = document.getElementById('editorDrawer');
+  var adminToggleBtn = document.getElementById('adminToggleBtn');
+  var editorCloseBtn = document.getElementById('editorCloseBtn');
+  var editorModeSelect = document.getElementById('editorModeSelect');
+  
+  var formColumn = document.getElementById('formColumn');
+  var formGallery = document.getElementById('formGallery');
+  var formTarot = document.getElementById('formTarot');
+
+  // Checkboxes
+  var chkShowTarot = document.getElementById('chkShowTarot');
+  var chkShowGallery = document.getElementById('chkShowGallery');
+  var chkShowColumn = document.getElementById('chkShowColumn');
+  var chkShowSchedule = document.getElementById('chkShowSchedule');
+
+  // Export
+  var btnExportHtml = document.getElementById('btnExportHtml');
+
+  // Open/Close
+  if (adminToggleBtn) {
+    adminToggleBtn.addEventListener('click', function() {
+      editorDrawer.classList.add('active');
+      editorDrawer.setAttribute('aria-hidden', 'false');
+      loadEditorList();
+    });
+  }
+  if (editorCloseBtn) {
+    editorCloseBtn.addEventListener('click', function() {
+      editorDrawer.classList.remove('active');
+      editorDrawer.setAttribute('aria-hidden', 'true');
+    });
+  }
+
+  // Switch Sub-Forms
+  if (editorModeSelect) {
+    editorModeSelect.addEventListener('change', function() {
+      var val = editorModeSelect.value;
+      formColumn.style.display = val === 'column' ? 'block' : 'none';
+      formGallery.style.display = val === 'gallery' ? 'block' : 'none';
+      formTarot.style.display = val === 'tarot' ? 'block' : 'none';
+    });
+  }
+
+  // Visibility Checkbox events - update DOM attribute so serialize copies it!
+  function bindCheckbox(chk, key) {
+    chk.addEventListener('change', function() {
+      OMOCHI_SETTINGS[key] = chk.checked;
+      if (chk.checked) {
+        chk.setAttribute('checked', 'checked');
+      } else {
+        chk.removeAttribute('checked');
+      }
+      syncDataTags();
+      renderAll();
+    });
+  }
+  bindCheckbox(chkShowTarot, 'showTarot');
+  bindCheckbox(chkShowGallery, 'showGallery');
+  bindCheckbox(chkShowColumn, 'showColumn');
+  bindCheckbox(chkShowSchedule, 'showSchedule');
+
+  // Load editor settings matching current data state
+  function initEditorSettings() {
+    chkShowTarot.checked = OMOCHI_SETTINGS.showTarot;
+    chkShowGallery.checked = OMOCHI_SETTINGS.showGallery;
+    chkShowColumn.checked = OMOCHI_SETTINGS.showColumn;
+    chkShowSchedule.checked = OMOCHI_SETTINGS.showSchedule;
+
+    if (OMOCHI_SETTINGS.showTarot) chkShowTarot.setAttribute('checked', 'checked'); else chkShowTarot.removeAttribute('checked');
+    if (OMOCHI_SETTINGS.showGallery) chkShowGallery.setAttribute('checked', 'checked'); else chkShowGallery.removeAttribute('checked');
+    if (OMOCHI_SETTINGS.showColumn) chkShowColumn.setAttribute('checked', 'checked'); else chkShowColumn.removeAttribute('checked');
+    if (OMOCHI_SETTINGS.showSchedule) chkShowSchedule.setAttribute('checked', 'checked'); else chkShowSchedule.removeAttribute('checked');
+  }
+
+  // Load content managers
+  var listColumns = document.getElementById('listColumns');
+  var listGallery = document.getElementById('listGallery');
+  var tarotCardSelect = document.getElementById('tarotCardSelect');
+
+  var colTitleInput = document.getElementById('colTitleInput');
+  var colTagInput = document.getElementById('colTagInput');
+  var colSummaryInput = document.getElementById('colSummaryInput');
+  var colContentInput = document.getElementById('colContentInput');
+  var btnSaveColumn = document.getElementById('btnSaveColumn');
+  var editingColId = null;
+
+  var galTitleInput = document.getElementById('galTitleInput');
+  var galDescInput = document.getElementById('galDescInput');
+  var galImageInput = document.getElementById('galImageInput');
+  var btnSaveGallery = document.getElementById('btnSaveGallery');
+  var editingGalId = null;
+
+  var tarotJpInput = document.getElementById('tarotJpInput');
+  var tarotEmojiInput = document.getElementById('tarotEmojiInput');
+  var tarotDescInput = document.getElementById('tarotDescInput');
+  var btnSaveTarot = document.getElementById('btnSaveTarot');
+
+  function loadEditorList() {
+    // 1. Column item list
+    var colHtml = '<div style="font-weight:700;margin-top:10px;font-size:0.8rem;">登録コラム一覧:</div>';
+    OMOCHI_COLUMNS.forEach(function(col) {
+      colHtml += '<div class="editor-item-row">' +
+        '<span>' + col.title + '</span>' +
+        '<div class="editor-item-actions">' +
+        '<button class="editor-small-btn btn-edit-col" data-id="' + col.id + '">✏️</button>' +
+        '<button class="editor-small-btn btn-del-col" data-id="' + col.id + '">🗑</button>' +
+        '</div>' +
+        '</div>';
+    });
+    listColumns.innerHTML = colHtml;
+
+    // 2. Gallery item list
+    var galHtml = '<div style="font-weight:700;margin-top:10px;font-size:0.8rem;">登録キャラクター一覧:</div>';
+    OMOCHI_GALLERY.forEach(function(gal) {
+      galHtml += '<div class="editor-item-row">' +
+        '<span>' + gal.title + '</span>' +
+        '<div class="editor-item-actions">' +
+        '<button class="editor-small-btn btn-edit-gal" data-id="' + gal.id + '">✏️</button>' +
+        '<button class="editor-small-btn btn-del-gal" data-id="' + gal.id + '">🗑</button>' +
+        '</div>' +
+        '</div>';
+    });
+    listGallery.innerHTML = galHtml;
+
+    // Bind edit/delete
+    document.querySelectorAll('.btn-edit-col').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = OMOCHI_COLUMNS.find(function(c) { return c.id === parseInt(btn.getAttribute('data-id')); });
+        if (item) {
+          colTitleInput.value = item.title;
+          colTagInput.value = item.tag;
+          colSummaryInput.value = item.summary;
+          colContentInput.value = item.content;
+          editingColId = item.id;
+          btnSaveColumn.textContent = 'コラムを更新 ✏️';
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-del-col').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if(confirm('このコラムを削除しますか？')) {
+          OMOCHI_COLUMNS = OMOCHI_COLUMNS.filter(function(c) { return c.id !== parseInt(btn.getAttribute('data-id')); });
+          syncDataTags();
+          renderAll();
+          loadEditorList();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-edit-gal').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = OMOCHI_GALLERY.find(function(g) { return g.id === parseInt(btn.getAttribute('data-id')); });
+        if (item) {
+          galTitleInput.value = item.title;
+          galDescInput.value = item.desc;
+          galImageInput.value = item.image;
+          editingGalId = item.id;
+          btnSaveGallery.textContent = 'キャラクターを更新 ✏️';
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-del-gal').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if(confirm('このキャラクターを削除しますか？')) {
+          OMOCHI_GALLERY = OMOCHI_GALLERY.filter(function(g) { return g.id !== parseInt(btn.getAttribute('data-id')); });
+          syncDataTags();
+          renderAll();
+          loadEditorList();
+        }
+      });
+    });
+  }
+
+  // Populate Tarot card dropdown selector
+  function initTarotSelector() {
+    var html = '';
+    OMOCHI_TAROT.forEach(function(card, idx) {
+      html += '<option value="' + idx + '">' + card.nameEn + ' (' + card.nameJp + ')</option>';
+    });
+    tarotCardSelect.innerHTML = html;
+    loadTarotCardFields();
+  }
+
+  function loadTarotCardFields() {
+    var card = OMOCHI_TAROT[parseInt(tarotCardSelect.value)];
+    if (card) {
+      tarotJpInput.value = card.nameJp;
+      tarotEmojiInput.value = card.illust;
+      tarotDescInput.value = card.desc;
+    }
+  }
+
+  tarotCardSelect.addEventListener('change', loadTarotCardFields);
+
+  // Save buttons
+  btnSaveColumn.addEventListener('click', function() {
+    if (!colTitleInput.value) return alert('タイトルを入力してください');
+    
+    if (editingColId !== null) {
+      // Edit
+      var item = OMOCHI_COLUMNS.find(function(c) { return c.id === editingColId; });
+      if (item) {
+        item.title = colTitleInput.value;
+        item.tag = colTagInput.value || 'コラム';
+        item.summary = colSummaryInput.value;
+        item.content = colContentInput.value;
+      }
+    } else {
+      // Add new
+      var nextId = OMOCHI_COLUMNS.length ? Math.max.apply(null, OMOCHI_COLUMNS.map(function(c){return c.id;})) + 1 : 1;
+      OMOCHI_COLUMNS.push({
+        id: nextId,
+        title: colTitleInput.value,
+        tag: colTagInput.value || 'コラム',
+        date: new Date().toISOString().slice(0,10).replace(/-/g, '.'),
+        readTime: Math.ceil(colContentInput.value.length / 400) + '分',
+        summary: colSummaryInput.value,
+        content: colContentInput.value
+      });
+    }
+
+    // Reset inputs
+    colTitleInput.value = '';
+    colTagInput.value = '';
+    colSummaryInput.value = '';
+    colContentInput.value = '';
+    editingColId = null;
+    btnSaveColumn.textContent = 'コラムを追加';
+
+    syncDataTags();
+    renderAll();
+    loadEditorList();
+  });
+
+  btnSaveGallery.addEventListener('click', function() {
+    if (!galTitleInput.value) return alert('名前を入力してください');
+
+    if (editingGalId !== null) {
+      // Edit
+      var item = OMOCHI_GALLERY.find(function(g) { return g.id === editingGalId; });
+      if (item) {
+        item.title = galTitleInput.value;
+        item.desc = galDescInput.value;
+        item.image = galImageInput.value;
+      }
+    } else {
+      // Add
+      var nextId = OMOCHI_GALLERY.length ? Math.max.apply(null, OMOCHI_GALLERY.map(function(g){return g.id;})) + 1 : 1;
+      OMOCHI_GALLERY.push({
+        id: nextId,
+        title: galTitleInput.value,
+        desc: galDescInput.value,
+        image: galImageInput.value
+      });
+    }
+
+    galTitleInput.value = '';
+    galDescInput.value = '';
+    galImageInput.value = '';
+    editingGalId = null;
+    btnSaveGallery.textContent = 'キャラクターを追加';
+
+    syncDataTags();
+    renderAll();
+    loadEditorList();
+  });
+
+  btnSaveTarot.addEventListener('click', function() {
+    var card = OMOCHI_TAROT[parseInt(tarotCardSelect.value)];
+    if (card) {
+      card.nameJp = tarotJpInput.value;
+      card.illust = tarotEmojiInput.value;
+      card.desc = tarotDescInput.value;
+      
+      syncDataTags();
+      initTarotSelector();
+      alert('タロットカードのメッセージを更新しました！');
+    }
+  });
+
+  // ---------------- SERIALIZE & DOWNLOAD index.html ----------------
+  btnExportHtml.addEventListener('click', function() {
+    // 1. Close the editor panel in the DOM before serializing so it downloads closed!
+    editorDrawer.classList.remove('active');
+    editorDrawer.setAttribute('aria-hidden', 'true');
+
+    // 2. Synchronize memory arrays into DOM scripts
+    syncDataTags();
+
+    // 3. Serialize document
+    var htmlString = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+    // 4. Create File Blob
+    var blob = new Blob([htmlString], { type: "text/html;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    
+    // 5. Trigger download link
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "index.html";
+    document.body.appendChild(a);
+    a.click();
+    
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // 6. Re-open editor drawer so user knows they are still in edit mode
+    editorDrawer.classList.add('active');
+    editorDrawer.setAttribute('aria-hidden', 'false');
+  });
+
+  // Load and initiate on startup
+  loadData();
+  renderAll();
+  initEditorSettings();
+  initTarotSelector();
 })();
 </script>
 </body>
