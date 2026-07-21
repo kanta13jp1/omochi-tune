@@ -1213,7 +1213,7 @@
   <div class="stars" id="stars" aria-hidden="true"></div>
   <div class="flyer-hero-container">
     <button class="flyer-trigger-btn" id="btnOpenFlyer" aria-label="チラシを拡大表示する">
-      <img src="images/hero.png" alt="OMOCHI TUNE 公式チラシ" class="flyer-hero-image">
+      <img src="images/hero.jpg" alt="OMOCHI TUNE 公式チラシ" class="flyer-hero-image">
     </button>
     <div style="margin-top: 14px;">
       <button class="copy-btn" id="btnDownloadFlyer" style="font-family:'Yomogi',sans-serif; font-weight:700;">📂 チラシ画像をダウンロード</button>
@@ -1502,9 +1502,9 @@
   <div class="modal-card" style="max-width: 520px; padding: 24px;">
     <button class="modal-close-btn" id="flyerModalCloseBtn" aria-label="閉じる">&times;</button>
     <div class="modal-content-wrap" style="text-align: center; background: #fff; border-color: var(--gold);">
-      <img src="images/hero.png" alt="OMOCHI TUNE 公式チラシ" style="max-width: 100%; height: auto; border-radius: 8px; border: 2.5px solid var(--gold); box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+      <img src="images/hero.jpg" alt="OMOCHI TUNE 公式チラシ" style="max-width: 100%; height: auto; border-radius: 8px; border: 2.5px solid var(--gold); box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
       <div style="margin-top: 18px;">
-        <a href="images/hero.png" download="omochi_tune_flyer.png" class="editor-btn-primary" style="display: inline-block; text-decoration: none; width: auto; padding: 10px 24px; font-family:'Yomogi',sans-serif; font-weight:700;">画像を保存する 💾</a>
+        <a href="images/hero.jpg" download="omochi_tune_flyer.jpg" class="editor-btn-primary" style="display: inline-block; text-decoration: none; width: auto; padding: 10px 24px; font-family:'Yomogi',sans-serif; font-weight:700;">画像を保存する 💾</a>
       </div>
     </div>
   </div>
@@ -2330,8 +2330,8 @@
     btnDownloadFlyer.addEventListener('click', function(e) {
       e.stopPropagation();
       var a = document.createElement('a');
-      a.href = 'images/hero.png';
-      a.download = 'omochi_tune_flyer.png';
+      a.href = 'images/hero.jpg';
+      a.download = 'omochi_tune_flyer.jpg';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
