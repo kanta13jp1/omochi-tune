@@ -14,25 +14,25 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Cpath%20d='M16%2027C7%2021%203%2015%203%2010%203%206.7%205.7%204%209%204c2.1%200%204%201.1%205%202.8C15%205.1%2016.9%204%2019%204c3.3%200%206%202.7%206%206%200%205-4%2011-9%2017z'%20fill='%23df6e79'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Kiwi+Maru:wght@400;500;700&family=Zen+Old+Mincho:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Kiwi+Maru:wght@400;500;700&family=Yomogi&family=Zen+Old+Mincho:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --sky-1: #cbdcf4;        /* Soft watercolor blue */
-    --sky-2: #e8effa;        /* Very light blue */
-    --sky-3: #ffffff;        /* Pure white for center */
-    --paper: #fdfbf7;        /* Cozy warm cream background for cards */
-    --coral: #e5822f;        /* Bubbly orange title */
-    --coral-deep: #b24d08;   /* Readability-safe burnt coral for headers */
-    --kicker: #9b3c65;       /* Small label plum-rose */
-    --pink: #df6e79;         /* Hand-drawn pink heart */
-    --gold: #cab083;         /* Warm metallic gold accent */
-    --gold-text: #8c6c39;    /* Readable gold text color */
-    --line: #eedcd0;         /* Card border line */
-    --pill-1: #fde3d2;       /* Light orange badge background */
-    --pill-2: #fbe2ec;       /* Light pink badge background */
-    --pill-ink: #4d2b1a;     /* Deep warm brown text */
-    --ink: #2c384e;          /* Deep indigo-slate text */
-    --ink-soft: #55627d;     /* Secondary text */
+    --sky-1: #b3cde3;        /* Soft watercolor blue border */
+    --sky-2: #f0f5fa;        /* Light sky backdrop */
+    --sky-3: #ffffff;        /* Pure white */
+    --paper: #fcfaf6;        /* Cozy warm paper */
+    --coral: #e58d5c;        /* Warm coral matching bubbly flyer title */
+    --coral-deep: #a54b1d;   /* Readability-safe deep burnt coral */
+    --kicker: #91395f;       /* Small label rose */
+    --pink: #ea8591;         /* Heart pink */
+    --gold: #d1b26a;         /* Flyer gold accent */
+    --gold-text: #8e6c31;    /* Readable gold text */
+    --line: #ebd5c8;         /* Borders */
+    --pill-1: #fbe0cc;       /* Light orange badge background */
+    --pill-2: #f8dbec;       /* Light pink badge background */
+    --pill-ink: #482619;     /* Deep warm brown text */
+    --ink: #2b3952;          /* Slate navy ink text */
+    --ink-soft: #5b6e8a;     /* Muted secondary */
     --ig-1: #c13584;         /* Instagram gradient start */
     --ig-2: #e1306c;         /* Instagram gradient end */
     --card: rgba(255, 255, 255, 0.94);
@@ -45,7 +45,7 @@
     margin: 0;
     color: var(--ink);
     line-height: 1.8;
-    font-family: "Kiwi Maru", "Zen Old Mincho", system-ui, sans-serif;
+    font-family: "Zen Maru Gothic", "Kiwi Maru", "Zen Old Mincho", system-ui, sans-serif;
     background: radial-gradient(circle at top, var(--sky-2) 0%, var(--sky-3) 40%, var(--sky-2) 100%);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
@@ -74,14 +74,14 @@
   
   a { color: inherit; }
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
-
+ 
   /* Focus Outlines */
   a:focus-visible, .maplink:focus-visible, .ig:focus-visible, .scroll:focus-visible, .copy-btn:focus-visible, .modal-close-btn:focus-visible, .filter-btn:focus-visible {
     outline: 3px solid #7fa8e6;
     outline-offset: 3px;
     border-radius: 8px;
   }
-
+ 
   /* ---- decorative gold double-line frame ---- */
   .frame {
     position: fixed;
@@ -108,7 +108,7 @@
   .corner.tr { top: 12px; right: 12px; transform: scaleX(-1); }
   .corner.bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
   .corner.br { bottom: 12px; right: 12px; transform: scale(-1, -1); }
-
+ 
   /* ---------------- hero ---------------- */
   .hero {
     position: relative;
@@ -143,38 +143,46 @@
     0%, 100% { opacity: .15; transform: scale(.7); }
     50% { opacity: .65; transform: scale(1.1); }
   }
-
-  .charm {
-    width: min(340px, 74vw);
-    height: auto;
-    display: block;
-    margin: 0 auto;
+ 
+  .flyer-hero-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     position: relative;
-    z-index: 2;
+    z-index: 5;
+    margin: 0 auto;
   }
-  .charm .float { transform-box: fill-box; transform-origin: center; animation: bob 5.5s ease-in-out infinite; }
-  .charm .heart { transform-box: fill-box; transform-origin: center; animation: beat 2.6s ease-in-out infinite; }
-  .charm .sparkle { animation: tw 2.8s ease-in-out infinite; }
-  
-  .charm .steam {
-    stroke-dasharray: 200;
-    stroke-dashoffset: 200;
-    animation: rise 6s infinite linear;
-    transform-origin: bottom;
-    filter: blur(1px);
-    opacity: 0;
+  .flyer-trigger-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-block;
   }
-  .charm .steam.s1 { animation-delay: 0s; }
-  .charm .steam.s2 { animation-delay: 2s; }
-  .charm .steam.s3 { animation-delay: 4s; }
-
-  @keyframes rise {
-    0% { stroke-dashoffset: 200; opacity: 0; transform: translateY(10px) scale(0.9); }
-    15% { opacity: 0.5; }
-    80% { opacity: 0.3; }
-    100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-80px) scale(1.1); }
+  .flyer-trigger-btn:hover {
+    transform: scale(1.03);
   }
-  @keyframes bob {
+  .flyer-hero-image {
+    max-width: min(340px, 74vw);
+    height: auto;
+    border-radius: 16px;
+    border: 3.5px solid var(--gold);
+    box-shadow: 0 12px 32px rgba(77, 43, 26, 0.2);
+    animation: flyerEntrance 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  }
+  @keyframes flyerEntrance {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  } bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-13px); }
   }
@@ -182,9 +190,9 @@
     0%, 100% { transform: scale(1); }
     45% { transform: scale(1.12); }
   }
-
+ 
   .eyebrow {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     letter-spacing: .32em;
     font-size: .82rem;
@@ -210,7 +218,7 @@
   }
   .title .jp {
     display: block;
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     font-size: clamp(1.3rem, 5.4vw, 2rem);
     color: var(--coral);
@@ -223,7 +231,7 @@
        1.5px  1.5px 0 var(--pill-ink);
   }
   .lead {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     font-size: clamp(1rem, 3.6vw, 1.24rem);
     color: var(--ink);
@@ -298,7 +306,7 @@
   /* ---------------- sections ---------------- */
   section { padding: 64px 0; scroll-margin-top: 64px; }
   .kicker {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     letter-spacing: .26em;
     font-size: .78rem;
@@ -308,7 +316,7 @@
   }
   .kicker::before, .kicker::after { content: "✦"; margin: 0 .6em; color: var(--pink); opacity: .85; }
   .h {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     color: var(--coral-deep);
     text-align: center;
@@ -347,7 +355,7 @@
   .cal h4 {
     margin: 0 0 10px;
     text-align: center;
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     color: var(--ink);
     font-size: .95rem;
@@ -373,8 +381,8 @@
     text-shadow: 0 2px 8px rgba(226, 106, 138, 0.5);
   }
 
-  .sched-info h3 { margin: 0 0 10px; font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.18rem; }
-  .sched-info .next { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
+  .sched-info h3 { margin: 0 0 10px; font-family: "Yomogi", "Zen Maru Gothic", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.18rem; }
+  .sched-info .next { font-family: "Yomogi", "Zen Maru Gothic", serif; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
   .sched-info .rec { color: var(--ink-soft); font-size: .9rem; margin: 6px 0 0; }
   .sched-info .place { margin: 12px 0 0; font-size: .96rem; color: var(--ink); }
 
@@ -502,7 +510,7 @@
     margin: 0 auto 12px;
   }
   .gallery-title {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     font-size: 1.05rem;
     color: var(--coral-deep);
@@ -580,7 +588,7 @@
   .card-date { float: right; font-size: 0.74rem; color: var(--ink-soft); margin-top: 2px; }
   
   .column-card h3 {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     font-size: 1.12rem;
     color: var(--coral-deep);
@@ -662,7 +670,7 @@
   }
   .modal-meta { font-size: 0.8rem; color: var(--ink-soft); }
   .modal-title {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     color: var(--coral-deep);
     font-size: 1.35rem;
@@ -801,7 +809,7 @@
   }
   .card-front .illust { font-size: 2.2rem; margin-bottom: 5px; }
   .card-front .name-en { font-family: "Fredoka", sans-serif; font-size: 0.8rem; color: var(--kicker); font-weight: 600; }
-  .card-front .name-jp { font-family: "Kiwi Maru", serif; font-weight: 700; font-size: 0.95rem; color: var(--coral-deep); }
+  .card-front .name-jp { font-family: "Yomogi", "Zen Maru Gothic", serif; font-weight: 700; font-size: 0.95rem; color: var(--coral-deep); }
   
   .tarot-result { max-width: 440px; margin: 30px auto 0; animation: fadeIn 0.6s ease forwards; }
   .result-card {
@@ -835,10 +843,10 @@
     border-radius: 99px;
     margin-bottom: 10px;
   }
-  .result-title { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.3rem; margin: 0 0 12px; }
+  .result-title { font-family: "Yomogi", "Zen Maru Gothic", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.3rem; margin: 0 0 12px; }
   .result-text { font-size: 0.96rem; line-height: 1.8; color: var(--ink); margin: 0 0 20px; text-align: center; }
   .reset-btn {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     background: linear-gradient(135deg, var(--coral), #d46f1d);
     color: #fff;
@@ -855,7 +863,7 @@
   /* price */
   .price-card { max-width: 460px; margin: 0 auto; padding: 10px 28px; }
   .prow { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 20px 0; }
-  .prow .l { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
+  .prow .l { font-family: "Yomogi", "Zen Maru Gothic", serif; font-weight: 700; color: var(--ink); font-size: 1.05rem; }
   .prow .l small { display: block; color: var(--ink-soft); font-weight: 500; font-size: .8rem; letter-spacing: .02em; margin-top: 2px; }
   .prow .p { font-family: "Fredoka", sans-serif; font-weight: 700; color: var(--coral-deep); font-size: 1.45rem; white-space: nowrap; }
   
@@ -866,17 +874,17 @@
     margin-top: 14px;
     padding-top: 12px;
     border-top: 1px dashed var(--line);
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 500;
   }
 
   /* access */
   .access .card { text-align: center; max-width: 460px; margin: 0 auto; }
-  .access .name { font-family: "Kiwi Maru", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.1rem; margin: 0 0 8px; }
+  .access .name { font-family: "Yomogi", "Zen Maru Gothic", serif; font-weight: 700; color: var(--coral-deep); font-size: 1.1rem; margin: 0 0 8px; }
   .access .addr { color: var(--ink); font-size: .98rem; margin: 0 0 12px; }
   .addr-box { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 10px 0; }
   .copy-btn {
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 500;
     background: none;
     border: 1.5px solid var(--gold);
@@ -894,7 +902,7 @@
     gap: 7px;
     margin-top: 12px;
     text-decoration: none;
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 500;
     color: var(--ink);
     border: 1.5px solid var(--gold);
@@ -913,7 +921,7 @@
     gap: 10px;
     text-decoration: none;
     color: #fff;
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     font-weight: 700;
     font-size: 1.06rem;
     letter-spacing: .04em;
@@ -982,7 +990,7 @@
     border-radius: 20px 20px 0 0;
     z-index: 10;
   }
-  .editor-header h3 { margin: 0; font-family: "Kiwi Maru", serif; color: var(--coral-deep); }
+  .editor-header h3 { margin: 0; font-family: "Yomogi", "Zen Maru Gothic", serif; color: var(--coral-deep); }
   .editor-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--ink-soft); }
   .editor-body { padding: 24px; overflow-y: auto; flex-grow: 1; display: grid; grid-template-columns: 1fr 1.3fr; gap: 28px; }
   .editor-col { display: flex; flex-direction: column; gap: 20px; }
@@ -990,7 +998,7 @@
   .editor-section-card { background: #fff; border: 1px solid var(--gold); border-radius: 12px; padding: 16px; }
   .editor-section-card h4 {
     margin: 0 0 12px;
-    font-family: "Kiwi Maru", serif;
+    font-family: "Yomogi", "Zen Maru Gothic", serif;
     color: var(--coral-deep);
     border-bottom: 1px dashed var(--gold);
     padding-bottom: 6px;
@@ -1163,104 +1171,54 @@
 <div class="paper-texture-overlay" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
 
-<!-- Corner Ornaments -->
-<svg class="corner tl" viewBox="0 0 58 58" aria-hidden="true">
-  <path d="M5,5 L52,5 M5,5 L5,52" stroke="#cab083" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-  <path d="M 5,5 C 16,5 24,10 26,18 C 28,26 20,32 14,32 C 10,32 6,28 6,22 C 6,14 12,10 18,12 C 22,14 20,20 16,18 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 5,16 10,24 18,26 C 26,28 32,20 32,14 C 32,10 28,6 22,6 C 14,6 10,12 12,18 C 14,22 20,20 18,16 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 18,18 34,34 38,42 C 40,46 36,50 30,50 C 24,50 20,44 16,36 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,30 C 9,33 11,38 9,42 C 7,46 5,42 5,38 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
-  <path d="M 30,5 C 33,9 38,11 42,9 C 46,7 42,5 38,5 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
+<!-- Corner Ornaments (Watercolor blue & gold scrolls matching flyer) -->
+<svg class="corner tl" viewBox="0 0 70 70" aria-hidden="true">
+  <path d="M 6,6 L 62,6 M 6,6 L 6,62" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M 12,12 L 52,12 M 12,12 L 12,52" stroke="var(--sky-1)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M 6,6 C 25,6 36,12 40,24 C 44,36 32,46 22,46 C 14,46 8,38 8,28 C 8,16 18,10 28,12 C 34,14 32,24 24,22 C 20,20 22,14 26,16" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M 6,6 C 6,25 12,36 24,40 C 36,44 46,32 46,22 C 46,14 38,8 28,8 C 16,8 10,18 12,28 C 14,34 24,32 22,24 C 20,20 14,22 16,26" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="56" cy="24" r="2.5" fill="var(--gold)"/>
+  <circle cx="24" cy="56" r="2.5" fill="var(--gold)"/>
+  <circle cx="48" cy="48" r="3.5" fill="var(--gold)"/>
 </svg>
-<svg class="corner tr" viewBox="0 0 58 58" aria-hidden="true">
-  <path d="M5,5 L52,5 M5,5 L5,52" stroke="#cab083" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-  <path d="M 5,5 C 16,5 24,10 26,18 C 28,26 20,32 14,32 C 10,32 6,28 6,22 C 6,14 12,10 18,12 C 22,14 20,20 16,18 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 5,16 10,24 18,26 C 26,28 32,20 32,14 C 32,10 28,6 22,6 C 14,6 10,12 12,18 C 14,22 20,20 18,16 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 18,18 34,34 38,42 C 40,46 36,50 30,50 C 24,50 20,44 16,36 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,30 C 9,33 11,38 9,42 C 7,46 5,42 5,38 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
-  <path d="M 30,5 C 33,9 38,11 42,9 C 46,7 42,5 38,5 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
+<svg class="corner tr" viewBox="0 0 70 70" aria-hidden="true" style="transform: scaleX(-1);">
+  <path d="M 6,6 L 62,6 M 6,6 L 6,62" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M 12,12 L 52,12 M 12,12 L 12,52" stroke="var(--sky-1)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M 6,6 C 25,6 36,12 40,24 C 44,36 32,46 22,46 C 14,46 8,38 8,28 C 8,16 18,10 28,12 C 34,14 32,24 24,22 C 20,20 22,14 26,16" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M 6,6 C 6,25 12,36 24,40 C 36,44 46,32 46,22 C 46,14 38,8 28,8 C 16,8 10,18 12,28 C 14,34 24,32 22,24 C 20,20 14,22 16,26" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="56" cy="24" r="2.5" fill="var(--gold)"/>
+  <circle cx="24" cy="56" r="2.5" fill="var(--gold)"/>
+  <circle cx="48" cy="48" r="3.5" fill="var(--gold)"/>
 </svg>
-<svg class="corner bl" viewBox="0 0 58 58" aria-hidden="true">
-  <path d="M5,5 L52,5 M5,5 L5,52" stroke="#cab083" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-  <path d="M 5,5 C 16,5 24,10 26,18 C 28,26 20,32 14,32 C 10,32 6,28 6,22 C 6,14 12,10 18,12 C 22,14 20,20 16,18 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 5,16 10,24 18,26 C 26,28 32,20 32,14 C 32,10 28,6 22,6 C 14,6 10,12 12,18 C 14,22 20,20 18,16 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 18,18 34,34 38,42 C 40,46 36,50 30,50 C 24,50 20,44 16,36 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,30 C 9,33 11,38 9,42 C 7,46 5,42 5,38 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
-  <path d="M 30,5 C 33,9 38,11 42,9 C 46,7 42,5 38,5 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
+<svg class="corner bl" viewBox="0 0 70 70" aria-hidden="true" style="transform: scaleY(-1);">
+  <path d="M 6,6 L 62,6 M 6,6 L 6,62" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M 12,12 L 52,12 M 12,12 L 12,52" stroke="var(--sky-1)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M 6,6 C 25,6 36,12 40,24 C 44,36 32,46 22,46 C 14,46 8,38 8,28 C 8,16 18,10 28,12 C 34,14 32,24 24,22 C 20,20 22,14 26,16" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M 6,6 C 6,25 12,36 24,40 C 36,44 46,32 46,22 C 46,14 38,8 28,8 C 16,8 10,18 12,28 C 14,34 24,32 22,24 C 20,20 14,22 16,26" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="56" cy="24" r="2.5" fill="var(--gold)"/>
+  <circle cx="24" cy="56" r="2.5" fill="var(--gold)"/>
+  <circle cx="48" cy="48" r="3.5" fill="var(--gold)"/>
 </svg>
-<svg class="corner br" viewBox="0 0 58 58" aria-hidden="true">
-  <path d="M5,5 L52,5 M5,5 L5,52" stroke="#cab083" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-  <path d="M 5,5 C 16,5 24,10 26,18 C 28,26 20,32 14,32 C 10,32 6,28 6,22 C 6,14 12,10 18,12 C 22,14 20,20 16,18 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 5,16 10,24 18,26 C 26,28 32,20 32,14 C 32,10 28,6 22,6 C 14,6 10,12 12,18 C 14,22 20,20 18,16 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,5 C 18,18 34,34 38,42 C 40,46 36,50 30,50 C 24,50 20,44 16,36 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 5,30 C 9,33 11,38 9,42 C 7,46 5,42 5,38 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
-  <path d="M 30,5 C 33,9 38,11 42,9 C 46,7 42,5 38,5 Z" fill="#a5bdd8" stroke="#48536b" stroke-width="1.4" stroke-linejoin="round"/>
+<svg class="corner br" viewBox="0 0 70 70" aria-hidden="true" style="transform: scale(-1, -1);">
+  <path d="M 6,6 L 62,6 M 6,6 L 6,62" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M 12,12 L 52,12 M 12,12 L 12,52" stroke="var(--sky-1)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M 6,6 C 25,6 36,12 40,24 C 44,36 32,46 22,46 C 14,46 8,38 8,28 C 8,16 18,10 28,12 C 34,14 32,24 24,22 C 20,20 22,14 26,16" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M 6,6 C 6,25 12,36 24,40 C 36,44 46,32 46,22 C 46,14 38,8 28,8 C 16,8 10,18 12,28 C 14,34 24,32 22,24 C 20,20 14,22 16,26" fill="var(--sky-1)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="56" cy="24" r="2.5" fill="var(--gold)"/>
+  <circle cx="24" cy="56" r="2.5" fill="var(--gold)"/>
+  <circle cx="48" cy="48" r="3.5" fill="var(--gold)"/>
 </svg>
 
 <header class="hero">
   <div class="stars" id="stars" aria-hidden="true"></div>
-  <svg class="charm" viewBox="0 0 440 560" role="img" aria-label="焼き網の上に座る、翼の生えた切り餅のおもちちゃん">
-    <defs>
-      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>
-      <linearGradient id="mochiTop" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#ffffff"/>
-        <stop offset="100%" stop-color="#fafbfc"/>
-      </linearGradient>
-      <linearGradient id="mochiLeft" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#f5f7fa"/>
-        <stop offset="100%" stop-color="#e1e8f2"/>
-      </linearGradient>
-      <linearGradient id="mochiRight" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#e9eff7"/>
-        <stop offset="100%" stop-color="#d3deed"/>
-      </linearGradient>
-    </defs>
-    <ellipse cx="220" cy="425" rx="100" ry="15" fill="#a5bdd8" opacity="0.3" filter="url(#soft)"/>
-    <g stroke="#ffffff" stroke-width="2.5" fill="none" opacity="0.6" stroke-linecap="round">
-      <path d="M 170,360 Q 165,330 175,300 T 170,230" class="steam s1"/>
-      <path d="M 220,350 Q 225,320 215,290 T 220,220" class="steam s2"/>
-      <path d="M 270,360 Q 260,330 270,300 T 265,230" class="steam s3"/>
-    </g>
-    <g stroke="#48536b" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85">
-      <line x1="90" y1="390" x2="310" y2="455"/>
-      <line x1="120" y1="375" x2="330" y2="435"/>
-      <line x1="150" y1="360" x2="350" y2="415"/>
-      <line x1="350" y1="390" x2="130" y2="455"/>
-      <line x1="320" y1="375" x2="110" y2="435"/>
-      <line x1="290" y1="360" x2="90" y2="415"/>
-    </g>
-    <g class="float">
-      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#48536b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="translate(440,0) scale(-1,1)"/>
-      <g stroke="#48536b" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
-        <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="url(#mochiLeft)"/>
-        <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="url(#mochiRight)"/>
-        <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="url(#mochiTop)"/>
-      </g>
-      <circle cx="195" cy="308" r="3.2" fill="#48536b"/>
-      <circle cx="245" cy="308" r="3.2" fill="#48536b"/>
-      <path d="M 213,316 Q 220,323 227,316" fill="none" stroke="#48536b" stroke-width="3" stroke-linecap="round"/>
-      <g stroke="#df6e79" stroke-width="2.2" stroke-linecap="round">
-        <line x1="172" y1="318" x2="177" y2="308"/><line x1="178" y1="318" x2="183" y2="308"/><line x1="184" y1="318" x2="189" y2="308"/>
-      </g>
-      <g stroke="#df6e79" stroke-width="2.2" stroke-linecap="round">
-        <line x1="251" y1="318" x2="256" y2="308"/><line x1="257" y1="318" x2="262" y2="308"/><line x1="263" y1="318" x2="268" y2="308"/>
-      </g>
-      <g class="heart" fill="none" stroke="#df6e79" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M220,135 C208,118 178,110 178,88 C178,72 192,68 202,76 C210,82 220,94 220,94 C220,94 230,82 238,76 C248,68 262,72 262,88 C262,110 232,118 220,135 Z"/>
-      </g>
-      <g stroke="#48536b" stroke-width="1.8" stroke-linecap="round" fill="none">
-        <path d="M 142,122 L 152,122 M 147,117 L 147,127 M 143,118 L 151,126 M 143,126 L 151,118" class="sparkle" style="animation-delay:0s"/>
-        <path d="M 288,142 L 298,142 M 293,137 L 293,147 M 289,138 L 297,146 M 289,146 L 297,138" class="sparkle" style="animation-delay:0.8s"/>
-        <path d="M 190,75 L 196,75 M 193,72 L 193,78" class="sparkle" style="animation-delay:0.4s"/>
-        <path d="M 247,75 L 253,75 M 250,72 L 250,78" class="sparkle" style="animation-delay:1.2s"/>
-        <path d="M 217,45 L 223,45 M 220,42 L 220,48" class="sparkle" style="animation-delay:1.6s"/>
-      </g>
-      <g fill="#48536b" class="sparkle" style="animation-delay:0.2s">
-        <circle cx="160" cy="85" r="2.5"/><circle cx="280" cy="95" r="2"/><circle cx="178" cy="155" r="2"/><circle cx="262" cy="155" r="2"/>
-      </g>
-    </g>
-  </svg>
+  <div class="flyer-hero-container">
+    <button class="flyer-trigger-btn" id="btnOpenFlyer" aria-label="チラシを拡大表示する">
+      <img src="images/hero.png" alt="OMOCHI TUNE 公式チラシ" class="flyer-hero-image">
+    </button>
+    <div style="margin-top: 14px;">
+      <button class="copy-btn" id="btnDownloadFlyer" style="font-family:'Yomogi',sans-serif; font-weight:700;">📂 チラシ画像をダウンロード</button>
+    </div>
+  </div>
  
   <p class="eyebrow">渋谷・道玄坂　天井裏 “M”</p>
   <h1 class="title">
@@ -1308,15 +1266,20 @@
               <div class="card-inner">
                 <div class="card-back">
                   <div class="card-back-inner">
-                    <svg viewBox="0 0 440 560" aria-hidden="true" style="width: 54px; height: 70px;">
-                      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6" transform="translate(440,0) scale(-1,1)"/>
-                      <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="#e1e8f2" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="#d3deed" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M220,135 C208,118 178,110 178,88 C178,72 192,68 202,76 C210,82 220,94 220,94 C220,94 230,82 238,76 C248,68 262,72 262,88 C262,110 232,118 220,135 Z" fill="#df6e79" stroke="#ffffff" stroke-width="3"/>
+                    <!-- Bubbly pink heart with glow (glowing heart design matching flyer) -->
+                    <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
+                      <defs>
+                        <filter id="heartGlow1" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="2.5" result="blur" />
+                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                      </defs>
+                      <path d="M 50,75 C 45,70 20,52 20,36 C 20,26 28,18 38,18 C 45,18 48,22 50,25 C 52,22 55,18 62,18 C 72,18 80,26 80,36 C 80,52 55,70 50,75 Z" fill="var(--pink)" filter="url(#heartGlow1)"/>
+                      <circle cx="25" cy="20" r="1.5" fill="#fff"/>
+                      <circle cx="75" cy="20" r="1.5" fill="#fff"/>
+                      <circle cx="50" cy="85" r="2" fill="var(--gold)"/>
                     </svg>
-                    <div class="card-back-stars">✦ ✦ ✦</div>
+                    <div class="card-back-stars" style="font-family:'Fredoka',sans-serif; color:var(--gold); font-size:0.65rem; letter-spacing:1px; margin-top:8px;">OMOCHI TUNE</div>
                   </div>
                 </div>
                 <div class="card-front" id="front-0"></div>
@@ -1329,15 +1292,20 @@
               <div class="card-inner">
                 <div class="card-back">
                   <div class="card-back-inner">
-                    <svg viewBox="0 0 440 560" aria-hidden="true" style="width: 54px; height: 70px;">
-                      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6" transform="translate(440,0) scale(-1,1)"/>
-                      <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="#e1e8f2" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="#d3deed" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M220,135 C208,118 178,110 178,88 C178,72 192,68 202,76 C210,82 220,94 220,94 C220,94 230,82 238,76 C248,68 262,72 262,88 C262,110 232,118 220,135 Z" fill="#df6e79" stroke="#ffffff" stroke-width="3"/>
+                    <!-- Bubbly pink heart with glow -->
+                    <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
+                      <defs>
+                        <filter id="heartGlow2" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="2.5" result="blur" />
+                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                      </defs>
+                      <path d="M 50,75 C 45,70 20,52 20,36 C 20,26 28,18 38,18 C 45,18 48,22 50,25 C 52,22 55,18 62,18 C 72,18 80,26 80,36 C 80,52 55,70 50,75 Z" fill="var(--pink)" filter="url(#heartGlow2)"/>
+                      <circle cx="25" cy="20" r="1.5" fill="#fff"/>
+                      <circle cx="75" cy="20" r="1.5" fill="#fff"/>
+                      <circle cx="50" cy="85" r="2" fill="var(--gold)"/>
                     </svg>
-                    <div class="card-back-stars">✦ ✦ ✦</div>
+                    <div class="card-back-stars" style="font-family:'Fredoka',sans-serif; color:var(--gold); font-size:0.65rem; letter-spacing:1px; margin-top:8px;">OMOCHI TUNE</div>
                   </div>
                 </div>
                 <div class="card-front" id="front-1"></div>
@@ -1350,15 +1318,20 @@
               <div class="card-inner">
                 <div class="card-back">
                   <div class="card-back-inner">
-                    <svg viewBox="0 0 440 560" aria-hidden="true" style="width: 54px; height: 70px;">
-                      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 140,295 C 100,240 60,235 55,255 C 50,275 90,305 135,305 M 135,305 C 95,310 65,315 65,330 C 65,345 95,340 135,325" fill="#dcf1fa" stroke="#ffffff" stroke-width="6" transform="translate(440,0) scale(-1,1)"/>
-                      <path d="M 135,315 L 135,380 C 135,385 140,390 148,392 L 220,418 L 220,353 Z" fill="#e1e8f2" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 220,353 L 220,418 L 292,392 C 300,390 305,385 305,380 L 305,315 Z" fill="#d3deed" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M 140,300 C 133,300 133,310 138,313 L 210,348 C 215,351 225,351 230,348 L 302,313 C 307,310 307,300 300,300 L 225,273 C 220,271 210,271 205,273 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6"/>
-                      <path d="M220,135 C208,118 178,110 178,88 C178,72 192,68 202,76 C210,82 220,94 220,94 C220,94 230,82 238,76 C248,68 262,72 262,88 C262,110 232,118 220,135 Z" fill="#df6e79" stroke="#ffffff" stroke-width="3"/>
+                    <!-- Bubbly pink heart with glow -->
+                    <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
+                      <defs>
+                        <filter id="heartGlow3" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="2.5" result="blur" />
+                          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                      </defs>
+                      <path d="M 50,75 C 45,70 20,52 20,36 C 20,26 28,18 38,18 C 45,18 48,22 50,25 C 52,22 55,18 62,18 C 72,18 80,26 80,36 C 80,52 55,70 50,75 Z" fill="var(--pink)" filter="url(#heartGlow3)"/>
+                      <circle cx="25" cy="20" r="1.5" fill="#fff"/>
+                      <circle cx="75" cy="20" r="1.5" fill="#fff"/>
+                      <circle cx="50" cy="85" r="2" fill="var(--gold)"/>
                     </svg>
-                    <div class="card-back-stars">✦ ✦ ✦</div>
+                    <div class="card-back-stars" style="font-family:'Fredoka',sans-serif; color:var(--gold); font-size:0.65rem; letter-spacing:1px; margin-top:8px;">OMOCHI TUNE</div>
                   </div>
                 </div>
                 <div class="card-front" id="front-2"></div>
@@ -1449,8 +1422,8 @@
           <div class="l">タロット占い<small>10分</small></div>
           <div class="p">¥1,000</div>
         </div>
-        <div class="price-notice">
-          （エントランスFee ￥1,000 + Drink が別途必要となります）
+        <div class="price-notice" style="font-family:'Yomogi', 'Zen Maru Gothic', sans-serif; font-weight:700;">
+          ※エントランスFee ¥1,000 + 1 Drinkが別途必要となります。
         </div>
       </div>
     </div>
@@ -1519,6 +1492,19 @@
             <div class="gal-meta-row"><strong>お誕生日/登録日:</strong> <span id="galModalDate">-</span></div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flyer Poster Lightbox Modal -->
+<div class="modal-overlay" id="flyerModal" style="display: none;" aria-hidden="true">
+  <div class="modal-card" style="max-width: 520px; padding: 24px;">
+    <button class="modal-close-btn" id="flyerModalCloseBtn" aria-label="閉じる">&times;</button>
+    <div class="modal-content-wrap" style="text-align: center; background: #fff; border-color: var(--gold);">
+      <img src="images/hero.png" alt="OMOCHI TUNE 公式チラシ" style="max-width: 100%; height: auto; border-radius: 8px; border: 2.5px solid var(--gold); box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+      <div style="margin-top: 18px;">
+        <a href="images/hero.png" download="omochi_tune_flyer.png" class="editor-btn-primary" style="display: inline-block; text-decoration: none; width: auto; padding: 10px 24px; font-family:'Yomogi',sans-serif; font-weight:700;">画像を保存する 💾</a>
       </div>
     </div>
   </div>
@@ -2229,7 +2215,7 @@
     });
   }
 
-  // ---------------- MODAL article/gallery READERS ----------------
+  // ---------------- MODAL article/gallery/flyer READERS ----------------
   var modal = document.getElementById('articleModal');
   var modalCloseBtn = document.getElementById('modalCloseBtn');
   var modalTag = document.getElementById('modalTag');
@@ -2246,6 +2232,11 @@
   var galModalType = document.getElementById('galModalType');
   var galModalFeatures = document.getElementById('galModalFeatures');
   var galModalDate = document.getElementById('galModalDate');
+
+  var flyerModal = document.getElementById('flyerModal');
+  var flyerModalCloseBtn = document.getElementById('flyerModalCloseBtn');
+  var btnOpenFlyer = document.getElementById('btnOpenFlyer');
+  var btnDownloadFlyer = document.getElementById('btnDownloadFlyer');
 
   function openModal(colId) {
     var article = OMOCHI_COLUMNS.find(function(item) { return item.id === parseInt(colId); });
@@ -2300,11 +2291,29 @@
     window.location.hash = 'character/' + galId;
   }
 
+  function openFlyerModal() {
+    lastFocusedEl = document.activeElement;
+    if (flyerModal) {
+      flyerModal.style.display = 'flex';
+      flyerModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (flyerModalCloseBtn) flyerModalCloseBtn.focus();
+    }
+  }
+
   function closeModal() {
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden', 'true');
-    galleryModal.style.display = 'none';
-    galleryModal.setAttribute('aria-hidden', 'true');
+    if (modal) {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    if (galleryModal) {
+      galleryModal.style.display = 'none';
+      galleryModal.setAttribute('aria-hidden', 'true');
+    }
+    if (flyerModal) {
+      flyerModal.style.display = 'none';
+      flyerModal.setAttribute('aria-hidden', 'true');
+    }
     document.body.style.overflow = '';
     
     // Reset Hash without reloading
@@ -2314,12 +2323,27 @@
 
   if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
   if (galleryModalCloseBtn) galleryModalCloseBtn.addEventListener('click', closeModal);
+  if (flyerModalCloseBtn) flyerModalCloseBtn.addEventListener('click', closeModal);
+
+  if (btnOpenFlyer) btnOpenFlyer.addEventListener('click', openFlyerModal);
+  if (btnDownloadFlyer) {
+    btnDownloadFlyer.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var a = document.createElement('a');
+      a.href = 'images/hero.png';
+      a.download = 'omochi_tune_flyer.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  }
   
   if (modal) modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
   if (galleryModal) galleryModal.addEventListener('click', function(e) { if (e.target === galleryModal) closeModal(); });
+  if (flyerModal) flyerModal.addEventListener('click', function(e) { if (e.target === flyerModal) closeModal(); });
   
   window.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && (modal.style.display === 'flex' || galleryModal.style.display === 'flex')) {
+    if (e.key === 'Escape' && (modal.style.display === 'flex' || galleryModal.style.display === 'flex' || (flyerModal && flyerModal.style.display === 'flex'))) {
       closeModal();
     }
   });
