@@ -35,8 +35,87 @@
     --ink-soft: #5b6e8a;     /* Muted secondary */
     --ig-1: #c13584;         /* Instagram gradient start */
     --ig-2: #e1306c;         /* Instagram gradient end */
+    --lime-neon: #b3ff3b;    /* Summer Mochi Ice Cream text lime */
+    --lime-text: #2d5a00;    /* High contrast dark lime text */
     --card: rgba(255, 255, 255, 0.94);
     --shadow: 0 16px 36px -12px rgba(74, 87, 113, 0.15);
+  }
+  
+  /* Summer Greeting Ribbon Banner */
+  .summer-ribbon-banner {
+    background: linear-gradient(90deg, #b8e4f5, #ffe6ec, #e2f8eb, #b8e4f5);
+    background-size: 300% 100%;
+    animation: ribbonGradient 8s ease infinite;
+    text-align: center;
+    padding: 6px 12px;
+    font-family: "Yomogi", "Zen Maru Gothic", sans-serif;
+    font-weight: 700;
+    font-size: 0.84rem;
+    color: #3b4d66;
+    border-bottom: 1.5px solid var(--gold);
+    position: relative;
+    z-index: 50;
+    letter-spacing: 0.05em;
+  }
+  @keyframes ribbonGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Instagram Profile Widget Card */
+  .insta-profile-card {
+    background: var(--card);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 440px;
+    margin: 24px auto 0;
+    box-shadow: var(--shadow);
+    text-align: left;
+    position: relative;
+  }
+  .insta-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .insta-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--pink);
+    padding: 2px;
+    object-fit: cover;
+    background: #fff;
+  }
+  .insta-info {
+    flex-grow: 1;
+  }
+  .insta-username {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin: 0;
+  }
+  .insta-bio {
+    font-family: "Yomogi", "Zen Maru Gothic", sans-serif;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    margin: 4px 0 0;
+  }
+  .insta-stats {
+    display: flex;
+    gap: 14px;
+    font-size: 0.78rem;
+    color: var(--ink);
+    margin-top: 8px;
+    font-family: "Fredoka", sans-serif;
+  }
+  .insta-stats span {
+    font-weight: 700;
   }
   
   * { box-sizing: border-box; }
@@ -1404,6 +1483,8 @@
 </head>
 <body>
 
+<div class="summer-ribbon-banner">🍧 暑中お見舞い申し上げます 🍧 渋谷・道玄坂 天井裏 “M” にて毎月第一木曜日に鑑定中 ♡</div>
+
 <div class="paper-texture-overlay" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
 
@@ -1527,6 +1608,9 @@
     <span class="jp">おもちちゃん</span>
   </h1>
   <p class="lead">月に一度、天井裏でタロットを。</p>
+  <div style="margin-top: 6px;">
+    <span style="font-family:'Yomogi', sans-serif; font-weight:700; font-size: 0.9rem; color: #d6336c; background: #fff0f6; border: 1.5px dashed #f783ac; padding: 4px 14px; border-radius: 99px; display: inline-block;">★ 恋愛リーディングがめちゃ得意です ♡</span>
+  </div>
   <div class="hero-mesh-floor" aria-hidden="true"></div>
   <span class="when" style="margin-top: 10px; display: inline-block;">毎月 第一木曜日　20:00 OPEN</span>
   <div><a class="scroll" href="#about" aria-label="下へスクロール">▾</a></div>
@@ -1566,6 +1650,12 @@
       <p class="kicker">PROJECT 01</p>
       <h2 class="h"><small style="display:block;font-size:0.65em;color:var(--kicker);margin-bottom:4px;font-family:'Fredoka',sans-serif;font-weight:600;letter-spacing:1px;">PROJECT 01</small>おもちのタロット占い</h2>
       <p class="tarot-intro">今日のおもちちゃんからのメッセージを、タロットカードで受け取ってみませんか？<br>心の中で問いかけをしてから、3枚のカードから1枚を選んでみてください。</p>
+      
+      <!-- Tarot Mode Selector (Love Reading Focus) -->
+      <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 24px;">
+        <button class="filter-btn active" id="btnTarotDaily" style="padding: 8px 18px; font-weight:700;">✦ 今日のメッセージ</button>
+        <button class="filter-btn" id="btnTarotLove" style="padding: 8px 18px; font-weight:700; background:#fff0f6; border-color:#f783ac; color:#d6336c;">💖 恋愛運を占う ♡</button>
+      </div>
       
       <div class="tarot-board">
         <div class="tarot-deck" id="tarotDeck">
@@ -1826,36 +1916,65 @@
   <section id="follow" class="follow reveal">
     <div class="wrap">
       <p class="kicker">MORE</p>
-      <h2 class="h">詳細はこちら</h2>
-      <a class="ig" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1"/>
-        </svg>@OMOCHITUNE
-      </a>
+      <h2 class="h">公式 Instagram</h2>
+
+      <!-- Authentic Instagram Profile Card (Image 2 Sync) -->
+      <div class="insta-profile-card">
+        <div class="insta-profile-header">
+          <div style="position: relative;">
+            <img src="images/hero.jpg" alt="omochitune icon" class="insta-avatar">
+            <span style="position: absolute; bottom: 0; right: 0; background: #e1306c; color: #fff; font-size: 0.6rem; padding: 1px 4px; border-radius: 50%;">✓</span>
+          </div>
+          <div class="insta-info">
+            <h3 class="insta-username">omochitune</h3>
+            <p class="insta-bio">【 OMOCHI TUNE / おもちちゃん 】<br>毎月第一木曜日 道玄坂教会 天井裏 “M”にて鑑定してます。<br><strong style="color: #d6336c;">★恋愛リーディングがめちゃ得意です♡</strong></p>
+            <div class="insta-stats">
+              <div><span>7</span> 投稿</div>
+              <div><span>20</span> フォロワー</div>
+              <div><span>24</span> フォロー</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 14px; text-align: center;">
+          <a class="ig" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" style="width: 100%; justify-content: center; font-size: 0.9rem; padding: 8px 16px;">
+            Instagram でフォローする (@omochitune)
+          </a>
+        </div>
+      </div>
       
-      <!-- Mock Instagram Grid Widget -->
-      <div class="insta-mock-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 360px; margin: 24px auto 0;">
-        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿1を見る" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #e3f0ff, #fff2f2); position: relative; transition: transform 0.2s; text-decoration: none;">
-          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
-            <span style="font-size: 1.4rem; margin-bottom: 4px;">🕊️</span>
-            <span style="font-family:'Yomogi', sans-serif; font-size: 0.65rem; color: var(--ink-soft); line-height: 1.3;">おもちちゃん<br>イラスト公開</span>
+      <!-- Mock Instagram 7-Post Grid Widget (Matching Screenshots 2 & 3) -->
+      <div class="insta-mock-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 520px; margin: 24px auto 0;">
+        <!-- Post 1: Mochi Ice Cream -->
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: 暑中お見舞い申し上げますもちアイス" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--pink); background: linear-gradient(135deg, #fcedf7, #d5e8fa); position: relative; transition: transform 0.2s; text-decoration: none;">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
+            <span style="font-size: 1.2rem;">🍧</span>
+            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: #d6336c; font-weight:700; line-height: 1.2;">暑中お見舞い<br>もちアイス</span>
           </div>
         </a>
-        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿2を見る" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #fff9e6, #ffe6f0); position: relative; transition: transform 0.2s; text-decoration: none;">
-          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
-            <span style="font-size: 1.4rem; margin-bottom: 4px;">🕯️</span>
-            <span style="font-family:'Yomogi', sans-serif; font-size: 0.65rem; color: var(--ink-soft); line-height: 1.3;">天井裏の<br>キャンドル夜</span>
+        <!-- Post 2: Teal Night Flyer -->
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: 夜チラシ" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #18586c, #0a2d37); position: relative; transition: transform 0.2s; text-decoration: none;">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
+            <span style="font-size: 1.2rem;">🌙</span>
+            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: #ffd699; font-weight:700; line-height: 1.2;">夜チラシ<br>天井裏 “M”</span>
           </div>
         </a>
-        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿3を見る" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #e6ffe8, #f0f0ff); position: relative; transition: transform 0.2s; text-decoration: none;">
-          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
-            <span style="font-size: 1.4rem; margin-bottom: 4px;">🔮</span>
-            <span style="font-family:'Yomogi', sans-serif; font-size: 0.65rem; color: var(--ink-soft); line-height: 1.3;">タロットの<br>秘密のお話</span>
+        <!-- Post 3: Day White Flyer -->
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: 昼チラシ" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #ffffff, #d4eaf7); position: relative; transition: transform 0.2s; text-decoration: none;">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
+            <span style="font-size: 1.2rem;">☀️</span>
+            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: var(--ink); font-weight:700; line-height: 1.2;">昼チラシ<br>水彩デザイン</span>
+          </div>
+        </a>
+        <!-- Post 4: Soft Sky Mascot -->
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: おもちマスコット単体" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #5ec4d4, #3aaab8); position: relative; transition: transform 0.2s; text-decoration: none;">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
+            <span style="font-size: 1.2rem;">🕊️</span>
+            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: #ffffff; font-weight:700; line-height: 1.2;">おもちちゃん<br>マスコット</span>
           </div>
         </a>
       </div>
 
-      <p class="note">最新の開催情報は Instagram でお知らせしています</p>
+      <p class="note">最新の開催情報や新作イラストは Instagram で毎日発信中！</p>
     </div>
   </section>
 </main>
@@ -1958,6 +2077,15 @@
 <script id="dataGallery" type="application/json">
 [
   {
+    "id": 100,
+    "title": "もちアイス（暑中お見舞い）",
+    "desc": "暑中お見舞い申し上げますもちアイス。夢かわなパステルカラーとネオンライムのロゴが涼しげな夏の限定アートです★",
+    "image": "avatar:ice",
+    "date": "2026.07.25",
+    "type": "夏限定・アイス型",
+    "features": "パステルソフトクリーム、天使の羽、ネオンライムロゴ"
+  },
+  {
     "id": 1,
     "title": "おもち天使",
     "desc": "夕暮れ空に浮かび、みんなの幸せを願うおもち天使の基本形です。",
@@ -2002,37 +2130,43 @@
     "nameEn": "The Fool",
     "nameJp": "おもちの旅立ち",
     "illust": "🌱",
-    "desc": "新しいことをはじめるのにぴったりの日。失敗をおそれず、ふわふわと軽やかに一歩を踏み出してみてね。"
+    "desc": "新しいことをはじめるのにぴったりの日。失敗をおそれず、ふわふわと軽やかに一歩を踏み出してみてね。",
+    "loveAdvice": "気になる相手への最初のアプローチに絶好のタイミング♡ 素直な自分を見せると相手のキュン度がUP！"
   },
   {
     "nameEn": "The Magician",
     "nameJp": "おもちのひらめき",
     "illust": "🪄",
-    "desc": "あなたの中のアイデアが形になりそう。自信を持って、あなたのワクワクをみんなに見せてあげて。"
+    "desc": "あなたの中のアイデアが形になりそう。自信を持って、あなたのワクワクをみんなに見せてあげて。",
+    "loveAdvice": "会話の引き出しが増える予感♡ 相手の好きな話題を振ることで距離が一気に縮まります。"
   },
   {
     "nameEn": "The Empress",
     "nameJp": "おもちのぬくもり",
     "illust": "🍵",
-    "desc": "まわりの人にも、自分自身にも、たっぷり優しくしてあげてね。おいしいお茶を飲んで、のんびり過ごすのが吉。"
+    "desc": "まわりの人にも、自分自身にも、たっぷり優しくしてあげてね。おいしいお茶を飲んで、のんびり過ごすのが吉。",
+    "loveAdvice": "あなたの優しい包容力が溢れる日♡ 相手を褒めたり気遣う言葉をかけると愛され度が最高潮に！"
   },
   {
     "nameEn": "The Chariot",
     "nameJp": "おもちのダッシュ",
     "illust": "🏃‍♂️",
-    "desc": "目標に向かってまっすぐ進めるパワーがみなぎっています。勢いにのって、やりたかったことを一気に進めちゃおう！"
+    "desc": "目標に向かってまっすぐ進めるパワーがみなぎっています。勢いにのって、やりたかったことを一気に進めちゃおう！",
+    "loveAdvice": "恋のライバルを一気にリードできる勢い！誘いたいデートがあるなら今日ストレートに伝えてみて♡"
   },
   {
     "nameEn": "The Star",
     "nameJp": "おもちのねがい",
     "illust": "🌟",
-    "desc": "あなたの願いはちゃんと届いています。未来を信じて、リラックスして過ごしてね。今夜は星空を見上げてみて。"
+    "desc": "あなたの願いはちゃんと届いています。未来を信じて、リラックスして過ごしてね。今夜は星空を見上げてみて。",
+    "loveAdvice": "片思いの相手と理想の展開を引き寄せる幸運期♡ 焦らず自然体で笑顔を意識すると恋が実ります。"
   },
   {
     "nameEn": "The Sun",
     "nameJp": "おもちのえがお",
     "illust": "☀️",
-    "desc": "エネルギー満タン！すべてが明るく照らされる日。あなたの笑顔が、まわりの人たちもあたたかく幸せにします。"
+    "desc": "エネルギー満タン！すべてが明るく照らされる日。あなたの笑顔が、まわりの人たちもあたたかく幸せにします。",
+    "loveAdvice": "二人の笑顔が溢れる最高の一日♡ 一緒に笑えるデートスポット（カフェや散歩）に出かけるとラブラブ度急上昇！"
   }
 ]
 </script>
@@ -2465,6 +2599,27 @@
     var item = parts[2] || "none";
     var h = height || 180;
     
+    // Mochi Ice Cream (Summer Special Artwork)
+    if (wings === "ice" || wings === "ice-summer") {
+      var iceSvg = '<svg class="gallery-placeholder" viewBox="0 0 400 500" aria-hidden="true" style="max-height:' + h + 'px; width:100%; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));">' +
+        '<defs><linearGradient id="iceGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fcedf7"/><stop offset="50%" stop-color="#e3d5fa"/><stop offset="100%" stop-color="#d5e8fa"/></linearGradient></defs>' +
+        '<!-- Ice Cream Wings -->' +
+        '<path d="M 120,200 C 70,160 40,165 35,180 C 30,195 65,225 110,215 M 110,215 C 75,225 50,235 55,248 C 60,260 95,245 118,230" fill="#ffffff" opacity="0.9" stroke="#5c6f84" stroke-width="4" stroke-linecap="round"/>' +
+        '<path d="M 280,200 C 330,160 360,165 365,180 C 370,195 335,225 290,215 M 290,215 C 325,225 350,235 345,248 C 340,260 305,245 282,230" fill="#ffffff" opacity="0.9" stroke="#5c6f84" stroke-width="4" stroke-linecap="round"/>' +
+        '<!-- Ice Cream Cone Base -->' +
+        '<path d="M 140,280 L 200,440 L 260,280 Z" fill="#fce5cd" stroke="#5c6f84" stroke-width="5" stroke-linejoin="round"/>' +
+        '<path d="M 155,320 L 245,320 M 170,360 L 230,360 M 185,400 L 215,400 M 160,295 L 225,410 M 240,295 L 175,410" stroke="#d9a779" stroke-width="3" stroke-linecap="round"/>' +
+        '<!-- Soft Serve Cream Swirls -->' +
+        '<path d="M 130,280 Q 200,310 270,280 Q 290,240 260,200 Q 200,160 140,200 Q 110,240 130,280 Z" fill="url(#iceGrad)" stroke="#5c6f84" stroke-width="5" stroke-linejoin="round"/>' +
+        '<path d="M 150,200 C 130,150 160,100 200,90 C 240,100 270,150 250,200 Z" fill="#ffffff" opacity="0.8" stroke="#5c6f84" stroke-width="4"/>' +
+        '<!-- Heart Aura -->' +
+        '<path d="M 200,80 C 190,65 170,60 170,48 C 170,38 182,35 190,41 C 196,45 200,53 200,53 C 200,53 204,45 210,41 C 218,35 230,38 230,48 C 230,60 210,65 200,80 Z" fill="#ff738a" stroke="#df6e79" stroke-width="2" filter="drop-shadow(0 0 6px #ff738a)"/>' +
+        '<!-- Neon Lime OMOCHI TUNE Text overlay -->' +
+        '<text x="200" y="240" font-family="Fredoka, sans-serif" font-weight="900" font-size="34" fill="#b3ff3b" stroke="#2d5a00" stroke-width="3" text-anchor="middle" transform="rotate(-12, 200, 240)" letter-spacing="1">OMOCHI TUNE</text>' +
+        '</svg>';
+      return iceSvg;
+    }
+    
     var wingColor = "#dcf1fa";
     if (wings === "gold") wingColor = "#fff5cc";
     if (wings === "pink") wingColor = "#ffe6ec";
@@ -2726,6 +2881,26 @@
   var resetTarotBtn = document.getElementById('resetTarotBtn');
   var cardButtons = document.querySelectorAll('.tarot-card');
 
+  var btnTarotDaily = document.getElementById('btnTarotDaily');
+  var btnTarotLove = document.getElementById('btnTarotLove');
+  var isLoveMode = false;
+
+  if (btnTarotDaily && btnTarotLove) {
+    btnTarotDaily.addEventListener('click', function() {
+      isLoveMode = false;
+      btnTarotDaily.classList.add('active');
+      btnTarotLove.classList.remove('active');
+      btnTarotLove.style.background = '#fff0f6';
+    });
+    btnTarotLove.addEventListener('click', function() {
+      isLoveMode = true;
+      btnTarotLove.classList.add('active');
+      btnTarotDaily.classList.remove('active');
+      btnTarotLove.style.background = '#d6336c';
+      btnTarotLove.style.color = '#ffffff';
+    });
+  }
+
   cardButtons.forEach(function(btn) {
     btn.addEventListener('click', function() {
       if (btn.classList.contains('flipped') || tarotResult.style.display === 'block') return;
@@ -2753,7 +2928,12 @@
 
       resultCardType.textContent = cardData.nameEn;
       resultCardTitle.textContent = cardData.nameJp;
-      resultCardText.textContent = cardData.desc;
+
+      if (isLoveMode && cardData.loveAdvice) {
+        resultCardText.innerHTML = cardData.desc + '<br><br><span style="display:block; padding:10px 14px; background:#fff0f6; border:1.5px dashed #f783ac; border-radius:12px; color:#d6336c; font-weight:700;">💖 おもちちゃんの恋愛アドバイス♡<br>' + cardData.loveAdvice + '</span>';
+      } else {
+        resultCardText.textContent = cardData.desc;
+      }
 
       setTimeout(function() {
         tarotResult.style.display = 'block';
