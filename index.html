@@ -118,18 +118,75 @@
     font-weight: 700;
   }
   
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  input, button, select, textarea { font-family: inherit; }
-  body {
-    margin: 0;
+  /* Handcrafted Squishy Mochi Micro-interaction */
+  @keyframes squishyPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.08, 0.92); }
+    70% { transform: scale(0.96, 1.04); }
+    100% { transform: scale(1); }
+  }
+  .squishy-btn, button, .copy-btn, .ig, .maplink, .filter-btn {
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.25s, box-shadow 0.25s;
+    min-height: 44px;
+  }
+  .squishy-btn:hover, button:hover:not(:disabled), .copy-btn:hover, .filter-btn:hover {
+    transform: scale(1.04) translateY(-2px);
+    animation: squishyPulse 0.4s ease-out;
+  }
+  .squishy-btn:active, button:active:not(:disabled) {
+    transform: scale(0.95, 1.05);
+  }
+
+  /* Mobile Sticky Bottom CTA Bar (<640px) */
+  .sticky-bottom-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 2px solid var(--gold);
+    padding: 8px 16px;
+    box-shadow: 0 -8px 24px rgba(74, 59, 99, 0.15);
+    display: none;
+  }
+  .sticky-bottom-cta-wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+  }
+  .sticky-cta-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    min-height: 48px;
+    border-radius: 99px;
+    font-family: "Yomogi", "Zen Maru Gothic", sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .sticky-cta-btn.primary {
+    background: linear-gradient(135deg, #ff738a, #d6336c);
+    color: #ffffff;
+    border: 1.5px solid #ff4b68;
+  }
+  .sticky-cta-btn.secondary {
+    background: #ffffff;
     color: var(--ink);
-    line-height: 1.8;
-    font-family: "Zen Maru Gothic", "Kiwi Maru", "Zen Old Mincho", system-ui, sans-serif;
-    background: radial-gradient(circle at center, #ffffff 30%, #d4e5f7 75%, #b9d3eb 100%);
-    background-attachment: fixed;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    border: 1.5px solid var(--gold);
+  }
+
+  @media(max-width: 640px) {
+    body { padding-bottom: 68px; }
+    .sticky-bottom-cta { display: block; }
   }
   body::before {
     content: "";
@@ -1744,10 +1801,11 @@
             <div class="result-badge" id="resultCardType">The Star / 星</div>
             <h3 class="result-title" id="resultCardTitle">おもちのねがい</h3>
             <p class="result-text" id="resultCardText">メッセージを読み込んでいます...</p>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px;">
               <button class="reset-btn" id="resetTarotBtn">もう一度占う ↺</button>
-              <button class="copy-btn" id="shareXBtn" style="font-family:'Fredoka',sans-serif; font-weight:700; background:#000; color:#fff; border-color:#000;">𝕏 でシェア 𝕏</button>
-              <button class="copy-btn" id="shareTarotBtn" style="font-family:'Yomogi',sans-serif; font-weight:700;">結果をコピー 📋</button>
+              <a class="copy-btn" id="shareXLink" href="#" target="_blank" rel="noopener" aria-label="𝕏 (Twitter) で占いの結果をシェアする" style="font-family:'Fredoka',sans-serif; font-weight:700; background:#000; color:#fff; border-color:#000; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">𝕏 でシェア 𝕏</a>
+              <a class="copy-btn" id="shareLineLink" href="#" target="_blank" rel="noopener" aria-label="LINE で占いの結果をシェアする" style="font-family:'Zen Maru Gothic',sans-serif; font-weight:700; background:#06c755; color:#fff; border-color:#06c755; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">LINE で送る 💬</a>
+              <button class="copy-btn" id="shareTarotBtn" style="font-family:'Yomogi',sans-serif; font-weight:700;">コピー 📋</button>
             </div>
           </div>
         </div>
@@ -1830,8 +1888,16 @@
           <h3>毎月 第一木曜日</h3>
           <p class="next" id="nextDate">次回を計算中…</p>
           <p class="rec">20:00 OPEN ／ 以降 毎月くりかえし開催</p>
-          <p class="place">📍 道玄坂教会 天井裏 “M”</p>
-        </div>
+      <!-- Accordion FAQ Block -->
+      <div style="margin-top: 20px;">
+        <details style="background:var(--card); border:1.5px solid var(--gold); border-radius:12px; padding:12px 16px; margin-bottom:8px;">
+          <summary style="font-family:'Yomogi',sans-serif; font-weight:700; cursor:pointer; color:var(--ink);">❓ 予約なしで当日ふらっと行っても大丈夫？</summary>
+          <p style="font-size:0.86rem; margin:8px 0 0; color:var(--ink-soft); line-height:1.6;">はい！予約なしでの当日飛び込みも大歓迎です。ハシゴを登ってお気軽にお声がけください。事前予約をご希望の場合は Instagram (@omochitune) のDMにて受付けています。</p>
+        </details>
+        <details style="background:var(--card); border:1.5px solid var(--gold); border-radius:12px; padding:12px 16px;">
+          <summary style="font-family:'Yomogi',sans-serif; font-weight:700; cursor:pointer; color:var(--ink);">❓ タロット占いが初めてでも平気ですか？</summary>
+          <p style="font-size:0.86rem; margin:8px 0 0; color:var(--ink-soft); line-height:1.6;">もちろん大歓迎です♡ 難しい用語や厳しい言葉は使わず、おもちちゃんが優しくメッセージをお渡ししますので、肩の力を抜いてお越しくださいね。</p>
+        </details>
       </div>
       
       <!-- Section sketch divider -->
@@ -1896,9 +1962,19 @@
         </p>
         
         <div style="text-align: center; margin-bottom: 16px;">
-          <a class="ig" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" style="display:inline-flex; font-size:0.85rem; padding:6px 18px;">
+          <a class="ig" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" style="display:inline-flex; font-size:0.85rem; padding:6px 18px;" aria-label="ハシゴを登る道案内動画を見る (Instagram Reelへ遷移)">
             🎥 ハシゴを登る道案内動画を見る (Instagram Reel)
           </a>
+          
+          <!-- Accessible Text Route Transcript -->
+          <details style="margin-top: 10px; font-size: 0.82rem; text-align: left; background: rgba(255,255,255,0.7); border-radius: 8px; padding: 6px 12px; border: 1px fill var(--line);">
+            <summary style="font-family:'Yomogi',sans-serif; font-weight:700; cursor:pointer; color:var(--ink-soft);">📝 テキストでの道順案内（音を出せない方向け）</summary>
+            <ol style="padding-left: 20px; margin: 8px 0 0; line-height: 1.6; color: var(--ink);">
+              <li>渋谷駅ハチ公口から道玄坂を上り、セントラル共立ビル2階へ進みます。</li>
+              <li>2階フロア奥にある「道玄坂教会」の木枠扉をそっと開けます。</li>
+              <li>教会奥に設置された木製ハシゴを5段登ると、天井裏 “M” に到着します！</li>
+            </ol>
+          </details>
         </div>
         <!-- Stylized hand-drawn direction map inside building -->
         <svg viewBox="0 0 320 160" style="width: 100%; max-width: 320px; margin: 0 auto; display: block; filter: drop-shadow(0 4px 8px rgba(77,43,26,0.1));" aria-hidden="true">
@@ -2973,6 +3049,14 @@
         resultCardText.textContent = cardData.desc;
       }
 
+      // Dynamic No-JS Share Links (X & LINE)
+      var shareXLink = document.getElementById('shareXLink');
+      var shareLineLink = document.getElementById('shareLineLink');
+      var shareMsg = "「おもちのタロット占い」で【" + cardData.nameJp + "】を引きました！🔮✨\n" + cardData.desc.slice(0, 70) + "...\n#おもちのタロット占い #OMOCHITUNE\n" + window.location.href;
+      
+      if (shareXLink) shareXLink.href = "https://x.com/intent/post?text=" + encodeURIComponent(shareMsg);
+      if (shareLineLink) shareLineLink.href = "https://line.me/R/msg/text/?" + encodeURIComponent(shareMsg);
+
       setTimeout(function() {
         tarotResult.style.display = 'block';
         tarotResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -3721,6 +3805,12 @@
     <line x1="58" y1="59" x2="60" y2="57" stroke="#df6e79" stroke-width="1"/>
     <line x1="60" y1="59" x2="62" y2="57" stroke="#df6e79" stroke-width="1"/>
   </svg>
+<!-- Mobile Sticky Bottom CTA Bar (<640px) -->
+<div class="sticky-bottom-cta" aria-label="モバイル用固定ナビゲーション">
+  <div class="sticky-bottom-cta-wrap">
+    <a href="#schedule" class="sticky-cta-btn secondary" aria-label="カレンダーで次回日程を確認する">📅 次回日程</a>
+    <a href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" class="sticky-cta-btn primary" aria-label="InstagramのDMで予約する">📩 DMで予約</a>
+  </div>
 </div>
 
 </body>
