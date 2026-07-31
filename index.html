@@ -1744,8 +1744,9 @@
             <div class="result-badge" id="resultCardType">The Star / 星</div>
             <h3 class="result-title" id="resultCardTitle">おもちのねがい</h3>
             <p class="result-text" id="resultCardText">メッセージを読み込んでいます...</p>
-            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
               <button class="reset-btn" id="resetTarotBtn">もう一度占う ↺</button>
+              <button class="copy-btn" id="shareXBtn" style="font-family:'Fredoka',sans-serif; font-weight:700; background:#000; color:#fff; border-color:#000;">𝕏 でシェア 𝕏</button>
               <button class="copy-btn" id="shareTarotBtn" style="font-family:'Yomogi',sans-serif; font-weight:700;">結果をコピー 📋</button>
             </div>
           </div>
@@ -1812,6 +1813,11 @@
     <div class="wrap">
       <p class="kicker">SCHEDULE</p>
       <h2 class="h">いつ、ひらくの？</h2>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <span style="font-family:'Yomogi', sans-serif; font-weight:700; font-size:1rem; color:#d6336c; background:#fff0f6; border:2px solid #f783ac; padding:6px 20px; border-radius:99px; display:inline-block; box-shadow:0 4px 12px rgba(214,51,108,0.15);">
+          🌙 次回オープン：毎月 第一木曜日 20:00 OPEN
+        </span>
+      </div>
       <div class="card sched">
         <div class="cal">
           <h4 id="calTitle">—</h4>
@@ -1869,12 +1875,31 @@
         <a class="maplink" id="mapLink" href="#" target="_blank" rel="noopener">🗺 Google マップでひらく</a>
       </div>
 
+      <!-- Reservation & Admission Notice Card -->
+      <div class="card" style="margin-top: 18px; border: 2px dashed var(--pink); background: rgba(255, 240, 246, 0.6);">
+        <p class="name" style="font-size:1.05rem; color:#d6336c;">📅 ご予約・受付システムについて</p>
+        <div style="font-size:0.88rem; line-height:1.7; display:grid; gap:10px; margin-top:8px;">
+          <div style="background:#fff; padding:10px 14px; border-radius:10px; border:1px solid #f783ac;">
+            <strong style="color:#d6336c;">📩 事前予約の方:</strong> Instagram (@omochitune) のDMにてご希望の時間帯をお気軽にご連絡ください♡
+          </div>
+          <div style="background:#fff; padding:10px 14px; border-radius:10px; border:1px solid var(--gold);">
+            <strong style="color:var(--coral-deep);">🚪 当日飛び込みの方:</strong> 予約なしで当日ふらっとお越しいただいても大歓迎です！教会のハシゴを登ってお声がけください。
+          </div>
+        </div>
+      </div>
+
       <!-- Room Entrance Guide Card -->
       <div class="card" style="margin-top: 24px;">
         <p class="name" style="font-size:1.05rem;">🚪 天井裏 “M” への登り方</p>
-        <p style="font-size:0.86rem; line-height:1.6; margin-bottom:16px;">
+        <p style="font-size:0.86rem; line-height:1.6; margin-bottom:12px;">
           セントラル共立ビルの2階へ上がり、教会奥の扉を開くと、小さなハシゴがございます。そのハシゴを登った天井裏が「おもちちゃん」の占い部屋 “M” です。
         </p>
+        
+        <div style="text-align: center; margin-bottom: 16px;">
+          <a class="ig" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" style="display:inline-flex; font-size:0.85rem; padding:6px 18px;">
+            🎥 ハシゴを登る道案内動画を見る (Instagram Reel)
+          </a>
+        </div>
         <!-- Stylized hand-drawn direction map inside building -->
         <svg viewBox="0 0 320 160" style="width: 100%; max-width: 320px; margin: 0 auto; display: block; filter: drop-shadow(0 4px 8px rgba(77,43,26,0.1));" aria-hidden="true">
           <defs>
@@ -2088,38 +2113,38 @@
   {
     "id": 1,
     "title": "おもち天使",
-    "desc": "夕暮れ空に浮かび、みんなの幸せを願うおもち天使の基本形です。",
-    "image": "",
+    "desc": "夕暮れ空に浮かび、みんなの幸せを願うおもち天使の基本形です。道玄坂教会の天井裏 “M” でいつも見守っています。",
+    "image": "avatar:sky|smile|none",
     "date": "2026.07.19",
-    "type": "天使型",
-    "features": "背中に水色のぷっくりした羽"
+    "type": "標準・天使型",
+    "features": "背中に水色のぷっくりした羽、ほっぺの斜線チーク"
   },
   {
     "id": 2,
     "title": "星空おもち",
-    "desc": "夜空で三日月と星たちに囲まれてふわふわと浮かびます。",
-    "image": "",
+    "desc": "夜空で三日月と星たちに囲まれてふわふわと浮かびます。きらめく星のスティックを持って占いのお手伝いをします。",
+    "image": "avatar:gold|wink|star",
     "date": "2026.07.19",
-    "type": "夜空型",
-    "features": "三日月と連動して光る"
+    "type": "夜空・魔法型",
+    "features": "ゴールドの羽、ウインク顔、魔法の星スティック"
   },
   {
     "id": 3,
     "title": "焼き網おもち",
-    "desc": "網の上でこんがりと美味しそうな焼き目がつきました。",
-    "image": "",
+    "desc": "網の上でこんがりと美味しそうな焼き目がつきました。香ばしい香りが漂うと、おもちちゃんの準備完了のしるしです。",
+    "image": "avatar:sky|relax|candle",
     "date": "2026.07.19",
-    "type": "焼き餅型",
-    "features": "焼き目、少しぷくっと膨らむ"
+    "type": "こんがり焼き餅型",
+    "features": "3D格子網目台座、キャンドルライトの灯火"
   },
   {
     "id": 4,
     "title": "お届けおもち",
-    "desc": "大きなハートを抱えて、大切な気持ちを届けにいきます。",
-    "image": "",
+    "desc": "大きなオーラハートを頭上に抱えて、大切な恋愛の気持ちやメッセージを届けにいきます。",
+    "image": "avatar:pink|smile|heart",
     "date": "2026.07.19",
-    "type": "ハート型",
-    "features": "抱きしめている大きなハート"
+    "type": "恋愛・ハート型",
+    "features": "ピンクの愛の羽、発光オーラハート"
   }
 ]
 </script>
@@ -2213,6 +2238,19 @@
         <h4>2. サイトの保存・公開</h4>
         <p class="editor-instruction">※ブラウザ上での編集は一時保存です。変更を全世界に公開するには、以下のボタンからファイルをダウンロードし、GitHubのリポジトリへアップロード（上書き保存）してください。</p>
         <button class="editor-btn-primary" id="btnExportHtml">Save & index.html をダウンロード 💾</button>
+      </div>
+
+      <!-- Admin Panel Guide Box -->
+      <div class="editor-section-card" style="border-color: var(--pink); background: #fff0f6;">
+        <h4 style="color:#d6336c;">💡 管理パネルの使い方ガイド</h4>
+        <details style="font-size:0.84rem; line-height:1.6; color:var(--ink);">
+          <summary style="font-weight:700; cursor:pointer; color:#d6336c; margin-bottom:6px;">📖 コラムやタロットを追加・変更する手順を見る</summary>
+          <ol style="padding-left:18px; margin:8px 0 0;">
+            <li>右側のフォームで<b>「コラム記事の管理」</b>または<b>「タロットカード解説の管理」</b>を選びます。</li>
+            <li>タイトルや本文を入力し、<b>「追加・更新ボタン」</b>を押すとサイト上に即座に反映されます。</li>
+            <li>最後に左の<b>「index.html をダウンロード」</b>ボタンを押し、ダウンロードしたファイルを GitHub のリポジトリにアップロード（コミット）すれば全世界へ公開完了です！</li>
+          </ol>
+        </details>
       </div>
     </div>
 
@@ -2956,23 +2994,38 @@
     });
   }
 
+  var shareXBtn = document.getElementById('shareXBtn');
+  if (shareXBtn) {
+    shareXBtn.addEventListener('click', function() {
+      var cardName = resultCardTitle.textContent || "おもちのカード";
+      var cardDesc = resultCardText.textContent || "";
+      var tweetText = "「おもちのタロット占い」で【" + cardName + "】のカードを引きました！🔮✨\n\n" +
+                      "〜おもちちゃんからのメッセージ〜\n" +
+                      cardDesc.slice(0, 80) + "...\n\n" +
+                      "#おもちのタロット占い #OMOCHITUNE\n" +
+                      window.location.href;
+      
+      var xUrl = "https://x.com/intent/tweet?text=" + encodeURIComponent(tweetText);
+      window.open(xUrl, '_blank', 'noopener,noreferrer');
+    });
+  }
+
   var shareTarotBtn = document.getElementById('shareTarotBtn');
   if (shareTarotBtn) {
     shareTarotBtn.addEventListener('click', function() {
       var cardName = resultCardTitle.textContent || "おもちのカード";
       var cardDesc = resultCardText.textContent || "";
       var shareText = "【OMOCHI TUNE タロット占い結果】\n" +
-                      "今日の私のカードは：「" + cardName + "」でした！\n" +
+                      "今日の私のカードは：「" + cardName + "」でした！✨\n\n" +
                       "〜おもちちゃんからのメッセージ〜\n" +
                       cardDesc + "\n\n" +
                       "あなたも天井裏でカードを引いてみませんか？ 🔮\n" +
                       window.location.href;
       
       navigator.clipboard.writeText(shareText).then(function() {
-        alert('占い結果をクリップボードにコピーしました！SNSに貼り付けてシェアしてください 📋✨');
+        alert('占い結果をコピーしました！InstagramストーリーズやLINE等に貼り付けてシェアしてね 📋✨');
       }).catch(function(err) {
         console.error('Failed to copy text: ', err);
-        // Fallback
         alert(shareText);
       });
     });
