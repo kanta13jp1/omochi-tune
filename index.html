@@ -1535,12 +1535,240 @@
   body.live-event .mascot-bubble::after {
     border-top-color: #ffd699;
   }
+
+  /* ---------------- 2026 conversion & trust refresh ---------------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  .hero {
+    padding: clamp(34px, 5vw, 64px) 24px 38px;
+  }
+  .hero-shell {
+    width: min(980px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 276px);
+    grid-template-areas:
+      "mascot flyer"
+      "copy flyer";
+    align-items: center;
+    column-gap: clamp(34px, 6vw, 72px);
+  }
+  .hero-mascot-wrap { grid-area: mascot; margin-bottom: 0 !important; }
+  .hero-mascot-wrap > svg { width: 132px !important; height: 116px !important; }
+  .hero-copy { grid-area: copy; position: relative; z-index: 5; }
+  .flyer-hero-container { grid-area: flyer; }
+  .flyer-hero-image { max-width: min(258px, 100%); border-radius: 14px; }
+  .hero .eyebrow { margin: 2px 0 8px; }
+  .hero .title .en { font-size: clamp(3.1rem, 7vw, 4.7rem); }
+  .hero .lead { margin-top: 16px; }
+  .hero-specialty {
+    margin: 9px auto 0;
+    display: inline-flex;
+    color: #9f204f;
+    background: #fff0f6;
+    border: 1.5px dashed #e96491;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: "Yomogi", "Zen Maru Gothic", sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+  }
+  .hero-next {
+    margin: 14px auto 0;
+    color: var(--ink);
+    font-family: "Kiwi Maru", serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .hero-next strong { color: #9f204f; }
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .hero-cta {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-family: "Zen Maru Gothic", sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 8px 18px -10px rgba(43, 57, 82, .55);
+  }
+  .hero-cta.primary { color: #fff; background: linear-gradient(135deg, #ed6384, #bd2f66); border: 2px solid #b7275d; }
+  .hero-cta.secondary { color: var(--ink); background: rgba(255,255,255,.9); border: 2px solid var(--gold); }
+  .hero-walkin { margin: 9px 0 0; color: var(--ink-soft); font-size: .82rem; }
+  .hero .scroll { margin-top: 14px; }
+
+  #gallery-section .wrap { max-width: 1080px; }
+  #gallery-section .gallery-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  #gallery-section .gallery-card { padding: 16px; }
+  #gallery-section .gallery-image,
+  #gallery-section .gallery-placeholder { height: 154px; }
+  .gallery-swipe-hint { display: none; text-align: center; color: var(--ink-soft); font-size: .82rem; margin: -8px 0 10px; }
+
+  .insta-profile-card { max-width: 560px; padding: 22px; }
+  .insta-profile-header { align-items: flex-start; }
+  .insta-avatar { width: 76px; height: 76px; }
+  .insta-username-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .insta-official-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    color: #9f204f;
+    background: #fff0f6;
+    border: 1px solid #e96491;
+    font: 700 .7rem/1 "Zen Maru Gothic", sans-serif;
+  }
+  .insta-trust-line { margin: 9px 0 0; color: var(--ink); font-size: .8rem; font-weight: 700; }
+  .insta-preview-label { text-align: center; margin: 25px 0 10px; color: var(--ink-soft); font-size: .78rem; letter-spacing: .14em; font-weight: 700; }
+  .insta-mock-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .insta-mock-tile {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 1.5px solid rgba(209,178,106,.85);
+    border-radius: 10px;
+    background: #e6f3f8;
+    text-decoration: none;
+    isolation: isolate;
+  }
+  .insta-mock-tile::after {
+    content: "↗";
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    z-index: 3;
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(20, 31, 49, .7);
+    font-size: .72rem;
+  }
+  .insta-post-image { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .insta-post-image.night { filter: saturate(.8) brightness(.45) contrast(1.18); }
+  .insta-post-label {
+    position: absolute;
+    left: 7px;
+    right: 7px;
+    bottom: 7px;
+    z-index: 3;
+    padding: 5px 7px;
+    border-radius: 7px;
+    color: #fff;
+    background: rgba(29, 39, 58, .78);
+    font-size: .68rem;
+    line-height: 1.25;
+    font-weight: 700;
+  }
+  .insta-post-avatar {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 5px 8px 18px;
+    background: linear-gradient(145deg, #fbfdff, #cdeaf5);
+  }
+  .insta-post-avatar.pink { background: linear-gradient(145deg, #fff9fc, #f9d7e7); }
+  .insta-post-avatar.night { background: linear-gradient(145deg, #24536b, #0e293b); }
+  .insta-post-avatar svg { width: 100% !important; max-height: 100% !important; }
+
+  .native-share-btn { background: #fff8e8; border-color: var(--gold); color: var(--ink); }
+
+  @media(max-width: 640px) {
+    .summer-ribbon-banner { padding: 5px 28px; font-size: .72rem; line-height: 1.45; }
+    .hero { padding: 24px 16px 26px; }
+    .hero-shell {
+      grid-template-columns: 1fr;
+      grid-template-areas: "mascot" "copy" "flyer";
+      row-gap: 10px;
+    }
+    .hero-mascot-wrap > svg { width: 92px !important; height: 80px !important; }
+    .hero-copy { min-width: 0; width: 100%; }
+    .hero .eyebrow { margin: 0 0 6px; font-size: .72rem; }
+    .hero .title .en { font-size: clamp(2.3rem, 11vw, 2.85rem); letter-spacing: -.01em; white-space: nowrap; }
+    .hero .title .jp { font-size: 1.32rem; }
+    .hero .lead { margin-top: 12px; font-size: 1rem; }
+    .hero-specialty { margin-top: 7px; font-size: .78rem; padding: 5px 11px; }
+    .hero-next { margin-top: 10px; font-size: .88rem; }
+    .hero-actions { margin-top: 10px; gap: 8px; }
+    .hero-cta { min-height: 46px; padding: 8px 15px; font-size: .82rem; }
+    .hero-walkin { margin-top: 7px; font-size: .75rem; }
+    .hero-mesh-floor, .hero .scroll { display: none; }
+    .flyer-hero-container { margin-top: 4px; }
+    .flyer-hero-image { max-width: 132px; border-width: 2px; border-radius: 10px; }
+    .flyer-hero-container > div { margin-top: 6px !important; }
+    #btnDownloadFlyer { min-height: 42px; font-size: .76rem; padding: 6px 12px; }
+
+    .sticky-nav { top: 0; margin-bottom: 8px; }
+    .nav-wrap {
+      max-width: none;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      gap: 2px;
+      padding: 5px 12px;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+      scrollbar-width: none;
+    }
+    .nav-wrap::-webkit-scrollbar { display: none; }
+    .nav-item { flex: 0 0 auto; min-height: 44px; display: inline-flex; align-items: center; padding: 6px 10px; }
+    .nav-theme-toggle, .nav-sound-toggle { flex: 0 0 44px; min-width: 44px; }
+
+    #gallery-section .gallery-grid {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(250px, 82vw);
+      gap: 14px;
+      margin-inline: -16px;
+      padding: 4px 24px 18px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-inline: contain;
+    }
+    #gallery-section .gallery-card { scroll-snap-align: center; }
+    .gallery-swipe-hint { display: block; }
+
+    .insta-profile-card { padding: 18px; }
+    .insta-avatar { width: 64px; height: 64px; }
+    .insta-profile-header { gap: 12px; }
+    .insta-mock-grid { gap: 5px; }
+    .insta-post-label { font-size: .58rem; padding: 4px 5px; }
+    .omochi-mascot { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      scroll-behavior: auto !important;
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+  }
 </style>
 <script id="jsonLdSchema" type="application/ld+json"></script>
 </head>
 <body>
 
-<div class="summer-ribbon-banner">🍧 暑中お見舞い申し上げます 🍧 渋谷・道玄坂 天井裏 “M” にて毎月第一木曜日に鑑定中 ♡</div>
+<div class="summer-ribbon-banner">🔮 渋谷・道玄坂 天井裏 “M”｜毎月第一木曜日 20:00 OPEN｜当日参加も歓迎 ♡</div>
 
 <div class="paper-texture-overlay" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
@@ -1593,6 +1821,7 @@
   <div class="crayon-sparkle" style="top: 22%; left: 78%; animation-delay: 2.1s;">✦</div>
   <div class="crayon-sparkle plus" style="top: 32%; left: 82%; animation-delay: 0.8s;">+</div>
 
+  <div class="hero-shell">
   <!-- Official High-Fidelity SVG Mascot Artwork -->
   <div class="hero-mascot-wrap" style="position: relative; z-index: 5; margin: 0 auto 10px; display: inline-block;">
     <svg viewBox="0 0 240 210" style="width: 170px; height: 150px; display: block; margin: 0 auto; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));" aria-label="おもちちゃん公式イラスト">
@@ -1659,18 +1888,24 @@
     </div>
   </div>
  
+  <div class="hero-copy">
   <p class="eyebrow">渋谷・道玄坂　天井裏 “M”</p>
   <h1 class="title">
     <span class="en">OMOCHI&nbsp;TUNE</span>
     <span class="jp">おもちちゃん</span>
   </h1>
   <p class="lead">月に一度、天井裏でタロットを。</p>
-  <div style="margin-top: 6px;">
-    <span style="font-family:'Yomogi', sans-serif; font-weight:700; font-size: 0.9rem; color: #d6336c; background: #fff0f6; border: 1.5px dashed #f783ac; padding: 4px 14px; border-radius: 99px; display: inline-block;">★ 恋愛リーディングがめちゃ得意です ♡</span>
+  <span class="hero-specialty">★ 恋愛リーディングがめちゃ得意です ♡</span>
+  <p class="hero-next" id="heroNextDate" aria-live="polite">次回開催日を計算中…</p>
+  <div class="hero-actions" aria-label="予約と開催情報">
+    <a class="hero-cta primary" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="InstagramのDMで事前予約する">📩 DMで事前予約</a>
+    <a class="hero-cta secondary" href="#schedule" aria-label="次回日程と受付方法を確認する">📅 次回日程・受付</a>
   </div>
+  <p class="hero-walkin">予約なしの当日参加も歓迎です。20:00から、天井裏 “M” へ。</p>
   <div class="hero-mesh-floor" aria-hidden="true"></div>
-  <span class="when" style="margin-top: 10px; display: inline-block;">毎月 第一木曜日　20:00 OPEN</span>
   <div><a class="scroll" href="#about" aria-label="下へスクロール">▾</a></div>
+  </div>
+  </div>
 </header>
 
 <!-- Navigation Bar -->
@@ -1803,6 +2038,7 @@
             <p class="result-text" id="resultCardText">メッセージを読み込んでいます...</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px;">
               <button class="reset-btn" id="resetTarotBtn">もう一度占う ↺</button>
+              <button class="copy-btn native-share-btn" id="nativeShareTarotBtn">シェアする ↗</button>
               <a class="copy-btn" id="shareXLink" href="#" target="_blank" rel="noopener" aria-label="𝕏 (Twitter) で占いの結果をシェアする" style="font-family:'Fredoka',sans-serif; font-weight:700; background:#000; color:#fff; border-color:#000; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">𝕏 でシェア 𝕏</a>
               <a class="copy-btn" id="shareLineLink" href="#" target="_blank" rel="noopener" aria-label="LINE で占いの結果をシェアする" style="font-family:'Zen Maru Gothic',sans-serif; font-weight:700; background:#06c755; color:#fff; border-color:#06c755; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">LINE で送る 💬</a>
               <button class="copy-btn" id="shareTarotBtn" style="font-family:'Yomogi',sans-serif; font-weight:700;">コピー 📋</button>
@@ -1824,6 +2060,7 @@
       <p class="kicker">GALLERY</p>
       <h2 class="h">おもちギャラリー</h2>
       <p class="tarot-intro" style="margin-bottom: 20px;">新しい「おもちちゃん」たちをご紹介します（カードを選ぶと詳細を表示します）。</p>
+      <p class="gallery-swipe-hint" aria-hidden="true">← 横にスワイプして、おもちちゃんを見つけてね →</p>
       <div class="gallery-grid">
         <!-- Rendered dynamically -->
       </div>
@@ -1904,6 +2141,8 @@
       <svg class="section-divider" viewBox="0 0 100 10" aria-hidden="true">
         <path d="M 5,5 Q 30,1 50,5 T 95,5" />
       </svg>
+    </div>
+    </div>
     </div>
   </section>
 
@@ -2019,63 +2258,55 @@
       <p class="kicker">MORE</p>
       <h2 class="h">公式 Instagram</h2>
 
-      <!-- Authentic Instagram Profile Card (Image 2 Sync) -->
+      <!-- Stable profile summary: live counts are intentionally omitted to avoid stale data. -->
       <div class="insta-profile-card">
         <div class="insta-profile-header">
-          <div style="position: relative;">
-            <img src="images/hero.jpg" alt="omochitune icon" class="insta-avatar">
-            <span style="position: absolute; bottom: 0; right: 0; background: #e1306c; color: #fff; font-size: 0.6rem; padding: 1px 4px; border-radius: 50%;">✓</span>
-          </div>
+          <img src="images/hero.jpg" alt="OMOCHI TUNEのInstagramプロフィール画像" class="insta-avatar">
           <div class="insta-info">
-            <h3 class="insta-username">omochitune</h3>
-            <p class="insta-bio">【 OMOCHI TUNE / おもちちゃん 】<br>毎月第一木曜日 道玄坂教会 天井裏 “M”にて鑑定してます。<br><strong style="color: #d6336c;">★恋愛リーディングがめちゃ得意です♡</strong></p>
-            <div class="insta-stats">
-              <div><span>7</span> 投稿</div>
-              <div><span>20</span> フォロワー</div>
-              <div><span>24</span> フォロー</div>
+            <div class="insta-username-row">
+              <h3 class="insta-username">@omochitune</h3>
+              <span class="insta-official-badge">公式アカウント</span>
             </div>
+            <p class="insta-bio">【 OMOCHI TUNE / おもちちゃん 】<br>毎月第一木曜日 道玄坂教会 天井裏 “M”にて鑑定してます。<br><strong style="color: #d6336c;">★恋愛リーディングがめちゃ得意です♡</strong></p>
+            <p class="insta-trust-line">開催案内・新作イラスト・当日の空き状況を発信中</p>
           </div>
         </div>
         <div style="margin-top: 14px; text-align: center;">
           <a class="ig" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" style="width: 100%; justify-content: center; font-size: 0.9rem; padding: 8px 16px;">
-            Instagram でフォローする (@omochitune)
+            Instagramで最新投稿を見る ↗
           </a>
         </div>
       </div>
       
-      <!-- Mock Instagram 7-Post Grid Widget (Matching Screenshots 2 & 3) -->
-      <div class="insta-mock-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 520px; margin: 24px auto 0;">
-        <!-- Post 1: Mochi Ice Cream -->
-        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: 暑中お見舞い申し上げますもちアイス" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--pink); background: linear-gradient(135deg, #fcedf7, #d5e8fa); position: relative; transition: transform 0.2s; text-decoration: none;">
-          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
-            <span style="font-size: 1.2rem;">🍧</span>
-            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: #d6336c; font-weight:700; line-height: 1.2;">暑中お見舞い<br>もちアイス</span>
-          </div>
+      <p class="insta-preview-label">POST PREVIEW</p>
+      <div class="insta-mock-grid" aria-label="Instagram投稿プレビュー">
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagramで昼チラシの投稿を見る">
+          <img class="insta-post-image" src="images/hero.jpg" alt="OMOCHI TUNE 昼チラシ">
+          <span class="insta-post-label">昼チラシ・開催案内</span>
         </a>
-        <!-- Post 2: Teal Night Flyer -->
-        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: 夜チラシ" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #18586c, #0a2d37); position: relative; transition: transform 0.2s; text-decoration: none;">
-          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
-            <span style="font-size: 1.2rem;">🌙</span>
-            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: #ffd699; font-weight:700; line-height: 1.2;">夜チラシ<br>天井裏 “M”</span>
-          </div>
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagramで夜チラシの投稿を見る">
+          <img class="insta-post-image night" src="images/hero.jpg" alt="天井裏の夜をイメージしたチラシ">
+          <span class="insta-post-label">天井裏 “M” の夜</span>
         </a>
-        <!-- Post 3: Day White Flyer -->
-        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: 昼チラシ" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #ffffff, #d4eaf7); position: relative; transition: transform 0.2s; text-decoration: none;">
-          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
-            <span style="font-size: 1.2rem;">☀️</span>
-            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: var(--ink); font-weight:700; line-height: 1.2;">昼チラシ<br>水彩デザイン</span>
-          </div>
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagramでもちアイスの投稿を見る">
+          <span class="insta-post-avatar pink" data-avatar="ice"></span>
+          <span class="insta-post-label">暑中お見舞い・もちアイス</span>
         </a>
-        <!-- Post 4: Soft Sky Mascot -->
-        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagram投稿: おもちマスコット単体" style="display: block; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--gold); background: linear-gradient(135deg, #5ec4d4, #3aaab8); position: relative; transition: transform 0.2s; text-decoration: none;">
-          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; text-align: center;">
-            <span style="font-size: 1.2rem;">🕊️</span>
-            <span style="font-family:'Yomogi', sans-serif; font-size: 0.6rem; color: #ffffff; font-weight:700; line-height: 1.2;">おもちちゃん<br>マスコット</span>
-          </div>
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagramでおもち天使の投稿を見る">
+          <span class="insta-post-avatar" data-avatar="sky|smile|none"></span>
+          <span class="insta-post-label">おもち天使</span>
+        </a>
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagramで恋愛おもちの投稿を見る">
+          <span class="insta-post-avatar pink" data-avatar="pink|smile|heart"></span>
+          <span class="insta-post-label">恋愛リーディング</span>
+        </a>
+        <a class="insta-mock-tile" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" aria-label="Instagramで星空おもちの投稿を見る">
+          <span class="insta-post-avatar night" data-avatar="gold|wink|star"></span>
+          <span class="insta-post-label">星空おもち</span>
         </a>
       </div>
 
-      <p class="note">最新の開催情報や新作イラストは Instagram で毎日発信中！</p>
+      <p class="note">最新の開催情報や新作イラストは Instagram で随時発信中！</p>
     </div>
   </section>
 </main>
@@ -2441,6 +2672,10 @@
             <label for="tarotDescInput">占い解説メッセージ</label>
             <textarea id="tarotDescInput" rows="4"></textarea>
           </div>
+          <div class="editor-form-group">
+            <label for="tarotLoveInput">恋愛リーディング用メッセージ</label>
+            <textarea id="tarotLoveInput" rows="4" placeholder="恋愛運モードで追加表示するメッセージ"></textarea>
+          </div>
           <button class="editor-btn-secondary" id="btnSaveTarot">カードメッセージを更新</button>
         </div>
 
@@ -2518,9 +2753,8 @@
     document.body.classList.add('live-event');
   }
 
+  var formattedDate = y + '年' + (m + 1) + '月' + ft.getDate() + '日（木）';
   if (nextDate) {
-    var formattedDate = y + '年' + (m + 1) + '月' + ft.getDate() + '日（木）';
-    
     if (isToday) {
       if (now.getHours() >= 20 && now.getHours() < 23) {
         nextDate.innerHTML = '<span class="live-badge">● 本日 20:00〜23:00 開催中！</span>';
@@ -2531,6 +2765,15 @@
       }
     } else {
       nextDate.innerHTML = '次回 &nbsp;' + formattedDate;
+    }
+  }
+
+  var heroNextDate = document.getElementById('heroNextDate');
+  if (heroNextDate) {
+    if (isToday && now.getHours() < 23) {
+      heroNextDate.innerHTML = '<strong>本日開催</strong>　20:00〜23:00';
+    } else {
+      heroNextDate.innerHTML = '次回 <strong>' + formattedDate + '</strong>　20:00 OPEN';
     }
   }
 
@@ -2706,17 +2949,19 @@
     }
   }
 
+  var mochiSvgSerial = 0;
   function generateMochiSvg(avatarString, height) {
     var parts = (avatarString || "sky|smile|none").split('|');
     var wings = parts[0] || "sky";
     var face = parts[1] || "smile";
     var item = parts[2] || "none";
     var h = height || 180;
+    var svgUid = 'mochi-' + (++mochiSvgSerial);
     
     // Mochi Ice Cream (Summer Special Artwork)
     if (wings === "ice" || wings === "ice-summer") {
       var iceSvg = '<svg class="gallery-placeholder" viewBox="0 0 400 500" aria-hidden="true" style="max-height:' + h + 'px; width:100%; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));">' +
-        '<defs><linearGradient id="iceGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fcedf7"/><stop offset="50%" stop-color="#e3d5fa"/><stop offset="100%" stop-color="#d5e8fa"/></linearGradient></defs>' +
+        '<defs><linearGradient id="iceGrad-' + svgUid + '" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fcedf7"/><stop offset="50%" stop-color="#e3d5fa"/><stop offset="100%" stop-color="#d5e8fa"/></linearGradient></defs>' +
         '<!-- Ice Cream Wings -->' +
         '<path d="M 120,200 C 70,160 40,165 35,180 C 30,195 65,225 110,215 M 110,215 C 75,225 50,235 55,248 C 60,260 95,245 118,230" fill="#ffffff" opacity="0.9" stroke="#5c6f84" stroke-width="4" stroke-linecap="round"/>' +
         '<path d="M 280,200 C 330,160 360,165 365,180 C 370,195 335,225 290,215 M 290,215 C 325,225 350,235 345,248 C 340,260 305,245 282,230" fill="#ffffff" opacity="0.9" stroke="#5c6f84" stroke-width="4" stroke-linecap="round"/>' +
@@ -2724,7 +2969,7 @@
         '<path d="M 140,280 L 200,440 L 260,280 Z" fill="#fce5cd" stroke="#5c6f84" stroke-width="5" stroke-linejoin="round"/>' +
         '<path d="M 155,320 L 245,320 M 170,360 L 230,360 M 185,400 L 215,400 M 160,295 L 225,410 M 240,295 L 175,410" stroke="#d9a779" stroke-width="3" stroke-linecap="round"/>' +
         '<!-- Soft Serve Cream Swirls -->' +
-        '<path d="M 130,280 Q 200,310 270,280 Q 290,240 260,200 Q 200,160 140,200 Q 110,240 130,280 Z" fill="url(#iceGrad)" stroke="#5c6f84" stroke-width="5" stroke-linejoin="round"/>' +
+        '<path d="M 130,280 Q 200,310 270,280 Q 290,240 260,200 Q 200,160 140,200 Q 110,240 130,280 Z" fill="url(#iceGrad-' + svgUid + ')" stroke="#5c6f84" stroke-width="5" stroke-linejoin="round"/>' +
         '<path d="M 150,200 C 130,150 160,100 200,90 C 240,100 270,150 250,200 Z" fill="#ffffff" opacity="0.8" stroke="#5c6f84" stroke-width="4"/>' +
         '<!-- Heart Aura -->' +
         '<path d="M 200,80 C 190,65 170,60 170,48 C 170,38 182,35 190,41 C 196,45 200,53 200,53 C 200,53 204,45 210,41 C 218,35 230,38 230,48 C 230,60 210,65 200,80 Z" fill="#ff738a" stroke="#df6e79" stroke-width="2" filter="drop-shadow(0 0 6px #ff738a)"/>' +
@@ -2794,6 +3039,12 @@
     return svg;
   }
 
+  function renderInstagramPreview() {
+    document.querySelectorAll('[data-avatar]').forEach(function(slot) {
+      slot.innerHTML = generateMochiSvg(slot.getAttribute('data-avatar'), 150);
+    });
+  }
+
   // ---------------- RENDER DYNAMIC SECTIONS ----------------
   var currentLimit = 6;
 
@@ -2828,6 +3079,7 @@
     renderGallery();
     renderFilters();
     renderColumns();
+    renderInstagramPreview();
   }
 
   function renderGallery() {
@@ -2878,7 +3130,7 @@
       }
     });
 
-    var activeBtn = document.querySelector('.filter-btn.active');
+    var activeBtn = tagFilters.querySelector('.filter-btn.active');
     var activeTag = activeBtn ? activeBtn.getAttribute('data-tag') : 'all';
 
     var html = '';
@@ -2890,9 +3142,9 @@
     tagFilters.innerHTML = html;
 
     // Re-bind click events
-    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    tagFilters.querySelectorAll('.filter-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        tagFilters.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
         currentLimit = 6; // Reset load limits on filter
         renderColumns();
@@ -2905,7 +3157,7 @@
     if (!columnGrid) return;
 
     var query = document.getElementById('columnSearch').value.toLowerCase();
-    var activeBtn = document.querySelector('.filter-btn.active');
+    var activeBtn = document.querySelector('#tagFilters .filter-btn.active');
     var activeTag = activeBtn ? activeBtn.getAttribute('data-tag') : 'all';
 
     // Filter logic
@@ -3092,6 +3344,31 @@
       var xUrl = "https://x.com/intent/tweet?text=" + encodeURIComponent(tweetText);
       window.open(xUrl, '_blank', 'noopener,noreferrer');
     });
+  }
+
+  function buildTarotShareText() {
+    var cardName = resultCardTitle.textContent || "おもちのカード";
+    var cardDesc = resultCardText.textContent || "";
+    return "【OMOCHI TUNE タロット占い結果】\n" +
+      "今日の私のカードは：「" + cardName + "」でした！✨\n\n" +
+      cardDesc + "\n\n#おもちのタロット占い #OMOCHITUNE";
+  }
+
+  var nativeShareTarotBtn = document.getElementById('nativeShareTarotBtn');
+  if (nativeShareTarotBtn) {
+    if (navigator.share) {
+      nativeShareTarotBtn.addEventListener('click', function() {
+        navigator.share({
+          title: 'OMOCHI TUNE タロット占い結果',
+          text: buildTarotShareText(),
+          url: window.location.href.split('#')[0] + '#tarot-section'
+        }).catch(function(err) {
+          if (err && err.name !== 'AbortError') console.error('Share failed:', err);
+        });
+      });
+    } else {
+      nativeShareTarotBtn.style.display = 'none';
+    }
   }
 
   var shareTarotBtn = document.getElementById('shareTarotBtn');
@@ -3400,6 +3677,7 @@
   var tarotJpInput = document.getElementById('tarotJpInput');
   var tarotEmojiInput = document.getElementById('tarotEmojiInput');
   var tarotDescInput = document.getElementById('tarotDescInput');
+  var tarotLoveInput = document.getElementById('tarotLoveInput');
   var btnSaveTarot = document.getElementById('btnSaveTarot');
 
   function loadEditorList() {
@@ -3508,6 +3786,7 @@
       tarotJpInput.value = card.nameJp;
       tarotEmojiInput.value = card.illust;
       tarotDescInput.value = card.desc;
+      tarotLoveInput.value = card.loveAdvice || '';
     }
   }
 
@@ -3609,6 +3888,7 @@
       card.nameJp = tarotJpInput.value;
       card.illust = tarotEmojiInput.value;
       card.desc = tarotDescInput.value;
+      card.loveAdvice = tarotLoveInput.value;
       
       syncDataTags();
       initTarotSelector();
@@ -3728,8 +4008,6 @@
   }
 
   // ---------------- INTERACTIVE MASCOT LOGIC & FLYER QUOTES ----------------
-  var omochiMascot = document.getElementById('omochiMascot');
-  var mascotBubble = document.getElementById('mascotBubble');
   var mascotGreetings = [
     "のほほん✦ ゆっくりしていってね。",
     "毎月 第一木曜日 20時 Open だよ 🌙",
@@ -3739,8 +4017,12 @@
     "公式 Instagram @OMOCHITUNE もチェックしてみてね 🕊️",
     "天井裏 “M” はとっても静かで落ち着くよ 🕯️"
   ];
-  
-  if (omochiMascot && mascotBubble) {
+
+  function initInteractiveMascot() {
+    var omochiMascot = document.getElementById('omochiMascot');
+    var mascotBubble = document.getElementById('mascotBubble');
+    if (!omochiMascot || !mascotBubble) return;
+
     // Show greeting bubble briefly on load
     setTimeout(function() {
       mascotBubble.classList.add('show');
@@ -3749,7 +4031,7 @@
       }, 5000);
     }, 1500);
 
-    omochiMascot.addEventListener('click', function() {
+    function showMascotGreeting() {
       if (omochiMascot.classList.contains('hop')) return;
       omochiMascot.classList.add('hop');
       
@@ -3765,7 +4047,21 @@
       window.mascotBubbleTimer = setTimeout(function() {
         mascotBubble.classList.remove('show');
       }, 4500);
+    }
+
+    omochiMascot.addEventListener('click', showMascotGreeting);
+    omochiMascot.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        showMascotGreeting();
+      }
     });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initInteractiveMascot, { once: true });
+  } else {
+    initInteractiveMascot();
   }
 
   // Fade-in Reveal on Scroll
@@ -3787,7 +4083,7 @@
 </script>
 
 <!-- Interactive Floating Omochi Mascot -->
-<div id="omochiMascot" class="omochi-mascot" aria-label="おもちマスコット">
+<div id="omochiMascot" class="omochi-mascot" role="button" tabindex="0" aria-label="おもちちゃんの案内を聞く" aria-describedby="mascotBubble">
   <div class="mascot-bubble" id="mascotBubble">のほほん✦ ゆっくりしていってね。</div>
   <svg viewBox="0 0 100 100" style="width: 54px; height: 54px; display: block;" aria-hidden="true">
     <!-- Wings -->
@@ -3805,6 +4101,7 @@
     <line x1="58" y1="59" x2="60" y2="57" stroke="#df6e79" stroke-width="1"/>
     <line x1="60" y1="59" x2="62" y2="57" stroke="#df6e79" stroke-width="1"/>
   </svg>
+</div>
 <!-- Mobile Sticky Bottom CTA Bar (<640px) -->
 <div class="sticky-bottom-cta" aria-label="モバイル用固定ナビゲーション">
   <div class="sticky-bottom-cta-wrap">
