@@ -1,0 +1,110 @@
+backend:
+  name: github
+  repo: kanta13jp1/omochi-tune
+  branch: main
+  auth_methods: [token]
+
+site_url: https://kanta13jp1.github.io/omochi-tune/
+display_url: https://kanta13jp1.github.io/omochi-tune/
+logo_url: https://kanta13jp1.github.io/omochi-tune/images/hero.jpg
+locale: ja
+media_folder: images/uploads
+public_folder: /omochi-tune/images/uploads
+
+collections:
+  - name: site_data
+    label: OMOCHI TUNE サイトデータ
+    files:
+      - name: settings
+        label: 公開・予約設定
+        file: content/settings.json
+        format: json
+        fields:
+          - { name: showTarot, label: 占いを表示, widget: boolean }
+          - { name: showGallery, label: ギャラリーを表示, widget: boolean }
+          - { name: showColumn, label: コラムを表示, widget: boolean }
+          - { name: showSchedule, label: 日程を表示, widget: boolean }
+          - { name: reservationUrl, label: 予約リンク, widget: string }
+          - { name: reservationLabel, label: 予約ボタン文言, widget: string }
+          - { name: walkInText, label: 当日参加の案内, widget: text }
+          - { name: instagramUrl, label: Instagram URL, widget: string }
+          - { name: instagramHandle, label: Instagram アカウント名, widget: string }
+          - { name: accessVideoUrl, label: アクセス動画URL, widget: string, required: false }
+
+      - name: columns
+        label: おもちコラム
+        file: content/columns.json
+        format: json
+        fields:
+          - name: columns
+            label: コラム一覧
+            label_singular: コラム
+            widget: list
+            root: true
+            summary: "{{fields.date}}｜{{fields.title}}"
+            fields:
+              - { name: id, label: ID, widget: number, value_type: int }
+              - { name: title, label: タイトル, widget: string }
+              - { name: date, label: 公開日（例 2026.08.16）, widget: string }
+              - { name: tag, label: カテゴリ, widget: string }
+              - { name: readTime, label: 読了時間, widget: string, default: 3分 }
+              - { name: summary, label: 要約, widget: text }
+              - { name: content, label: 本文, widget: richtext }
+              - { name: thumbnail, label: サムネイル, widget: image, required: false }
+
+      - name: gallery
+        label: おもち図鑑
+        file: content/gallery.json
+        format: json
+        fields:
+          - name: gallery
+            label: キャラクター一覧
+            label_singular: おもちちゃん
+            widget: list
+            root: true
+            summary: "{{fields.title}}｜{{fields.type}}"
+            fields:
+              - { name: id, label: ID, widget: number, value_type: int }
+              - { name: title, label: 名前, widget: string }
+              - { name: desc, label: 紹介文, widget: text }
+              - { name: image, label: 画像またはavatar指定, widget: string }
+              - { name: date, label: お誕生日・登録日, widget: string }
+              - { name: type, label: タイプ, widget: string }
+              - { name: features, label: とくちょう, widget: text }
+
+      - name: tarot
+        label: タロットメッセージ
+        file: content/tarot.json
+        format: json
+        fields:
+          - name: tarot
+            label: カード一覧
+            label_singular: カード
+            widget: list
+            root: true
+            summary: "{{fields.nameEn}}｜{{fields.nameJp}}"
+            fields:
+              - { name: nameEn, label: 英語名, widget: string }
+              - { name: nameJp, label: 日本語名, widget: string }
+              - { name: illust, label: 絵文字, widget: string }
+              - { name: desc, label: 今日のメッセージ, widget: text }
+              - { name: loveAdvice, label: 恋愛アドバイス, widget: text }
+
+      - name: instagram
+        label: Instagram・世界観プレビュー
+        file: content/instagram.json
+        format: json
+        fields:
+          - name: instagram
+            label: プレビュー一覧
+            label_singular: プレビュー
+            widget: list
+            root: true
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: 表示名, widget: string }
+              - { name: alt, label: 画像説明, widget: string }
+              - { name: url, label: 投稿URL, widget: string }
+              - { name: image, label: 画像, widget: image, required: false }
+              - { name: avatar, label: avatar指定, widget: string, required: false }
+              - { name: theme, label: 表示テーマ, widget: select, required: false, options: ['', pink, night] }
