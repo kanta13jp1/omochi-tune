@@ -1,0 +1,50 @@
+[
+  {
+    "label": "昼チラシ・開催案内",
+    "alt": "OMOCHI TUNE 昼チラシ",
+    "url": "https://www.instagram.com/omochitune/",
+    "image": "images/hero.jpg",
+    "avatar": "",
+    "theme": ""
+  },
+  {
+    "label": "天井裏 “M” の夜",
+    "alt": "天井裏の夜をイメージしたチラシ",
+    "url": "https://www.instagram.com/omochitune/",
+    "image": "images/hero.jpg",
+    "avatar": "",
+    "theme": "night"
+  },
+  {
+    "label": "暑中お見舞い・もちアイス",
+    "alt": "もちアイスのおもちちゃん",
+    "url": "https://www.instagram.com/omochitune/",
+    "image": "",
+    "avatar": "ice",
+    "theme": "pink"
+  },
+  {
+    "label": "おもち天使",
+    "alt": "水色の羽のおもち天使",
+    "url": "https://www.instagram.com/omochitune/",
+    "image": "",
+    "avatar": "sky|smile|none",
+    "theme": ""
+  },
+  {
+    "label": "恋愛リーディング",
+    "alt": "恋愛リーディングのおもちちゃん",
+    "url": "https://www.instagram.com/omochitune/",
+    "image": "",
+    "avatar": "pink|smile|heart",
+    "theme": "pink"
+  },
+  {
+    "label": "星空おもち",
+    "alt": "星空のおもちちゃん",
+    "url": "https://www.instagram.com/omochitune/",
+    "image": "",
+    "avatar": "gold|wink|star",
+    "theme": "night"
+  }
+]
