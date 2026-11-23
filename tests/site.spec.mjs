@@ -1,4 +1,14 @@
+import { readFile } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const [columns, gallery, instagram] = await Promise.all([
+  readFile(join(repoRoot, 'content', 'columns.json'), 'utf8').then(JSON.parse),
+  readFile(join(repoRoot, 'content', 'gallery.json'), 'utf8').then(JSON.parse),
+  readFile(join(repoRoot, 'content', 'instagram.json'), 'utf8').then(JSON.parse)
+]);
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
@@ -7,9 +17,9 @@ test.beforeEach(async ({ page }) => {
 
 test('CMS content is rendered from JSON', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'OMOCHI TUNE' })).toBeVisible();
-  await expect(page.locator('.column-card')).toHaveCount(3);
-  await expect(page.locator('.gallery-card')).toHaveCount(5);
-  await expect(page.locator('#instagramPreviewGrid .insta-mock-tile')).toHaveCount(6);
+  await expect(page.locator('.column-card')).toHaveCount(Math.min(columns.length, 6));
+  await expect(page.locator('.gallery-card')).toHaveCount(gallery.length);
+  await expect(page.locator('#instagramPreviewGrid .insta-mock-tile')).toHaveCount(instagram.length);
   await expect(page.locator('#accessVideoLink')).toHaveAttribute('href', 'https://www.instagram.com/omochitune/');
 });
 
@@ -29,7 +39,7 @@ test('column dialog traps focus and closes with Escape', async ({ page }) => {
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute('role', 'dialog');
   await expect(dialog).toHaveAttribute('aria-modal', 'true');
-  await expect(page.locator('#modalTitle')).toHaveText('はじめまして、おもちちゃんです');
+  await expect(page.locator('#modalTitle')).toHaveText(columns[0].title);
   await page.keyboard.press('Shift+Tab');
   const focusInside = await page.evaluate(() => document.querySelector('#articleModal')?.contains(document.activeElement));
   expect(focusInside).toBe(true);

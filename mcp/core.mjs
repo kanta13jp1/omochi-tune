@@ -1,5 +1,12 @@
+import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { extname } from 'node:path';
+import { dirname, extname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  registerAppResource,
+  registerAppTool,
+  RESOURCE_MIME_TYPE
+} from '@modelcontextprotocol/ext-apps/server';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { getEventSchedule } from './schedule.mjs';
@@ -16,6 +23,33 @@ import {
 } from './schemas.mjs';
 
 const SITE_URL = 'https://kanta13jp1.github.io/omochi-tune/';
+export const DASHBOARD_URI = 'ui://omochi-tune/dashboard.html';
+const MAX_APP_HTML_BYTES = 10 * 1024 * 1024;
+const APP_AND_MODEL = ['model', 'app'];
+
+export function resolveDefaultDashboardHtml(explicitPath) {
+  const scriptDir = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    explicitPath,
+    process.env.OMOCHI_TUNE_MCP_HTML?.trim(),
+    join(scriptDir, 'dashboard.html'),
+    resolve(scriptDir, 'dist', 'dashboard.html'),
+    resolve(scriptDir, '..', '.agents', 'plugins', 'omochi-tune-mcp', 'bin', 'dashboard.html')
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      const buf = readFileSync(candidate);
+      if (buf.byteLength === 0 || buf.byteLength >= MAX_APP_HTML_BYTES) {
+        throw new Error(`dashboard.html のサイズが範囲外です: ${buf.byteLength} bytes`);
+      }
+      return buf.toString('utf8');
+    }
+  }
+  throw new Error(
+    `dashboard.html が見つかりません（先に npm run mcp:build を実行してください）。検索パス: ${candidates.join(', ')}`
+  );
+}
 
 function ok(data) {
   return {
@@ -69,17 +103,22 @@ async function decodeUploadedImageInput({ filename, base64Data, sourcePath }) {
 /**
  * Creates a transport-agnostic MCP Server instance for OMOCHI TUNE.
  */
-export function createOmochiMcpServer({ store, ops, now = () => new Date() }) {
+export function createOmochiMcpServer({
+  store,
+  ops,
+  getDashboardHtml = () => resolveDefaultDashboardHtml(),
+  now = () => new Date()
+}) {
   const server = new McpServer(
     {
       name: 'omochi-tune-mcp',
-      version: '1.0.0'
+      version: '1.1.0'
     },
     {
       instructions:
         'OMOCHI TUNE（おもちちゃん タロット占い）公式サイトのコンテンツ（設定・コラム・図鑑・タロット・Instagram）、' +
-        '毎月第一木曜日の開催スケジュール、ローカルビルド/Playwright検証、および承認付きGitHub公開を操作できます。' +
-        'publish_changes は confirm: true を明示しない限り dry-run プレビューのみ返します。'
+        '毎月第一木曜日の開催スケジュール、MCP App ダッシュボード (open_dashboard)、ローカルビルド/Playwright検証、' +
+        'および承認付きGitHub公開を操作できます。publish_changes は confirm: true を明示しない限り dry-run プレビューのみ返します。'
     }
   );
 
@@ -116,7 +155,40 @@ export function createOmochiMcpServer({ store, ops, now = () => new Date() }) {
     };
   }
 
-  // ---------------- RESOURCES ----------------
+  async function buildDashboardSnapshot(tab = 'overview') {
+    const [overview, columns, gallery, tarot, instagram] = await Promise.all([
+      buildOverviewPayload(),
+      store.readJson('columns'),
+      store.readJson('gallery'),
+      store.readJson('tarot'),
+      store.readJson('instagram')
+    ]);
+    return { tab, overview, columns, gallery, tarot, instagram };
+  }
+
+  // ---------------- MCP APP UI RESOURCE ----------------
+  registerAppResource(
+    server,
+    'OMOCHI TUNE Dashboard',
+    DASHBOARD_URI,
+    {
+      title: 'OMOCHI TUNE 管理ダッシュボード',
+      description: '開催予定・公開設定・コンテンツ一覧・GitHub dry-run 確認を行う Antigravity MCP App UI',
+      _meta: { ui: { prefersBorder: false } }
+    },
+    async () => ({
+      contents: [
+        {
+          uri: DASHBOARD_URI,
+          mimeType: RESOURCE_MIME_TYPE,
+          text: getDashboardHtml(),
+          _meta: { ui: { prefersBorder: false } }
+        }
+      ]
+    })
+  );
+
+  // ---------------- JSON RESOURCES ----------------
   server.registerResource(
     'site-overview',
     'omochi://site/overview',
@@ -899,7 +971,8 @@ export function createOmochiMcpServer({ store, ops, now = () => new Date() }) {
         runValidation: z.boolean().optional().describe('コミット前に全JSON検証＋ビルドを実行するか（既定: true）'),
         confirm: z.boolean().optional().describe('true を指定した場合のみ実際に commit/push/PR 作成を実行（既定: false = dry-run）')
       },
-      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true }
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+      _meta: { ui: { visibility: [...APP_AND_MODEL] } }
     },
     async (args) => {
       try {
@@ -908,6 +981,61 @@ export function createOmochiMcpServer({ store, ops, now = () => new Date() }) {
           validateAllContent(all);
         });
         return ok(result);
+      } catch (err) {
+        return fail(err);
+      }
+    }
+  );
+
+  // 23. open_dashboard (MCP App UI entrypoint)
+  registerAppTool(
+    server,
+    'open_dashboard',
+    {
+      title: 'OMOCHI TUNE 管理ダッシュボードを開く',
+      description:
+        'Antigravity サイドパネル・チャット内に OMOCHI TUNE の対話型管理ダッシュボード（開催予定・設定・コンテンツ一覧・タロット試し引き・dry-run 公開確認）を表示します。',
+      inputSchema: {
+        tab: z
+          .enum(['overview', 'settings', 'content', 'publish'])
+          .optional()
+          .describe('初期表示タブ（省略時は overview）')
+      },
+      annotations: {
+        title: 'OMOCHI TUNE ダッシュボード',
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false
+      },
+      _meta: {
+        ui: {
+          resourceUri: DASHBOARD_URI,
+          visibility: [...APP_AND_MODEL]
+        },
+        'com.google.antigravity/ui': {
+          entrypoints: [
+            { type: 'aux_pane', title: 'OMOCHI TUNE' },
+            { type: 'global', title: 'OMOCHI TUNE' }
+          ]
+        }
+      }
+    },
+    async (args = {}) => {
+      try {
+        const tab = args?.tab || 'overview';
+        const snapshot = await buildDashboardSnapshot(tab);
+        const ov = snapshot.overview;
+        const summary = [
+          `OMOCHI TUNE ダッシュボード (${tab})`,
+          `次回開催: ${ov.schedule.nextEvent.displayDate} ${ov.schedule.nextEvent.startTime}〜${ov.schedule.nextEvent.endTime} (${ov.schedule.statusLabel})`,
+          `コンテンツ件数: コラム ${ov.counts.columns} / 図鑑 ${ov.counts.gallery} / タロット ${ov.counts.tarot} / Instagram ${ov.counts.instagram}`,
+          `ブランチ: ${ov.git.currentBranch} (公開待ち ${ov.git.allowedContentPaths.length} 件)`
+        ].join('\n');
+        return {
+          content: [{ type: 'text', text: summary }],
+          structuredContent: snapshot
+        };
       } catch (err) {
         return fail(err);
       }

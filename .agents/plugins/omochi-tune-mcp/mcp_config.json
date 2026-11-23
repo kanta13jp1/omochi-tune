@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "omochi-tune": {
+      "command": "node",
+      "args": ["${PLUGIN_ROOT}/bin/server.mjs"],
+      "env": {
+        "OMOCHI_TUNE_MCP_HTML": "${PLUGIN_ROOT}/bin/dashboard.html"
+      }
+    }
+  }
+}
