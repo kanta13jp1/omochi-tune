@@ -31,20 +31,31 @@ npm test
 
 ## Antigravity MCP で操作する
 
-このリポジトリには Antigravity からコンテンツ参照・編集・ビルド検証・GitHub 反映（PR / push）までを直接行えるローカル `stdio` MCP サーバー（`mcp/server.mjs`）を同梱しています。
+このリポジトリには Antigravity からコンテンツ参照・編集・ビルド検証・GitHub 反映（PR / push）までを直接行える MCP サーバー（`stdio` / Streamable HTTP 対応）およびサイドパネル用の対話型 **MCP App UI**（`open_dashboard`）を同梱しています。
 
-### 登録設定
-- **ワークスペース設定**: `.agents/mcp_config.json` に `omochi-tune` サーバーが定義済みです。
-- **グローバル登録**（どのワークスペースからでも操作する場合）: `~/.gemini/config/mcp_config.json` の `mcpServers` に `node` ＋ `mcp/server.mjs`（`cwd` に本リポジトリパス）を登録します。
+### プラグイン構成と登録
+- **専用プラグイン**: `.agents/plugins/omochi-tune-mcp/`（`plugin.json`, `mcp_config.json`, `assets/logo.svg`, `skills/omochi-tune-ops/SKILL.md`, `bin/`）としてパッケージ化済みです。
+- **グローバル利用**（どのワークスペースからでも操作する場合）: 同プラグインを `~/.gemini/config/plugins/omochi-tune-mcp/` へ配置し、`mcp_config.json` の `env.OMOCHI_TUNE_REPO_ROOT` に本リポジトリパスを指定します（二重登録を防ぐため、`mcp_config.json` 単体と重複させません）。
 
-### 提供機能（主な MCP ツール / リソース）
+### Streamable HTTP モードで起動する場合
+
+```powershell
+npm run mcp:build
+npm run mcp:http
+```
+
+- 既定では `http://127.0.0.1:8788/mcp`（ヘルスチェック: `GET /health`）で起動します。
+- `OMOCHI_TUNE_MCP_HTTP_TOKEN` を設定すると `Authorization: Bearer <token>` のタイミングセーフ認証を有効化します（非ループバックアドレスへバインドする場合は必須）。
+
+### 提供機能（23 ツール / 7 リソース）
+- **MCP App UI**: `open_dashboard`（`ui://omochi-tune/dashboard.html` — 概要・設定・コンテンツ一覧・タロット試し引き・dry-run 公開確認。Antigravity の `aux_pane` / `global` エントリポイント対応）
 - **参照・算出**: `get_site_overview`, `get_event_schedule`（毎月第一木曜 20:00〜23:00 JST 算出）, `draw_tarot_card`（シェア文言生成付き）
 - **CRUD**: `get_settings` / `update_settings`, `list_columns` / `get_column` / `upsert_column` / `delete_column`, `list_gallery` / `upsert_gallery_item` / `delete_gallery_item`, `list_tarot_cards` / `upsert_tarot_card` / `delete_tarot_card`, `list_instagram_items` / `upsert_instagram_item` / `delete_instagram_item`, `save_uploaded_image`
 - **検証・公開**: `validate_and_build`（全5JSON検証＋ビルド＋任意E2E）, `get_publish_status`, `publish_changes`
   - `publish_changes` は安全のため `confirm: true` を明示するまで **dry-run（事前プレビュー）** として動作し、`content/*.json` と `images/uploads/*` のみを対象に PR 作成または `main` への反映を行います。
-- **MCP リソース**: `omochi://site/overview`, `omochi://content/{settings,columns,gallery,tarot,instagram}`
+- **MCP リソース**: `ui://omochi-tune/dashboard.html`, `omochi://site/overview`, `omochi://content/{settings,columns,gallery,tarot,instagram}`
 
-### MCP 単体・結合テスト
+### MCP ビルド・単体・結合テスト
 
 ```powershell
 npm run test:mcp

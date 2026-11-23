@@ -1,12 +1,17 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { access, cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { createOmochiMcpServer, DASHBOARD_URI } from '../mcp/core.mjs';
+import { startHttpServer } from '../mcp/http.mjs';
+import { createRepoOps } from '../mcp/ops.mjs';
 import { getEventSchedule, getFirstThursdayOfMonth } from '../mcp/schedule.mjs';
 import {
   validateAllContent,
@@ -15,6 +20,7 @@ import {
   validateSafeUrl,
   validateUploadFilename
 } from '../mcp/schemas.mjs';
+import { createFileRepositoryStore } from '../mcp/store.mjs';
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -40,10 +46,12 @@ const EXPECTED_TOOLS = [
   'save_uploaded_image',
   'validate_and_build',
   'get_publish_status',
-  'publish_changes'
+  'publish_changes',
+  'open_dashboard'
 ];
 
 const EXPECTED_RESOURCES = [
+  'ui://omochi-tune/dashboard.html',
   'omochi://site/overview',
   'omochi://content/settings',
   'omochi://content/columns',
@@ -211,15 +219,37 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       assert.ok(resourceUris.includes(expectedUri), `Missing resource: ${expectedUri}`);
     }
 
-    // 2. Read resources
+    // 2. Read resources (derive baseline counts/IDs dynamically so CMS additions do not break tests)
+    const [initialColumns, initialGallery, initialTarot, initialInstagram] = await Promise.all([
+      readFile(join(tmpRepo, 'content', 'columns.json'), 'utf8').then(JSON.parse),
+      readFile(join(tmpRepo, 'content', 'gallery.json'), 'utf8').then(JSON.parse),
+      readFile(join(tmpRepo, 'content', 'tarot.json'), 'utf8').then(JSON.parse),
+      readFile(join(tmpRepo, 'content', 'instagram.json'), 'utf8').then(JSON.parse)
+    ]);
+    const expectedNextColId = Math.max(0, ...initialColumns.map((c) => c.id)) + 1;
+    const expectedNoticeCount = initialColumns.filter((c) => c.tag === 'お知らせ').length;
+    const expectedNextGalId = Math.max(0, ...initialGallery.map((g) => g.id)) + 1;
+
     const overviewRes = await client.readResource({ uri: 'omochi://site/overview' });
     const overviewFromResource = JSON.parse(overviewRes.contents[0].text);
-    assert.equal(overviewFromResource.counts.columns, 3);
-    assert.equal(overviewFromResource.counts.tarot, 6);
+    assert.equal(overviewFromResource.counts.columns, initialColumns.length);
+    assert.equal(overviewFromResource.counts.tarot, initialTarot.length);
 
     const settingsResource = await client.readResource({ uri: 'omochi://content/settings' });
     const settingsFromResource = JSON.parse(settingsResource.contents[0].text);
     assert.equal(settingsFromResource.instagramHandle, '@omochitune');
+
+    // 2b. Verify MCP App UI resource & open_dashboard with empty args {}
+    const uiResource = await client.readResource({ uri: DASHBOARD_URI });
+    assert.equal(uiResource.contents[0].mimeType, 'text/html;profile=mcp-app');
+    const uiHtml = uiResource.contents[0].text;
+    assert.ok(uiHtml.includes('<!doctype html>') && Buffer.byteLength(uiHtml, 'utf8') < 10 * 1024 * 1024);
+
+    const dashCall = await client.callTool({ name: 'open_dashboard', arguments: {} });
+    assert.notEqual(dashCall.isError, true);
+    assert.equal(dashCall.structuredContent.tab, 'overview');
+    assert.equal(dashCall.structuredContent.overview.counts.columns, initialColumns.length);
+    assert.equal(dashCall.structuredContent.tarot.length, initialTarot.length);
 
     // 3. Overview, schedule, and tarot draw
     const overviewTool = parseToolPayload(await client.callTool({ name: 'get_site_overview', arguments: {} }));
@@ -275,21 +305,22 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(createdCol.action, 'created');
-    assert.equal(createdCol.column.id, 4);
+    assert.equal(createdCol.column.id, expectedNextColId);
     assert.equal(
       createdCol.column.content,
       '<p>あたたかいお茶を用意してお待ちしています。</p><p>ぜひ遊びに来てください。</p>'
     );
 
     const fetchedCol = parseToolPayload(
-      await client.callTool({ name: 'get_column', arguments: { id: 4 } })
+      await client.callTool({ name: 'get_column', arguments: { id: expectedNextColId } })
     );
     assert.equal(fetchedCol.column.title, '冬の天井裏ニュース');
 
     const filteredCols = parseToolPayload(
       await client.callTool({ name: 'list_columns', arguments: { tag: 'お知らせ' } })
     );
-    assert.equal(filteredCols.total, 1);
+    assert.equal(filteredCols.total, expectedNoticeCount + 1);
+    assert.ok(filteredCols.items.some((c) => c.id === expectedNextColId));
 
     const badCol = await client.callTool({
       name: 'upsert_column',
@@ -303,10 +334,10 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     assert.equal(badCol.isError, true);
 
     const deletedCol = parseToolPayload(
-      await client.callTool({ name: 'delete_column', arguments: { id: 4 } })
+      await client.callTool({ name: 'delete_column', arguments: { id: expectedNextColId } })
     );
     assert.equal(deletedCol.deleted, true);
-    assert.equal(deletedCol.remaining, 3);
+    assert.equal(deletedCol.remaining, initialColumns.length);
 
     // 6. Gallery CRUD + negative avatar check
     const createdGal = parseToolPayload(
@@ -322,10 +353,10 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(createdGal.action, 'created');
-    assert.equal(createdGal.item.id, 101);
+    assert.equal(createdGal.item.id, expectedNextGalId);
 
     const listedGal = parseToolPayload(await client.callTool({ name: 'list_gallery', arguments: {} }));
-    assert.equal(listedGal.total, 6);
+    assert.equal(listedGal.total, initialGallery.length + 1);
     assert.ok(listedGal.avatarOptions.wings.includes('sky'));
 
     const badGal = await client.callTool({
@@ -341,7 +372,7 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     assert.equal(badGal.isError, true);
 
     const deletedGal = parseToolPayload(
-      await client.callTool({ name: 'delete_gallery_item', arguments: { id: 101 } })
+      await client.callTool({ name: 'delete_gallery_item', arguments: { id: expectedNextGalId } })
     );
     assert.equal(deletedGal.deleted, true);
 
@@ -372,19 +403,25 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(updatedCard.action, 'updated');
-    assert.equal(updatedCard.total, 7);
+    assert.equal(updatedCard.total, initialTarot.length + 1);
 
     const listCards = parseToolPayload(await client.callTool({ name: 'list_tarot_cards', arguments: {} }));
-    assert.equal(listCards.total, 7);
+    assert.equal(listCards.total, initialTarot.length + 1);
 
-    // Delete 4 cards (7 -> 3), then the 4th deletion attempt (at 3 cards) must fail
-    for (const name of ['the moon', 'The Fool', 'The Magician', 'The Empress']) {
+    // Delete cards down to 3, then the next deletion attempt (at 3 cards) must fail
+    const orderedNames = [
+      'the moon',
+      ...listCards.items.map((c) => c.nameEn).filter((n) => n.toLowerCase() !== 'the moon')
+    ];
+    const toDelete = orderedNames.slice(0, listCards.total - 3);
+    for (const name of toDelete) {
       const del = await client.callTool({ name: 'delete_tarot_card', arguments: { nameEn: name } });
       assert.notEqual(del.isError, true);
     }
+    const remainingCard = orderedNames[listCards.total - 3];
     const minCardBlock = await client.callTool({
       name: 'delete_tarot_card',
-      arguments: { nameEn: 'The Chariot' }
+      arguments: { nameEn: remainingCard }
     });
     assert.equal(minCardBlock.isError, true);
 
@@ -401,10 +438,10 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(createdInsta.action, 'created');
-    assert.equal(createdInsta.index, 6);
+    assert.equal(createdInsta.index, initialInstagram.length);
 
     const listedInsta = parseToolPayload(await client.callTool({ name: 'list_instagram_items', arguments: {} }));
-    assert.equal(listedInsta.total, 7);
+    assert.equal(listedInsta.total, initialInstagram.length + 1);
 
     const badInsta = await client.callTool({
       name: 'upsert_instagram_item',
@@ -417,7 +454,7 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     assert.equal(badInsta.isError, true);
 
     const deletedInsta = parseToolPayload(
-      await client.callTool({ name: 'delete_instagram_item', arguments: { index: 6 } })
+      await client.callTool({ name: 'delete_instagram_item', arguments: { index: createdInsta.index } })
     );
     assert.equal(deletedInsta.deleted, true);
 
@@ -494,5 +531,118 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       await client.close().catch(() => {});
     }
     await rm(tmpRepo, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test('Streamable HTTP transport: fail-closed auth, host/origin guards, and MCP client calls', async () => {
+  const store = createFileRepositoryStore(REPO_ROOT);
+  const ops = createRepoOps(REPO_ROOT);
+  const token = 'omochi-test-bearer-token';
+
+  // Non-loopback bind without token must fail closed
+  await assert.rejects(() =>
+    startHttpServer({
+      createServer: () => createOmochiMcpServer({ store, ops }),
+      host: '0.0.0.0',
+      port: 0
+    })
+  );
+
+  const handle = await startHttpServer({
+    createServer: () => createOmochiMcpServer({ store, ops }),
+    host: '127.0.0.1',
+    port: 0,
+    token
+  });
+
+  let client;
+  try {
+    const base = `http://127.0.0.1:${handle.port}`;
+
+    // 1. Health endpoint
+    const healthRes = await fetch(`${base}/health`);
+    assert.equal(healthRes.status, 200);
+    const healthJson = await healthRes.json();
+    assert.equal(healthJson.ok, true);
+    assert.equal(healthJson.authRequired, true);
+
+    // 2. Unauthenticated POST /mcp -> 401
+    const unauthRes = await fetch(`${base}/mcp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
+    });
+    assert.equal(unauthRes.status, 401);
+
+    // 3. Bad Origin header -> 403
+    const badOriginRes = await fetch(`${base}/mcp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        Origin: 'https://evil.example'
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' })
+    });
+    assert.equal(badOriginRes.status, 403);
+
+    // 4. Bad Host header -> 403 (via node:http to bypass fetch forbidden Host restriction)
+    const badHostStatus = await new Promise((resolveStatus, rejectErr) => {
+      const req = http.request(
+        {
+          host: '127.0.0.1',
+          port: handle.port,
+          path: '/mcp',
+          method: 'POST',
+          headers: {
+            Host: 'evil.example',
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        },
+        (res) => {
+          res.resume();
+          res.on('end', () => resolveStatus(res.statusCode));
+        }
+      );
+      req.on('error', rejectErr);
+      req.end('{}');
+    });
+    assert.equal(badHostStatus, 403);
+
+    // 5. GET /mcp -> 405 Method Not Allowed
+    const getMcpRes = await fetch(`${base}/mcp`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    assert.equal(getMcpRes.status, 405);
+
+    // 6. Real StreamableHTTPClientTransport end-to-end session
+    const transport = new StreamableHTTPClientTransport(new URL(handle.endpointUrl), {
+      requestInit: {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    });
+    client = new Client({ name: 'omochi-http-test-client', version: '1.0.0' }, { capabilities: {} });
+    await client.connect(transport);
+
+    const tools = await client.listTools();
+    assert.equal(tools.tools.length, EXPECTED_TOOLS.length);
+
+    const schedule = parseToolPayload(
+      await client.callTool({ name: 'get_event_schedule', arguments: { count: 2 } })
+    );
+    assert.equal(schedule.upcoming.length, 2);
+
+    const dash = await client.callTool({ name: 'open_dashboard', arguments: {} });
+    assert.notEqual(dash.isError, true);
+    assert.equal(dash.structuredContent.tab, 'overview');
+  } finally {
+    if (client) {
+      await client.close().catch(() => {});
+    }
+    await handle.close();
   }
 });
