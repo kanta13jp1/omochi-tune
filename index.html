@@ -8,6 +8,7 @@
 <meta name="description" content="毎月第一木曜日 20時オープン。渋谷・道玄坂の天井裏 “M” でひらく、おもちちゃんのタロット占い。10分 ¥1,000。">
 <meta name="theme-color" content="#e8effa">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="omochi-kpi-endpoint" content="">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:title" content="OMOCHI TUNE / おもちちゃん">
@@ -2007,7 +2008,7 @@
   </div>
   <time class="hero-next" id="heroNextDate" aria-live="polite" data-timezone="Asia/Tokyo">次回開催日を計算中…</time>
   <div class="hero-actions" aria-label="予約と開催情報">
-    <a class="hero-cta primary" href="https://ig.me/m/omochitune" target="_blank" rel="noopener" aria-label="InstagramのDMで事前予約する" data-setting-href="reservationUrl"><span data-setting-text="reservationLabel">📩 DMで事前予約</span></a>
+    <a class="hero-cta primary" href="https://ig.me/m/omochitune" target="_blank" rel="noopener" aria-label="InstagramのDMで事前予約する" data-setting-href="reservationUrl" data-kpi-booking="hero"><span data-setting-text="reservationLabel">📩 DMで事前予約</span></a>
     <a class="hero-cta secondary" href="#schedule" aria-label="次回日程と受付方法を確認する">📅 次回日程・受付</a>
   </div>
   <p class="hero-walkin" data-setting-text="walkInText">予約なしの当日参加も歓迎です。20:00から、天井裏 “M” へ。</p>
@@ -2384,7 +2385,7 @@
         </div>
         <div class="insta-action-row">
           <a class="ig" href="https://www.instagram.com/omochitune/" target="_blank" rel="noopener" data-setting-href="instagramUrl">最新投稿を見る ↗</a>
-          <a class="ig dm" href="https://ig.me/m/omochitune" target="_blank" rel="noopener" data-setting-href="reservationUrl">DMで予約相談 ✉</a>
+          <a class="ig dm" href="https://ig.me/m/omochitune" target="_blank" rel="noopener" data-setting-href="reservationUrl" data-kpi-booking="instagram_card">DMで予約相談 ✉</a>
         </div>
       </div>
       
@@ -2653,6 +2654,7 @@
 
 <script src="vendor/dompurify-3.4.13.min.js"></script>
 <script src="vendor/a11y-dialog-8.1.5.min.js"></script>
+<script src="js/kpi.js"></script>
 <script>
 (function(){
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2850,6 +2852,7 @@
       OMOCHI_SETTINGS = data[3] || OMOCHI_SETTINGS;
       OMOCHI_INSTAGRAM = Array.isArray(data[4]) ? data[4] : [];
       document.documentElement.setAttribute('data-content-ready', 'true');
+      if (window.__omochiKpi) window.__omochiKpi.track('lp_view');
     }).catch(function(error) {
       console.error('Content loading failed', error);
       document.documentElement.setAttribute('data-content-ready', 'error');
@@ -3347,6 +3350,9 @@
       
       if (shareXLink) shareXLink.href = "https://x.com/intent/post?text=" + encodeURIComponent(shareMsg);
       if (shareLineLink) shareLineLink.href = "https://line.me/R/msg/text/?" + encodeURIComponent(shareMsg);
+      if (window.__omochiKpi) {
+        window.__omochiKpi.track('tarot_draw', { mode: isLoveMode ? 'love' : 'daily' });
+      }
 
       setTimeout(function() {
         tarotResult.style.display = 'block';
@@ -3366,8 +3372,29 @@
         container.style.pointerEvents = 'auto';
       });
       tarotResult.style.display = 'none';
+      if (window.__omochiKpi) window.__omochiKpi.resetTarotDraw();
     });
   }
+
+  var shareXLinkEl = document.getElementById('shareXLink');
+  if (shareXLinkEl) {
+    shareXLinkEl.addEventListener('click', function() {
+      if (window.__omochiKpi) window.__omochiKpi.track('tarot_share_click', { channel: 'x' });
+    });
+  }
+  var shareLineLinkEl = document.getElementById('shareLineLink');
+  if (shareLineLinkEl) {
+    shareLineLinkEl.addEventListener('click', function() {
+      if (window.__omochiKpi) window.__omochiKpi.track('tarot_share_click', { channel: 'line' });
+    });
+  }
+
+  document.addEventListener('click', function(event) {
+    var target = event.target && event.target.closest ? event.target.closest('[data-kpi-booking]') : null;
+    if (!target || !window.__omochiKpi) return;
+    var placement = target.getAttribute('data-kpi-booking');
+    if (placement) window.__omochiKpi.track('booking_dm_click', { placement: placement });
+  });
 
   var shareXBtn = document.getElementById('shareXBtn');
   if (shareXBtn) {
@@ -3397,6 +3424,7 @@
   if (nativeShareTarotBtn) {
     if (navigator.share) {
       nativeShareTarotBtn.addEventListener('click', function() {
+        if (window.__omochiKpi) window.__omochiKpi.track('tarot_share_click', { channel: 'native' });
         navigator.share({
           title: 'OMOCHI TUNE タロット占い結果',
           text: buildTarotShareText(),
@@ -3413,6 +3441,7 @@
   var shareTarotBtn = document.getElementById('shareTarotBtn');
   if (shareTarotBtn) {
     shareTarotBtn.addEventListener('click', function() {
+      if (window.__omochiKpi) window.__omochiKpi.track('tarot_share_click', { channel: 'copy' });
       var cardName = resultCardTitle.textContent || "おもちのカード";
       var cardDesc = resultCardText.textContent || "";
       var shareText = "【OMOCHI TUNE タロット占い結果】\n" +
@@ -4160,7 +4189,7 @@
 <div class="sticky-bottom-cta" aria-label="モバイル用固定ナビゲーション">
   <div class="sticky-bottom-cta-wrap">
     <a href="#schedule" class="sticky-cta-btn secondary" aria-label="カレンダーで次回日程を確認する">📅 次回日程</a>
-    <a href="https://ig.me/m/omochitune" target="_blank" rel="noopener" class="sticky-cta-btn primary" aria-label="InstagramのDMで予約する" data-setting-href="reservationUrl">📩 DMで予約</a>
+    <a href="https://ig.me/m/omochitune" target="_blank" rel="noopener" class="sticky-cta-btn primary" aria-label="InstagramのDMで予約する" data-setting-href="reservationUrl" data-kpi-booking="sticky_mobile">📩 DMで予約</a>
   </div>
 </div>
 

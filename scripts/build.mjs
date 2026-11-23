@@ -17,7 +17,7 @@ for (const file of ['index.html']) {
   await cp(join(root, file), join(output, file));
 }
 
-for (const directory of ['admin', 'content', 'images', 'vendor']) {
+for (const directory of ['admin', 'content', 'images', 'js', 'vendor']) {
   await cp(join(root, directory), join(output, directory), { recursive: true });
 }
 
