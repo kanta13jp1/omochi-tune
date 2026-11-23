@@ -1,0 +1,15 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "omochi-tune-mcp",
+  "displayName": "OMOCHI TUNE MCP",
+  "version": "1.1.0",
+  "description": "OMOCHI TUNE（おもちちゃん タロット占い）公式サイトのコンテンツ管理・開催日算出・ビルド検証・GitHub公開を Antigravity およびサイドパネル MCP App から操作するプラグイン。",
+  "logo": "assets/logo.svg",
+  "homepage": "https://kanta13jp1.github.io/omochi-tune/",
+  "repository": "https://github.com/kanta13jp1/omochi-tune",
+  "suggestedPrompts": [
+    "open_dashboard を開いて、次回開催日と公開設定を確認して",
+    "次回の第一木曜日に合わせたお知らせコラム下書きを作成して、ビルド検証までして",
+    "publish_changes で変更内容の dry-run プレビューを確認して"
+  ]
+}

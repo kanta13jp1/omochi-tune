@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="OMOCHI TUNE">
+  <!-- Background badge with ~10% transparent outer margin -->
+  <circle cx="64" cy="64" r="50" fill="#2b3952" stroke="#d1b26a" stroke-width="4"/>
+  <!-- Wings -->
+  <path d="M36 62 C22 48 16 50 18 58 C20 65 28 70 36 69" fill="#dcf1fa" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M92 62 C106 48 112 50 110 58 C108 65 100 70 92 69" fill="#dcf1fa" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Mochi body -->
+  <path d="M36 62 C36 46 48 38 64 38 C80 38 92 46 92 62 L92 78 C92 86 80 92 64 92 C48 92 36 86 36 78 Z" fill="#ffffff" stroke="#e1e8f2" stroke-width="2"/>
+  <!-- Eyes & smile -->
+  <circle cx="54" cy="63" r="3" fill="#2b3952"/>
+  <circle cx="74" cy="63" r="3" fill="#2b3952"/>
+  <path d="M59 70 Q64 75 69 70" fill="none" stroke="#2b3952" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="46" cy="69" r="3.2" fill="#ea8591"/>
+  <circle cx="82" cy="69" r="3.2" fill="#ea8591"/>
+  <!-- Heart halo -->
+  <path d="M64 32 C60 26 52 25 52 20 C52 16 56 15 60 18 C62 19.5 64 22 64 22 C64 22 66 19.5 68 18 C72 15 76 16 76 20 C76 25 68 26 64 32 Z" fill="#ea8591"/>
+</svg>

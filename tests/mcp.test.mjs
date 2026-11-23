@@ -1,12 +1,17 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { access, cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { createOmochiMcpServer, DASHBOARD_URI } from '../mcp/core.mjs';
+import { startHttpServer } from '../mcp/http.mjs';
+import { createRepoOps } from '../mcp/ops.mjs';
 import { getEventSchedule, getFirstThursdayOfMonth } from '../mcp/schedule.mjs';
 import {
   validateAllContent,
@@ -15,6 +20,7 @@ import {
   validateSafeUrl,
   validateUploadFilename
 } from '../mcp/schemas.mjs';
+import { createFileRepositoryStore } from '../mcp/store.mjs';
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -40,10 +46,12 @@ const EXPECTED_TOOLS = [
   'save_uploaded_image',
   'validate_and_build',
   'get_publish_status',
-  'publish_changes'
+  'publish_changes',
+  'open_dashboard'
 ];
 
 const EXPECTED_RESOURCES = [
+  'ui://omochi-tune/dashboard.html',
   'omochi://site/overview',
   'omochi://content/settings',
   'omochi://content/columns',
@@ -218,6 +226,18 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     const settingsResource = await client.readResource({ uri: 'omochi://content/settings' });
     const settingsFromResource = JSON.parse(settingsResource.contents[0].text);
     assert.equal(settingsFromResource.instagramHandle, '@omochitune');
+
+    // 2b. Verify MCP App UI resource & open_dashboard with empty args {}
+    const uiResource = await client.readResource({ uri: DASHBOARD_URI });
+    assert.equal(uiResource.contents[0].mimeType, 'text/html;profile=mcp-app');
+    const uiHtml = uiResource.contents[0].text;
+    assert.ok(uiHtml.includes('<!doctype html>') && Buffer.byteLength(uiHtml, 'utf8') < 10 * 1024 * 1024);
+
+    const dashCall = await client.callTool({ name: 'open_dashboard', arguments: {} });
+    assert.notEqual(dashCall.isError, true);
+    assert.equal(dashCall.structuredContent.tab, 'overview');
+    assert.equal(dashCall.structuredContent.overview.counts.columns, 3);
+    assert.equal(dashCall.structuredContent.tarot.length, 6);
 
     // 3. Overview, schedule, and tarot draw
     const overviewTool = parseToolPayload(await client.callTool({ name: 'get_site_overview', arguments: {} }));
@@ -492,5 +512,118 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       await client.close().catch(() => {});
     }
     await rm(tmpRepo, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test('Streamable HTTP transport: fail-closed auth, host/origin guards, and MCP client calls', async () => {
+  const store = createFileRepositoryStore(REPO_ROOT);
+  const ops = createRepoOps(REPO_ROOT);
+  const token = 'omochi-test-bearer-token';
+
+  // Non-loopback bind without token must fail closed
+  await assert.rejects(() =>
+    startHttpServer({
+      createServer: () => createOmochiMcpServer({ store, ops }),
+      host: '0.0.0.0',
+      port: 0
+    })
+  );
+
+  const handle = await startHttpServer({
+    createServer: () => createOmochiMcpServer({ store, ops }),
+    host: '127.0.0.1',
+    port: 0,
+    token
+  });
+
+  let client;
+  try {
+    const base = `http://127.0.0.1:${handle.port}`;
+
+    // 1. Health endpoint
+    const healthRes = await fetch(`${base}/health`);
+    assert.equal(healthRes.status, 200);
+    const healthJson = await healthRes.json();
+    assert.equal(healthJson.ok, true);
+    assert.equal(healthJson.authRequired, true);
+
+    // 2. Unauthenticated POST /mcp -> 401
+    const unauthRes = await fetch(`${base}/mcp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' })
+    });
+    assert.equal(unauthRes.status, 401);
+
+    // 3. Bad Origin header -> 403
+    const badOriginRes = await fetch(`${base}/mcp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        Origin: 'https://evil.example'
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' })
+    });
+    assert.equal(badOriginRes.status, 403);
+
+    // 4. Bad Host header -> 403 (via node:http to bypass fetch forbidden Host restriction)
+    const badHostStatus = await new Promise((resolveStatus, rejectErr) => {
+      const req = http.request(
+        {
+          host: '127.0.0.1',
+          port: handle.port,
+          path: '/mcp',
+          method: 'POST',
+          headers: {
+            Host: 'evil.example',
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        },
+        (res) => {
+          res.resume();
+          res.on('end', () => resolveStatus(res.statusCode));
+        }
+      );
+      req.on('error', rejectErr);
+      req.end('{}');
+    });
+    assert.equal(badHostStatus, 403);
+
+    // 5. GET /mcp -> 405 Method Not Allowed
+    const getMcpRes = await fetch(`${base}/mcp`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    assert.equal(getMcpRes.status, 405);
+
+    // 6. Real StreamableHTTPClientTransport end-to-end session
+    const transport = new StreamableHTTPClientTransport(new URL(handle.endpointUrl), {
+      requestInit: {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    });
+    client = new Client({ name: 'omochi-http-test-client', version: '1.0.0' }, { capabilities: {} });
+    await client.connect(transport);
+
+    const tools = await client.listTools();
+    assert.equal(tools.tools.length, EXPECTED_TOOLS.length);
+
+    const schedule = parseToolPayload(
+      await client.callTool({ name: 'get_event_schedule', arguments: { count: 2 } })
+    );
+    assert.equal(schedule.upcoming.length, 2);
+
+    const dash = await client.callTool({ name: 'open_dashboard', arguments: {} });
+    assert.notEqual(dash.isError, true);
+    assert.equal(dash.structuredContent.tab, 'overview');
+  } finally {
+    if (client) {
+      await client.close().catch(() => {});
+    }
+    await handle.close();
   }
 });
