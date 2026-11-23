@@ -168,8 +168,10 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
 
   try {
     // Prepare isolated repository copy (never mutating real workspace content/)
-    for (const dir of ['content', 'images', 'admin', 'vendor', 'scripts']) {
-      await cp(join(REPO_ROOT, dir), join(tmpRepo, dir), { recursive: true });
+    for (const dir of ['content', 'images', 'admin', 'vendor', 'scripts', 'js']) {
+      if (await pathExists(join(REPO_ROOT, dir))) {
+        await cp(join(REPO_ROOT, dir), join(tmpRepo, dir), { recursive: true });
+      }
     }
     await cp(join(REPO_ROOT, 'index.html'), join(tmpRepo, 'index.html'));
     // Add mcp/ and .agents/ placeholders to verify scripts/build.mjs excludes them from dist/

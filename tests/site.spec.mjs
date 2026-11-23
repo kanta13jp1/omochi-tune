@@ -75,3 +75,87 @@ test('Sveltia admin boots in Japanese without CSP errors', async ({ page }) => {
   await expect(page.locator('body')).toContainText(/アクセストークン|Access Token/, { timeout: 20000 });
   expect(browserErrors.filter((message) => message.includes('Content Security Policy'))).toEqual([]);
 });
+
+test('minimal KPI funnel records lp_view, tarot_draw, booking_dm_click without PII and deduplicates', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', (err) => pageErrors.push(err.message));
+
+  // 1. lp_view fired once on content ready with skipped_unconfigured status
+  const initialEvents = await page.evaluate(() => window.__omochiKpi.getEvents());
+  expect(initialEvents).toHaveLength(1);
+  expect(initialEvents[0].event).toBe('lp_view');
+  expect(Object.keys(initialEvents[0]).sort()).toEqual(['event', 'page', 'schemaVersion', 'ts']);
+
+  // Calling lp_view again must deduplicate
+  const duplicateLp = await page.evaluate(() => window.__omochiKpi.track('lp_view'));
+  expect(duplicateLp).toBe(false);
+
+  // Unknown events / disallowed props are rejected or stripped
+  const unknownEvent = await page.evaluate(() => window.__omochiKpi.track('evil_event', { email: 'test@example.com' }));
+  expect(unknownEvent).toBe(false);
+
+  // 2. tarot_draw in love mode + reset allows another draw
+  await page.locator('#btnTarotLove').click();
+  await page.locator('.tarot-card').first().click();
+  await expect(page.locator('#tarotResult')).toBeVisible();
+
+  const afterDraw = await page.evaluate(() => window.__omochiKpi.getEvents());
+  const drawEvents = afterDraw.filter((e) => e.event === 'tarot_draw');
+  expect(drawEvents).toHaveLength(1);
+  expect(drawEvents[0].mode).toBe('love');
+  expect(Object.keys(drawEvents[0]).sort()).toEqual(['event', 'mode', 'page', 'schemaVersion', 'ts']);
+
+  // Second click before reset + direct duplicate track call are deduplicated
+  await page.locator('.tarot-card').first().click({ force: true });
+  const duplicateDraw = await page.evaluate(() => window.__omochiKpi.track('tarot_draw', { mode: 'daily' }));
+  expect(duplicateDraw).toBe(false);
+  const afterSecondClick = await page.evaluate(() => window.__omochiKpi.getEvents().filter((e) => e.event === 'tarot_draw'));
+  expect(afterSecondClick).toHaveLength(1);
+
+  // Resetting allows a new tarot draw event in daily mode
+  await page.locator('#resetTarotBtn').click();
+  await page.locator('#btnTarotDaily').click();
+  await page.locator('.tarot-card').nth(1).click();
+  await expect(page.locator('#tarotResult')).toBeVisible();
+  const afterResetDraw = await page.evaluate(() => window.__omochiKpi.getEvents().filter((e) => e.event === 'tarot_draw'));
+  expect(afterResetDraw).toHaveLength(2);
+  expect(afterResetDraw[1].mode).toBe('daily');
+
+  // 3. booking_dm_click fires on hero CTA and deduplicates rapid double-click (prevent navigation in test)
+  await page.evaluate(() => {
+    document.querySelector('[data-kpi-booking="hero"]')?.addEventListener('click', (e) => e.preventDefault());
+  });
+  await page.locator('[data-kpi-booking="hero"]').click();
+  await page.locator('[data-kpi-booking="hero"]').click();
+
+  const bookingEvents = await page.evaluate(() => window.__omochiKpi.getEvents().filter((e) => e.event === 'booking_dm_click'));
+  expect(bookingEvents).toHaveLength(1);
+  expect(bookingEvents[0].placement).toBe('hero');
+
+  const stats = await page.evaluate(() => window.__omochiKpi.getStats());
+  expect(stats.skippedUnconfigured).toBe(4);
+  expect(stats.deduplicated).toBeGreaterThanOrEqual(3);
+  expect(pageErrors).toEqual([]);
+});
+
+test('minimal KPI fails open when sendBeacon throws and fallback endpoint fails', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', (err) => pageErrors.push(err.message));
+
+  await page.route('**/__kpi_fail', (route) => route.fulfill({ status: 500, body: 'error' }));
+  await page.evaluate(() => {
+    window.__OMOCHI_KPI_CONFIG__ = { endpoint: '/__kpi_fail' };
+    navigator.sendBeacon = () => {
+      throw new Error('beacon blocked');
+    };
+  });
+
+  await page.locator('.tarot-card').first().click();
+  await expect(page.locator('#tarotResult')).toBeVisible();
+  await expect(page.locator('[data-kpi-booking="hero"]')).toHaveAttribute('href', 'https://ig.me/m/omochitune');
+
+  await expect
+    .poll(async () => page.evaluate(() => window.__omochiKpi.getStats().failed))
+    .toBeGreaterThanOrEqual(1);
+  expect(pageErrors).toEqual([]);
+});
