@@ -217,11 +217,21 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       assert.ok(resourceUris.includes(expectedUri), `Missing resource: ${expectedUri}`);
     }
 
-    // 2. Read resources
+    // 2. Read resources (derive baseline counts/IDs dynamically so CMS additions do not break tests)
+    const [initialColumns, initialGallery, initialTarot, initialInstagram] = await Promise.all([
+      readFile(join(tmpRepo, 'content', 'columns.json'), 'utf8').then(JSON.parse),
+      readFile(join(tmpRepo, 'content', 'gallery.json'), 'utf8').then(JSON.parse),
+      readFile(join(tmpRepo, 'content', 'tarot.json'), 'utf8').then(JSON.parse),
+      readFile(join(tmpRepo, 'content', 'instagram.json'), 'utf8').then(JSON.parse)
+    ]);
+    const expectedNextColId = Math.max(0, ...initialColumns.map((c) => c.id)) + 1;
+    const expectedNoticeCount = initialColumns.filter((c) => c.tag === 'お知らせ').length;
+    const expectedNextGalId = Math.max(0, ...initialGallery.map((g) => g.id)) + 1;
+
     const overviewRes = await client.readResource({ uri: 'omochi://site/overview' });
     const overviewFromResource = JSON.parse(overviewRes.contents[0].text);
-    assert.equal(overviewFromResource.counts.columns, 3);
-    assert.equal(overviewFromResource.counts.tarot, 6);
+    assert.equal(overviewFromResource.counts.columns, initialColumns.length);
+    assert.equal(overviewFromResource.counts.tarot, initialTarot.length);
 
     const settingsResource = await client.readResource({ uri: 'omochi://content/settings' });
     const settingsFromResource = JSON.parse(settingsResource.contents[0].text);
@@ -236,8 +246,8 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     const dashCall = await client.callTool({ name: 'open_dashboard', arguments: {} });
     assert.notEqual(dashCall.isError, true);
     assert.equal(dashCall.structuredContent.tab, 'overview');
-    assert.equal(dashCall.structuredContent.overview.counts.columns, 3);
-    assert.equal(dashCall.structuredContent.tarot.length, 6);
+    assert.equal(dashCall.structuredContent.overview.counts.columns, initialColumns.length);
+    assert.equal(dashCall.structuredContent.tarot.length, initialTarot.length);
 
     // 3. Overview, schedule, and tarot draw
     const overviewTool = parseToolPayload(await client.callTool({ name: 'get_site_overview', arguments: {} }));
@@ -293,21 +303,22 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(createdCol.action, 'created');
-    assert.equal(createdCol.column.id, 4);
+    assert.equal(createdCol.column.id, expectedNextColId);
     assert.equal(
       createdCol.column.content,
       '<p>あたたかいお茶を用意してお待ちしています。</p><p>ぜひ遊びに来てください。</p>'
     );
 
     const fetchedCol = parseToolPayload(
-      await client.callTool({ name: 'get_column', arguments: { id: 4 } })
+      await client.callTool({ name: 'get_column', arguments: { id: expectedNextColId } })
     );
     assert.equal(fetchedCol.column.title, '冬の天井裏ニュース');
 
     const filteredCols = parseToolPayload(
       await client.callTool({ name: 'list_columns', arguments: { tag: 'お知らせ' } })
     );
-    assert.equal(filteredCols.total, 1);
+    assert.equal(filteredCols.total, expectedNoticeCount + 1);
+    assert.ok(filteredCols.items.some((c) => c.id === expectedNextColId));
 
     const badCol = await client.callTool({
       name: 'upsert_column',
@@ -321,10 +332,10 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     assert.equal(badCol.isError, true);
 
     const deletedCol = parseToolPayload(
-      await client.callTool({ name: 'delete_column', arguments: { id: 4 } })
+      await client.callTool({ name: 'delete_column', arguments: { id: expectedNextColId } })
     );
     assert.equal(deletedCol.deleted, true);
-    assert.equal(deletedCol.remaining, 3);
+    assert.equal(deletedCol.remaining, initialColumns.length);
 
     // 6. Gallery CRUD + negative avatar check
     const createdGal = parseToolPayload(
@@ -340,10 +351,10 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(createdGal.action, 'created');
-    assert.equal(createdGal.item.id, 101);
+    assert.equal(createdGal.item.id, expectedNextGalId);
 
     const listedGal = parseToolPayload(await client.callTool({ name: 'list_gallery', arguments: {} }));
-    assert.equal(listedGal.total, 6);
+    assert.equal(listedGal.total, initialGallery.length + 1);
     assert.ok(listedGal.avatarOptions.wings.includes('sky'));
 
     const badGal = await client.callTool({
@@ -359,7 +370,7 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     assert.equal(badGal.isError, true);
 
     const deletedGal = parseToolPayload(
-      await client.callTool({ name: 'delete_gallery_item', arguments: { id: 101 } })
+      await client.callTool({ name: 'delete_gallery_item', arguments: { id: expectedNextGalId } })
     );
     assert.equal(deletedGal.deleted, true);
 
@@ -390,19 +401,25 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(updatedCard.action, 'updated');
-    assert.equal(updatedCard.total, 7);
+    assert.equal(updatedCard.total, initialTarot.length + 1);
 
     const listCards = parseToolPayload(await client.callTool({ name: 'list_tarot_cards', arguments: {} }));
-    assert.equal(listCards.total, 7);
+    assert.equal(listCards.total, initialTarot.length + 1);
 
-    // Delete 4 cards (7 -> 3), then the 4th deletion attempt (at 3 cards) must fail
-    for (const name of ['the moon', 'The Fool', 'The Magician', 'The Empress']) {
+    // Delete cards down to 3, then the next deletion attempt (at 3 cards) must fail
+    const orderedNames = [
+      'the moon',
+      ...listCards.items.map((c) => c.nameEn).filter((n) => n.toLowerCase() !== 'the moon')
+    ];
+    const toDelete = orderedNames.slice(0, listCards.total - 3);
+    for (const name of toDelete) {
       const del = await client.callTool({ name: 'delete_tarot_card', arguments: { nameEn: name } });
       assert.notEqual(del.isError, true);
     }
+    const remainingCard = orderedNames[listCards.total - 3];
     const minCardBlock = await client.callTool({
       name: 'delete_tarot_card',
-      arguments: { nameEn: 'The Chariot' }
+      arguments: { nameEn: remainingCard }
     });
     assert.equal(minCardBlock.isError, true);
 
@@ -419,10 +436,10 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       })
     );
     assert.equal(createdInsta.action, 'created');
-    assert.equal(createdInsta.index, 6);
+    assert.equal(createdInsta.index, initialInstagram.length);
 
     const listedInsta = parseToolPayload(await client.callTool({ name: 'list_instagram_items', arguments: {} }));
-    assert.equal(listedInsta.total, 7);
+    assert.equal(listedInsta.total, initialInstagram.length + 1);
 
     const badInsta = await client.callTool({
       name: 'upsert_instagram_item',
@@ -435,7 +452,7 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     assert.equal(badInsta.isError, true);
 
     const deletedInsta = parseToolPayload(
-      await client.callTool({ name: 'delete_instagram_item', arguments: { index: 6 } })
+      await client.callTool({ name: 'delete_instagram_item', arguments: { index: createdInsta.index } })
     );
     assert.equal(deletedInsta.deleted, true);
 
