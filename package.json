@@ -6,10 +6,16 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "preview": "node scripts/serve.mjs dist 4173",
-    "test": "npm run build && playwright test",
+    "mcp": "node mcp/server.mjs",
+    "test:mcp": "node --test tests/mcp.test.mjs",
+    "test": "npm run test:mcp && npm run build && playwright test",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
   }
 }
