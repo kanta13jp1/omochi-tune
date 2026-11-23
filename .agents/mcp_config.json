@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "omochi-tune": {
+      "command": "node",
+      "args": ["mcp/server.mjs"]
+    }
+  }
+}
