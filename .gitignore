@@ -3,6 +3,8 @@ Thumbs.db
 node_modules/
 dist/
 mcp/dist/
+.cloudflare/
+workers/*/.cloudflare/
 .gemini/
 .claude/
 verify_logic.js

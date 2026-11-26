@@ -55,8 +55,11 @@ npm run mcp:http
   - `publish_changes` は安全のため `confirm: true` を明示するまで **dry-run（事前プレビュー）** として動作し、`content/*.json` と `images/uploads/*` のみを対象に PR 作成または `main` への反映を行います。
 - **MCP リソース**: `ui://omochi-tune/dashboard.html`, `omochi://site/overview`, `omochi://site/kpi`, `omochi://content/{settings,columns,gallery,tarot,instagram}`
 
-### MCP ビルド・単体・結合テスト
+### MCP / KPI ビルド・単体・結合テスト
 
 ```powershell
 npm run test:mcp
+npm run test:worker
 ```
+
+KPI 収集バックエンドは [workers/kpi/](workers/kpi/src/index.mjs) に実装済みで、Cloudflare Workers（`omochi-tune-kpi`）＋ D1（`omochi-tune-kpi-db`）へ `workers/kpi/build.mjs` ＋ `cf deploy --prebuilt` で配備できます。
