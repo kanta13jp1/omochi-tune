@@ -38,16 +38,19 @@ OMOCHI TUNE はサーバーレス静的ランディングページであり、�
   }
   ```
 * **Fail-Open 保証**: 送信先未設定・通信失敗・`navigator.sendBeacon` 例外・`fetch` 失敗のいずれの場合も例外を握りつぶし（`stats.failed` にのみ記録）、タロット表示や Instagram DM 遷移を一切阻害しません。
+* **CORS シンプルリクエスト & ローカルホスト保護**: `navigator.sendBeacon` はプリフライト不要な `text/plain;charset=UTF-8` で JSON 文字列を送信し（`fetch` フォールバックは `application/json` + `keepalive: true` + `credentials: 'omit'`）、`localhost` / `127.0.0.1` / `[::1]` での閲覧・Playwright E2E 実行時は `window.__OMOCHI_KPI_CONFIG__` 明示指定を除き送信を抑制して本番集計の汚染を防ぎます。
 * **CSP 準拠**: `js/kpi.js` は同一オリジン配信（`script-src 'self'`）。外部集計エンドポイントを設定するまで `connect-src 'self'` を維持します。
 
 ---
 
-## 3. 集計先の接続手順（運用開始時）
+## 3. 集計先の接続手順・コントラクト仕様（運用開始時）
 
-1. Cloudflare Workers / 自前集計エンドポイント（HTTPS `POST application/json` で上記ペイロードを受理）を用意する。
+1. Cloudflare Workers + D1 または Supabase Edge Functions 等の集計エンドポイントを用意する：
+   * `POST <endpoint>`（または `<endpoint>/event`）: 上記 JSON ペイロードを受理し `202` 返却（未知キー・不正値・不許可 Origin 拒否）。
+   * `GET <endpoint>/summary?days=30`（任意で `Authorization: Bearer <token>` 保護、`OMOCHI_TUNE_KPI_READ_TOKEN` 連携）: 非 PII の日次・期間合計（`totals`, `rates`, `allTimeTotal`, `firstEventAt`, `lastEventAt`, `daily`）を JSON 返却。
 2. [index.html](../index.html) の `<meta name="omochi-kpi-endpoint" content="">` に HTTPS URL（または同一オリジンパス）を設定する。
 3. 外部オリジンを指定する場合は、同時に [index.html](../index.html) の CSP `connect-src 'self'` へ該当オリジン（例: `https://kpi.example.com`）のみを追記する。
-4. 接続前の初期値は **未計測 (`not-measured`)** として扱い、上記設定後に実イベント到達を確認した時点で計測開始日を記録する。
+4. **Antigravity MCP 確認**: `get_kpi_summary`（リソース `omochi://site/kpi`）および `open_dashboard` の概要タブ「主導線 KPI」カードから集計値または未計測（`not-measured`）状態を参照可能（`OMOCHI_TUNE_KPI_ENDPOINT` で上書きも可）。接続前の初期値は **未計測 (`not-measured`)** として扱い、上記設定後に実イベント到達を確認した時点で計測開始日を記録する。
 
 ---
 

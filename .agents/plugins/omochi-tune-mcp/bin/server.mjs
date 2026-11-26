@@ -7366,7 +7366,7 @@ var require_content_type = __commonJS({
 
 // mcp/server.mjs
 import { existsSync as existsSync2, readFileSync as readFileSync2 } from "node:fs";
-import { dirname as dirname3, join as join4, resolve as resolve4 } from "node:path";
+import { dirname as dirname3, join as join5, resolve as resolve4 } from "node:path";
 import { fileURLToPath as fileURLToPath2 } from "node:url";
 
 // node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
@@ -28728,8 +28728,8 @@ var StdioServerTransport = class {
 
 // mcp/core.mjs
 import { existsSync, readFileSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { dirname, extname as extname2, join, resolve } from "node:path";
+import { readFile as readFile2 } from "node:fs/promises";
+import { dirname, extname as extname2, join as join2, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // node_modules/@modelcontextprotocol/ext-apps/dist/src/server/index.js
@@ -36923,6 +36923,141 @@ function getEventSchedule({ count = 6, fromDate, now = /* @__PURE__ */ new Date(
   };
 }
 
+// mcp/kpi.mjs
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+var META_RE_NAME_FIRST = /<meta\s+[^>]*name=["']omochi-kpi-endpoint["'][^>]*content=["']([^"']*)["'][^>]*>/i;
+var META_RE_CONTENT_FIRST = /<meta\s+[^>]*content=["']([^"']*)["'][^>]*name=["']omochi-kpi-endpoint["'][^>]*>/i;
+function normalizeEndpointUrl(raw) {
+  const value = String(raw ?? "").trim();
+  if (!value || value.toLowerCase() === "disabled") {
+    return null;
+  }
+  if (/[\x00-\x1f\x7f\s]/.test(value)) {
+    return null;
+  }
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+      return null;
+    }
+    return parsed.toString().replace(/\/+$/, "");
+  } catch {
+    return null;
+  }
+}
+async function resolveKpiEndpoint(repoRoot2, env = process.env) {
+  if (Object.prototype.hasOwnProperty.call(env, "OMOCHI_TUNE_KPI_ENDPOINT") && env.OMOCHI_TUNE_KPI_ENDPOINT !== void 0) {
+    return normalizeEndpointUrl(env.OMOCHI_TUNE_KPI_ENDPOINT);
+  }
+  if (!repoRoot2) {
+    return null;
+  }
+  try {
+    const html = await readFile(join(repoRoot2, "index.html"), "utf8");
+    const match = html.match(META_RE_NAME_FIRST) || html.match(META_RE_CONTENT_FIRST);
+    return match ? normalizeEndpointUrl(match[1]) : null;
+  } catch {
+    return null;
+  }
+}
+function round4(n) {
+  return Math.round(n * 1e4) / 1e4;
+}
+function computeRates(totals) {
+  if (!totals || typeof totals !== "object") {
+    return { tarotExperienceRate: null, bookingDmCtr: null, shareRate: null };
+  }
+  const lpView = Number(totals.lp_view || 0);
+  const tarotDraw = Number(totals.tarot_draw || 0);
+  const bookingClick = Number(totals.booking_dm_click || 0);
+  const shareClick = Number(totals.tarot_share_click || 0);
+  return {
+    tarotExperienceRate: lpView > 0 ? round4(tarotDraw / lpView) : null,
+    bookingDmCtr: lpView > 0 ? round4(bookingClick / lpView) : null,
+    shareRate: tarotDraw > 0 ? round4(shareClick / tarotDraw) : null
+  };
+}
+async function fetchKpiSummary({
+  repoRoot: repoRoot2,
+  endpoint,
+  readToken,
+  days = 30,
+  fetchImpl = fetch,
+  env = process.env
+} = {}) {
+  const windowDays = Math.max(1, Math.min(365, Math.trunc(Number(days) || 30)));
+  const resolvedEndpoint = endpoint !== void 0 ? normalizeEndpointUrl(endpoint) : await resolveKpiEndpoint(repoRoot2, env);
+  if (!resolvedEndpoint) {
+    return {
+      configured: false,
+      status: "not-measured",
+      endpoint: null,
+      windowDays,
+      allTimeTotal: 0,
+      firstEventAt: null,
+      lastEventAt: null,
+      totals: null,
+      rates: null,
+      breakdowns: null,
+      daily: [],
+      note: "index.html \u306E omochi-kpi-endpoint\uFF08\u307E\u305F\u306F\u74B0\u5883\u5909\u6570 OMOCHI_TUNE_KPI_ENDPOINT\uFF09\u304C\u672A\u8A2D\u5B9A\u306E\u305F\u3081\u672A\u8A08\u6E2C\u3067\u3059\u3002"
+    };
+  }
+  const summaryUrl = `${resolvedEndpoint}/summary?days=${windowDays}`;
+  const token = String(readToken ?? env.OMOCHI_TUNE_KPI_READ_TOKEN ?? "").trim();
+  const headers = { Accept: "application/json" };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  try {
+    const res = await fetchImpl(summaryUrl, {
+      method: "GET",
+      headers,
+      signal: AbortSignal.timeout(8e3)
+    });
+    if (!res.ok) {
+      throw new Error(`KPI summary HTTP ${res.status}`);
+    }
+    const payload = await res.json();
+    if (!payload || typeof payload !== "object") {
+      throw new Error("Invalid KPI summary response payload");
+    }
+    const allTimeTotal = Number(payload.allTimeTotal ?? 0);
+    const status = payload.status || (allTimeTotal > 0 ? "measuring" : "ready_no_events");
+    const totals = payload.totals ?? null;
+    const rates = payload.rates ?? (totals ? computeRates(totals) : null);
+    return {
+      configured: true,
+      endpoint: resolvedEndpoint,
+      windowDays: Number(payload.windowDays ?? windowDays),
+      allTimeTotal,
+      firstEventAt: payload.firstEventAt ?? null,
+      lastEventAt: payload.lastEventAt ?? null,
+      totals,
+      rates,
+      breakdowns: payload.breakdowns ?? null,
+      daily: Array.isArray(payload.daily) ? payload.daily : [],
+      status
+    };
+  } catch (err) {
+    return {
+      configured: true,
+      status: "error",
+      endpoint: resolvedEndpoint,
+      windowDays,
+      error: err instanceof Error ? err.message : String(err),
+      allTimeTotal: 0,
+      firstEventAt: null,
+      lastEventAt: null,
+      totals: null,
+      rates: null,
+      breakdowns: null,
+      daily: []
+    };
+  }
+}
+
 // mcp/schemas.mjs
 import { extname } from "node:path";
 var MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
@@ -37317,7 +37452,7 @@ function resolveDefaultDashboardHtml(explicitPath) {
   const candidates = [
     explicitPath,
     process.env.OMOCHI_TUNE_MCP_HTML?.trim(),
-    join(scriptDir, "dashboard.html"),
+    join2(scriptDir, "dashboard.html"),
     resolve(scriptDir, "dist", "dashboard.html"),
     resolve(scriptDir, "..", ".agents", "plugins", "omochi-tune-mcp", "bin", "dashboard.html")
   ].filter(Boolean);
@@ -37371,21 +37506,26 @@ async function decodeUploadedImageInput({ filename, base64Data, sourcePath }) {
   if (!extname2(filename)) {
     throw new Error("filename \u306B\u62E1\u5F35\u5B50\u3092\u542B\u3081\u3066\u304F\u3060\u3055\u3044");
   }
-  return readFile(String(sourcePath));
+  return readFile2(String(sourcePath));
 }
 function createOmochiMcpServer({
   store: store2,
   ops: ops2,
   getDashboardHtml: getDashboardHtml2 = () => resolveDefaultDashboardHtml(),
+  fetchKpiSummaryFn = fetchKpiSummary,
   now = () => /* @__PURE__ */ new Date()
 }) {
+  const repoRoot2 = store2.getPaths?.().repoRoot || process.cwd();
+  async function getKpi(days = 30) {
+    return fetchKpiSummaryFn({ repoRoot: repoRoot2, days });
+  }
   const server = new McpServer(
     {
       name: "omochi-tune-mcp",
-      version: "1.1.0"
+      version: "1.2.0"
     },
     {
-      instructions: "OMOCHI TUNE\uFF08\u304A\u3082\u3061\u3061\u3083\u3093 \u30BF\u30ED\u30C3\u30C8\u5360\u3044\uFF09\u516C\u5F0F\u30B5\u30A4\u30C8\u306E\u30B3\u30F3\u30C6\u30F3\u30C4\uFF08\u8A2D\u5B9A\u30FB\u30B3\u30E9\u30E0\u30FB\u56F3\u9451\u30FB\u30BF\u30ED\u30C3\u30C8\u30FBInstagram\uFF09\u3001\u6BCE\u6708\u7B2C\u4E00\u6728\u66DC\u65E5\u306E\u958B\u50AC\u30B9\u30B1\u30B8\u30E5\u30FC\u30EB\u3001MCP App \u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9 (open_dashboard)\u3001\u30ED\u30FC\u30AB\u30EB\u30D3\u30EB\u30C9/Playwright\u691C\u8A3C\u3001\u304A\u3088\u3073\u627F\u8A8D\u4ED8\u304DGitHub\u516C\u958B\u3092\u64CD\u4F5C\u3067\u304D\u307E\u3059\u3002publish_changes \u306F confirm: true \u3092\u660E\u793A\u3057\u306A\u3044\u9650\u308A dry-run \u30D7\u30EC\u30D3\u30E5\u30FC\u306E\u307F\u8FD4\u3057\u307E\u3059\u3002"
+      instructions: "OMOCHI TUNE\uFF08\u304A\u3082\u3061\u3061\u3083\u3093 \u30BF\u30ED\u30C3\u30C8\u5360\u3044\uFF09\u516C\u5F0F\u30B5\u30A4\u30C8\u306E\u30B3\u30F3\u30C6\u30F3\u30C4\uFF08\u8A2D\u5B9A\u30FB\u30B3\u30E9\u30E0\u30FB\u56F3\u9451\u30FB\u30BF\u30ED\u30C3\u30C8\u30FBInstagram\uFF09\u3001\u6BCE\u6708\u7B2C\u4E00\u6728\u66DC\u65E5\u306E\u958B\u50AC\u30B9\u30B1\u30B8\u30E5\u30FC\u30EB\u3001\u4E3B\u5C0E\u7DDAKPI\u30B5\u30DE\u30EA\u30FC\uFF08get_kpi_summary\uFF09\u3001MCP App \u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9 (open_dashboard)\u3001\u30ED\u30FC\u30AB\u30EB\u30D3\u30EB\u30C9/Playwright\u691C\u8A3C\u3001\u304A\u3088\u3073\u627F\u8A8D\u4ED8\u304DGitHub\u516C\u958B\u3092\u64CD\u4F5C\u3067\u304D\u307E\u3059\u3002publish_changes \u306F confirm: true \u3092\u660E\u793A\u3057\u306A\u3044\u9650\u308A dry-run \u30D7\u30EC\u30D3\u30E5\u30FC\u306E\u307F\u8FD4\u3057\u307E\u3059\u3002"
     }
   );
   async function buildOverviewPayload() {
@@ -37420,14 +37560,15 @@ function createOmochiMcpServer({
     };
   }
   async function buildDashboardSnapshot(tab = "overview") {
-    const [overview, columns, gallery, tarot, instagram] = await Promise.all([
+    const [overview, columns, gallery, tarot, instagram, kpi] = await Promise.all([
       buildOverviewPayload(),
       store2.readJson("columns"),
       store2.readJson("gallery"),
       store2.readJson("tarot"),
-      store2.readJson("instagram")
+      store2.readJson("instagram"),
+      getKpi(30)
     ]);
-    return { tab, overview, columns, gallery, tarot, instagram };
+    return { tab, overview, columns, gallery, tarot, instagram, kpi };
   }
   G(
     server,
@@ -37463,6 +37604,24 @@ function createOmochiMcpServer({
           uri: uri.href,
           mimeType: "application/json",
           text: JSON.stringify(await buildOverviewPayload(), null, 2)
+        }
+      ]
+    })
+  );
+  server.registerResource(
+    "site-kpi",
+    "omochi://site/kpi",
+    {
+      title: "OMOCHI TUNE KPI Summary",
+      description: "\u4E3B\u5C0E\u7DDAKPI\uFF08\u8A2A\u554F\u2192\u30BF\u30ED\u30C3\u30C8\u2192\u4E88\u7D04DM\u30AF\u30EA\u30C3\u30AF\uFF09\u306E\u76F4\u8FD130\u65E5\u96C6\u8A08\u307E\u305F\u306F\u672A\u8A08\u6E2C\u30B9\u30C6\u30FC\u30BF\u30B9",
+      mimeType: "application/json"
+    },
+    async (uri) => ({
+      contents: [
+        {
+          uri: uri.href,
+          mimeType: "application/json",
+          text: JSON.stringify(await getKpi(30), null, 2)
         }
       ]
     })
@@ -38205,12 +38364,32 @@ ${SITE_URL}`;
           `OMOCHI TUNE \u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9 (${tab})`,
           `\u6B21\u56DE\u958B\u50AC: ${ov.schedule.nextEvent.displayDate} ${ov.schedule.nextEvent.startTime}\u301C${ov.schedule.nextEvent.endTime} (${ov.schedule.statusLabel})`,
           `\u30B3\u30F3\u30C6\u30F3\u30C4\u4EF6\u6570: \u30B3\u30E9\u30E0 ${ov.counts.columns} / \u56F3\u9451 ${ov.counts.gallery} / \u30BF\u30ED\u30C3\u30C8 ${ov.counts.tarot} / Instagram ${ov.counts.instagram}`,
+          `KPI: ${snapshot.kpi?.status || "not-measured"} (\u7D2F\u8A08 ${snapshot.kpi?.allTimeTotal ?? 0} \u4EF6)`,
           `\u30D6\u30E9\u30F3\u30C1: ${ov.git.currentBranch} (\u516C\u958B\u5F85\u3061 ${ov.git.allowedContentPaths.length} \u4EF6)`
         ].join("\n");
         return {
           content: [{ type: "text", text: summary }],
           structuredContent: snapshot
         };
+      } catch (err) {
+        return fail(err);
+      }
+    }
+  );
+  server.registerTool(
+    "get_kpi_summary",
+    {
+      title: "\u4E3B\u5C0E\u7DDA KPI \u96C6\u8A08\u30B5\u30DE\u30EA\u30FC\u3092\u53D6\u5F97",
+      description: "\u8A2D\u5B9A\u6E08\u307F\u306E KPI \u30A8\u30F3\u30C9\u30DD\u30A4\u30F3\u30C8\uFF08index.html \u307E\u305F\u306F OMOCHI_TUNE_KPI_ENDPOINT\uFF09\u304B\u3089\u76F4\u8FD1 N \u65E5\u306E\u4E3B\u5C0E\u7DDA\u30D5\u30A1\u30CD\u30EB\u96C6\u8A08\u3092\u53D6\u5F97\u3057\u307E\u3059\u3002\u672A\u8A2D\u5B9A\u6642\u306F\u672A\u8A08\u6E2C\uFF08not-measured\uFF09\u3092\u8FD4\u3057\u307E\u3059\u3002",
+      inputSchema: {
+        days: external_exports.number().int().min(1).max(365).optional().describe("\u96C6\u8A08\u5BFE\u8C61\u306E\u65E5\u6570\uFF081\u301C365\u3001\u65E2\u5B9A: 30\uFF09")
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+      _meta: { ui: { visibility: [...APP_AND_MODEL] } }
+    },
+    async ({ days = 30 } = {}) => {
+      try {
+        return ok(await getKpi(days));
       } catch (err) {
         return fail(err);
       }
@@ -40536,7 +40715,7 @@ async function startHttpServer({
 import { execFile } from "node:child_process";
 import { access, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join as join2, resolve as resolve2 } from "node:path";
+import { join as join3, resolve as resolve2 } from "node:path";
 import { promisify } from "node:util";
 var execFileAsync = promisify(execFile);
 var CONTENT_EXACT_PATHS = /* @__PURE__ */ new Set([
@@ -40633,16 +40812,16 @@ function createRepoOps(repoRootInput) {
   }
   return {
     async runBuild() {
-      const buildScript = join2(repoRoot2, "scripts", "build.mjs");
+      const buildScript = join3(repoRoot2, "scripts", "build.mjs");
       const { stdout, stderr } = await runSubprocess(process.execPath, [buildScript], {
         cwd: repoRoot2,
         timeoutMs: 3e4
       });
-      const distDir = join2(repoRoot2, "dist");
+      const distDir = join3(repoRoot2, "dist");
       const requiredOutputs = ["index.html", "feed.xml", "sitemap.xml", "robots.txt"];
       const missingOutputs = [];
       for (const rel of requiredOutputs) {
-        if (!await exists(join2(distDir, rel))) {
+        if (!await exists(join3(distDir, rel))) {
           missingOutputs.push(rel);
         }
       }
@@ -40650,8 +40829,8 @@ function createRepoOps(repoRootInput) {
         throw new Error(`\u30D3\u30EB\u30C9\u6210\u679C\u7269\u304C\u4E0D\u8DB3\u3057\u3066\u3044\u307E\u3059: ${missingOutputs.join(", ")}`);
       }
       const leakedDirs = [];
-      for (const forbidden of ["mcp", ".agents"]) {
-        if (await exists(join2(distDir, forbidden))) {
+      for (const forbidden of ["mcp", ".agents", "supabase", "workers"]) {
+        if (await exists(join3(distDir, forbidden))) {
           leakedDirs.push(forbidden);
         }
       }
@@ -40662,11 +40841,11 @@ function createRepoOps(repoRootInput) {
         ok: true,
         output: [stdout.trim(), stderr.trim()].filter(Boolean).join("\n"),
         verifiedFiles: requiredOutputs.map((f) => `dist/${f}`),
-        excludedVerified: ["dist/mcp", "dist/.agents"]
+        excludedVerified: ["dist/mcp", "dist/.agents", "dist/supabase", "dist/workers"]
       };
     },
     async runE2E() {
-      const playwrightCli = join2(repoRoot2, "node_modules", "@playwright", "test", "cli.js");
+      const playwrightCli = join3(repoRoot2, "node_modules", "@playwright", "test", "cli.js");
       if (!await exists(playwrightCli)) {
         throw new Error("Playwright \u304C\u672A\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u3067\u3059\uFF08npm install \u3092\u5B9F\u884C\u3057\u3066\u304F\u3060\u3055\u3044\uFF09");
       }
@@ -40805,7 +40984,7 @@ function createRepoOps(repoRootInput) {
           `- \u4E8B\u524D\u30B9\u30AD\u30FC\u30DE\u691C\u8A3C\u30FB\u30D3\u30EB\u30C9\u78BA\u8A8D: ${runValidation !== false ? "\u5B9F\u65BD\u6E08\u307F" : "\u30B9\u30AD\u30C3\u30D7"}`
         ].join("\n")
       );
-      const tmpBodyPath = join2(tmpdir(), `omochi-pr-body-${process.pid}-${Date.now()}.md`);
+      const tmpBodyPath = join3(tmpdir(), `omochi-pr-body-${process.pid}-${Date.now()}.md`);
       try {
         await writeFile(tmpBodyPath, effectiveBody, "utf8");
         const prRes = await runSubprocess(
@@ -40844,8 +41023,8 @@ function createRepoOps(repoRootInput) {
 }
 
 // mcp/store.mjs
-import { mkdir, readFile as readFile2, rename, rm as rm2, writeFile as writeFile2 } from "node:fs/promises";
-import { dirname as dirname2, join as join3, resolve as resolve3, sep } from "node:path";
+import { mkdir, readFile as readFile3, rename, rm as rm2, writeFile as writeFile2 } from "node:fs/promises";
+import { dirname as dirname2, join as join4, resolve as resolve3, sep } from "node:path";
 var CONTENT_FILES = {
   settings: "content/settings.json",
   columns: "content/columns.json",
@@ -40894,7 +41073,7 @@ function createFileRepositoryStore(repoRootInput) {
     },
     async readJson(key) {
       const target = resolveContentPath(key);
-      const raw = await readFile2(target, "utf8");
+      const raw = await readFile3(target, "utf8");
       return JSON.parse(raw.replace(/^\uFEFF/, ""));
     },
     async readAllContent() {
@@ -40988,7 +41167,7 @@ function parseArgs(argv = process.argv.slice(2)) {
 function findRepoRootFrom(startDir) {
   let current = resolve4(startDir);
   while (true) {
-    if (existsSync2(join4(current, "content", "settings.json"))) {
+    if (existsSync2(join5(current, "content", "settings.json"))) {
       return current;
     }
     const parent = dirname3(current);
@@ -41013,9 +41192,9 @@ function createHtmlLoader(explicitHtmlPath, repoRoot2) {
     const candidates = [
       explicitHtmlPath,
       process.env.OMOCHI_TUNE_MCP_HTML?.trim(),
-      join4(dirname3(fileURLToPath2(import.meta.url)), "dashboard.html"),
-      join4(repoRoot2, "mcp", "dist", "dashboard.html"),
-      join4(repoRoot2, ".agents", "plugins", "omochi-tune-mcp", "bin", "dashboard.html")
+      join5(dirname3(fileURLToPath2(import.meta.url)), "dashboard.html"),
+      join5(repoRoot2, "mcp", "dist", "dashboard.html"),
+      join5(repoRoot2, ".agents", "plugins", "omochi-tune-mcp", "bin", "dashboard.html")
     ].filter(Boolean);
     for (const candidate of candidates) {
       if (existsSync2(candidate)) {

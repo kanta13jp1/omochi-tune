@@ -10,6 +10,7 @@ import {
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { getEventSchedule } from './schedule.mjs';
+import { fetchKpiSummary } from './kpi.mjs';
 import {
   AVATAR_OPTIONS,
   MAX_UPLOAD_BYTES,
@@ -107,18 +108,25 @@ export function createOmochiMcpServer({
   store,
   ops,
   getDashboardHtml = () => resolveDefaultDashboardHtml(),
+  fetchKpiSummaryFn = fetchKpiSummary,
   now = () => new Date()
 }) {
+  const repoRoot = store.getPaths?.().repoRoot || process.cwd();
+
+  async function getKpi(days = 30) {
+    return fetchKpiSummaryFn({ repoRoot, days });
+  }
+
   const server = new McpServer(
     {
       name: 'omochi-tune-mcp',
-      version: '1.1.0'
+      version: '1.2.0'
     },
     {
       instructions:
         'OMOCHI TUNE（おもちちゃん タロット占い）公式サイトのコンテンツ（設定・コラム・図鑑・タロット・Instagram）、' +
-        '毎月第一木曜日の開催スケジュール、MCP App ダッシュボード (open_dashboard)、ローカルビルド/Playwright検証、' +
-        'および承認付きGitHub公開を操作できます。publish_changes は confirm: true を明示しない限り dry-run プレビューのみ返します。'
+        '毎月第一木曜日の開催スケジュール、主導線KPIサマリー（get_kpi_summary）、MCP App ダッシュボード (open_dashboard)、' +
+        'ローカルビルド/Playwright検証、および承認付きGitHub公開を操作できます。publish_changes は confirm: true を明示しない限り dry-run プレビューのみ返します。'
     }
   );
 
@@ -156,14 +164,15 @@ export function createOmochiMcpServer({
   }
 
   async function buildDashboardSnapshot(tab = 'overview') {
-    const [overview, columns, gallery, tarot, instagram] = await Promise.all([
+    const [overview, columns, gallery, tarot, instagram, kpi] = await Promise.all([
       buildOverviewPayload(),
       store.readJson('columns'),
       store.readJson('gallery'),
       store.readJson('tarot'),
-      store.readJson('instagram')
+      store.readJson('instagram'),
+      getKpi(30)
     ]);
-    return { tab, overview, columns, gallery, tarot, instagram };
+    return { tab, overview, columns, gallery, tarot, instagram, kpi };
   }
 
   // ---------------- MCP APP UI RESOURCE ----------------
@@ -203,6 +212,25 @@ export function createOmochiMcpServer({
           uri: uri.href,
           mimeType: 'application/json',
           text: JSON.stringify(await buildOverviewPayload(), null, 2)
+        }
+      ]
+    })
+  );
+
+  server.registerResource(
+    'site-kpi',
+    'omochi://site/kpi',
+    {
+      title: 'OMOCHI TUNE KPI Summary',
+      description: '主導線KPI（訪問→タロット→予約DMクリック）の直近30日集計または未計測ステータス',
+      mimeType: 'application/json'
+    },
+    async (uri) => ({
+      contents: [
+        {
+          uri: uri.href,
+          mimeType: 'application/json',
+          text: JSON.stringify(await getKpi(30), null, 2)
         }
       ]
     })
@@ -1030,12 +1058,35 @@ export function createOmochiMcpServer({
           `OMOCHI TUNE ダッシュボード (${tab})`,
           `次回開催: ${ov.schedule.nextEvent.displayDate} ${ov.schedule.nextEvent.startTime}〜${ov.schedule.nextEvent.endTime} (${ov.schedule.statusLabel})`,
           `コンテンツ件数: コラム ${ov.counts.columns} / 図鑑 ${ov.counts.gallery} / タロット ${ov.counts.tarot} / Instagram ${ov.counts.instagram}`,
+          `KPI: ${snapshot.kpi?.status || 'not-measured'} (累計 ${snapshot.kpi?.allTimeTotal ?? 0} 件)`,
           `ブランチ: ${ov.git.currentBranch} (公開待ち ${ov.git.allowedContentPaths.length} 件)`
         ].join('\n');
         return {
           content: [{ type: 'text', text: summary }],
           structuredContent: snapshot
         };
+      } catch (err) {
+        return fail(err);
+      }
+    }
+  );
+
+  // 24. get_kpi_summary
+  server.registerTool(
+    'get_kpi_summary',
+    {
+      title: '主導線 KPI 集計サマリーを取得',
+      description:
+        '設定済みの KPI エンドポイント（index.html または OMOCHI_TUNE_KPI_ENDPOINT）から直近 N 日の主導線ファネル集計を取得します。未設定時は未計測（not-measured）を返します。',
+      inputSchema: {
+        days: z.number().int().min(1).max(365).optional().describe('集計対象の日数（1〜365、既定: 30）')
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+      _meta: { ui: { visibility: [...APP_AND_MODEL] } }
+    },
+    async ({ days = 30 } = {}) => {
+      try {
+        return ok(await getKpi(days));
       } catch (err) {
         return fail(err);
       }
