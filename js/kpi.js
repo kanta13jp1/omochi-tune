@@ -25,11 +25,23 @@
   var lastPlacementAt = {};
   var lastChannelAt = {};
 
+  function isLocalHost() {
+    try {
+      var host = (window.location && window.location.hostname) || '';
+      return host === 'localhost' || host === '127.0.0.1' || host === '[::1]' || host === '';
+    } catch (_) {
+      return false;
+    }
+  }
+
   function getEndpoint() {
     try {
       var cfg = window.__OMOCHI_KPI_CONFIG__;
       if (cfg && typeof cfg.endpoint === 'string') {
         return cfg.endpoint.trim();
+      }
+      if (isLocalHost()) {
+        return '';
       }
       var meta = document.querySelector('meta[name="omochi-kpi-endpoint"]');
       if (meta && typeof meta.content === 'string') {
@@ -93,7 +105,7 @@
     var beaconSent = false;
     try {
       if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
-        var blob = new Blob([jsonBody], { type: 'application/json' });
+        var blob = new Blob([jsonBody], { type: 'text/plain;charset=UTF-8' });
         beaconSent = Boolean(navigator.sendBeacon(endpoint, blob));
       }
     } catch (_) {

@@ -353,3 +353,19 @@ pre.code-box {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+button.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.kpi-rates {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.kpi-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}

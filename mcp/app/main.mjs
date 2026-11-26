@@ -8,6 +8,7 @@ const state = {
   tab: 'overview',
   busy: false,
   snapshot: null,
+  kpiDays: 30,
   drawnTarot: null,
   buildReport: null,
   dryRunReport: null,
@@ -16,7 +17,7 @@ const state = {
   canOpenLinks: false
 };
 
-const app = new App({ name: 'OMOCHI TUNE', version: '1.1.0' }, {});
+const app = new App({ name: 'OMOCHI TUNE', version: '1.2.0' }, {});
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -148,6 +149,9 @@ function renderOverview(container) {
   countsCard.append(grid);
   container.append(countsCard);
 
+  // KPI Funnel Card
+  renderKpiCard(container, snap.kpi);
+
   // Quick Tarot Card
   const tarotCard = el('section', 'card');
   tarotCard.append(el('h2', 'card-title', 'おもちタロット 1枚引き'));
@@ -184,6 +188,99 @@ function renderOverview(container) {
     tarotCard.append(box);
   }
   container.append(tarotCard);
+}
+
+function fmtPct(rate) {
+  if (rate === null || rate === undefined || Number.isNaN(Number(rate))) return '—';
+  return `${(Number(rate) * 100).toFixed(1)}%`;
+}
+
+function getKpiBadge(status) {
+  if (status === 'measuring') return ['badge badge-ok', '実測中'];
+  if (status === 'ready_no_events') return ['badge badge-accent', '計測待機 (0件)'];
+  if (status === 'error') return ['badge badge-rose', '取得エラー'];
+  return ['badge', '未計測'];
+}
+
+function renderKpiCard(container, kpiInput) {
+  const kpi = kpiInput || { configured: false, status: 'not-measured', windowDays: state.kpiDays };
+  const kpiCard = el('section', 'card');
+  const titleRow = el('h2', 'card-title');
+  titleRow.append(el('span', '', `主導線 KPI（直近 ${kpi.windowDays || state.kpiDays} 日）`));
+  const [badgeCls, badgeText] = getKpiBadge(kpi.status);
+  titleRow.append(el('span', badgeCls, badgeText));
+  kpiCard.append(titleRow);
+
+  const controls = el('div', 'row');
+  for (const days of [7, 30, 90]) {
+    const btn = el('button', `btn-sm tab-btn${state.kpiDays === days ? ' active' : ''}`, `${days}日`);
+    btn.type = 'button';
+    btn.disabled = state.busy;
+    btn.addEventListener('click', async () => {
+      const res = await callTool('get_kpi_summary', { days });
+      if (res) {
+        state.kpiDays = days;
+        state.snapshot.kpi = res;
+        render();
+      }
+    });
+    controls.append(btn);
+  }
+  const reloadBtn = el('button', 'btn-sm', 'KPI更新');
+  reloadBtn.type = 'button';
+  reloadBtn.disabled = state.busy;
+  reloadBtn.addEventListener('click', async () => {
+    const res = await callTool('get_kpi_summary', { days: state.kpiDays });
+    if (res) {
+      state.snapshot.kpi = res;
+      render();
+    }
+  });
+  controls.append(reloadBtn);
+  kpiCard.append(controls);
+
+  if (kpi.status === 'error') {
+    kpiCard.append(el('div', 'banner banner-error', `KPI 取得エラー: ${kpi.error || '接続できませんでした'}`));
+  } else if (!kpi.configured || kpi.status === 'not-measured') {
+    kpiCard.append(
+      el(
+        'div',
+        'banner',
+        kpi.note || 'KPI 送信先エンドポイントが未設定のため現在は未計測（not-measured）です。'
+      )
+    );
+  } else {
+    const totals = kpi.totals || {};
+    const grid = el('div', 'stats-grid');
+    for (const [label, val] of [
+      ['LP訪問', totals.lp_view ?? 0],
+      ['タロット体験', totals.tarot_draw ?? 0],
+      ['予約DMクリック', totals.booking_dm_click ?? 0],
+      ['シェア', totals.tarot_share_click ?? 0]
+    ]) {
+      const box = el('div', 'stat-box');
+      box.append(el('div', 'stat-value', String(val)));
+      box.append(el('div', 'stat-label', label));
+      grid.append(box);
+    }
+    kpiCard.append(grid);
+
+    const rates = kpi.rates || {};
+    kpiCard.append(
+      el(
+        'div',
+        'kpi-rates',
+        `体験率 ${fmtPct(rates.tarotExperienceRate)} ・ 予約DM CTR ${fmtPct(rates.bookingDmCtr)} ・ シェア率 ${fmtPct(rates.shareRate)}`
+      )
+    );
+    const metaText =
+      Number(kpi.allTimeTotal || 0) > 0
+        ? `累計 ${kpi.allTimeTotal} 件 / 初回 ${kpi.firstEventAt || '—'} / 最終 ${kpi.lastEventAt || '—'}`
+        : '実イベント未到達（最初のアクセス待機中）';
+    kpiCard.append(el('div', 'kpi-meta', metaText));
+  }
+
+  container.append(kpiCard);
 }
 
 function renderSettings(container) {

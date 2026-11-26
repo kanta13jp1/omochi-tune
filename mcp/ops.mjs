@@ -137,7 +137,7 @@ export function createRepoOps(repoRootInput) {
       }
 
       const leakedDirs = [];
-      for (const forbidden of ['mcp', '.agents']) {
+      for (const forbidden of ['mcp', '.agents', 'supabase', 'workers']) {
         if (await exists(join(distDir, forbidden))) {
           leakedDirs.push(forbidden);
         }
@@ -150,7 +150,7 @@ export function createRepoOps(repoRootInput) {
         ok: true,
         output: [stdout.trim(), stderr.trim()].filter(Boolean).join('\n'),
         verifiedFiles: requiredOutputs.map((f) => `dist/${f}`),
-        excludedVerified: ['dist/mcp', 'dist/.agents']
+        excludedVerified: ['dist/mcp', 'dist/.agents', 'dist/supabase', 'dist/workers']
       };
     },
 

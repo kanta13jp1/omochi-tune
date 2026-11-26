@@ -10,8 +10,8 @@ description: >-
 `omochi-tune` MCP サーバーを使ってサイトのコンテンツ参照・編集・公開を行う際は、以下の標準フローを順守してください。
 
 ## 1. 事前確認（Read First）
-1. ユーザーへ視覚サマリーを提示したい場合やサイドパネル操作時は `open_dashboard`（引数 `{}` または `{ tab: "overview" | "settings" | "content" | "publish" }`）を呼び出す。
-2. テキスト処理中心の調査時は `get_site_overview`（または `omochi://site/overview`）で現在の設定・コンテンツ件数・次回開催日・Git 状態を確認し、対象コレクションに応じて `get_settings` / `list_columns` / `list_gallery` / `list_tarot_cards` / `list_instagram_items` を読み取る。
+1. ユーザーへ視覚サマリーを提示したい場合やサイドパネル操作時は `open_dashboard`（引数 `{}` または `{ tab: "overview" | "settings" | "content" | "publish" }`）を呼び出す（概要タブには公開コンテンツ件数・次回日程・主導線 KPI サマリーが表示される）。
+2. テキスト処理中心の調査時は `get_site_overview`（または `omochi://site/overview`）で現在の設定・コンテンツ件数・次回開催日・Git 状態を、`get_kpi_summary`（または `omochi://site/kpi`）で主導線 KPI の計測状態・直近 N 日集計（未接続時は `not-measured`）を確認し、対象コレクションに応じて `get_settings` / `list_columns` / `list_gallery` / `list_tarot_cards` / `list_instagram_items` を読み取る。
 
 ## 2. コンテンツ編集の制約
 - **コラム（`upsert_column`）**:

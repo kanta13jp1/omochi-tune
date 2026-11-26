@@ -47,13 +47,13 @@ npm run mcp:http
 - 既定では `http://127.0.0.1:8788/mcp`（ヘルスチェック: `GET /health`）で起動します。
 - `OMOCHI_TUNE_MCP_HTTP_TOKEN` を設定すると `Authorization: Bearer <token>` のタイミングセーフ認証を有効化します（非ループバックアドレスへバインドする場合は必須）。
 
-### 提供機能（23 ツール / 7 リソース）
-- **MCP App UI**: `open_dashboard`（`ui://omochi-tune/dashboard.html` — 概要・設定・コンテンツ一覧・タロット試し引き・dry-run 公開確認。Antigravity の `aux_pane` / `global` エントリポイント対応）
-- **参照・算出**: `get_site_overview`, `get_event_schedule`（毎月第一木曜 20:00〜23:00 JST 算出）, `draw_tarot_card`（シェア文言生成付き）
+### 提供機能（24 ツール / 8 リソース）
+- **MCP App UI**: `open_dashboard`（`ui://omochi-tune/dashboard.html` — 概要・KPI サマリー・設定・コンテンツ一覧・タロット試し引き・dry-run 公開確認。Antigravity の `aux_pane` / `global` エントリポイント対応）
+- **参照・算出・KPI**: `get_site_overview`, `get_event_schedule`（毎月第一木曜 20:00〜23:00 JST 算出）, `draw_tarot_card`（シェア文言生成付き）, `get_kpi_summary`（[docs/KPI_SPEC.md](docs/KPI_SPEC.md) 準拠の主導線 KPI 集計 / 未設定時は `not-measured`）
 - **CRUD**: `get_settings` / `update_settings`, `list_columns` / `get_column` / `upsert_column` / `delete_column`, `list_gallery` / `upsert_gallery_item` / `delete_gallery_item`, `list_tarot_cards` / `upsert_tarot_card` / `delete_tarot_card`, `list_instagram_items` / `upsert_instagram_item` / `delete_instagram_item`, `save_uploaded_image`
 - **検証・公開**: `validate_and_build`（全5JSON検証＋ビルド＋任意E2E）, `get_publish_status`, `publish_changes`
   - `publish_changes` は安全のため `confirm: true` を明示するまで **dry-run（事前プレビュー）** として動作し、`content/*.json` と `images/uploads/*` のみを対象に PR 作成または `main` への反映を行います。
-- **MCP リソース**: `ui://omochi-tune/dashboard.html`, `omochi://site/overview`, `omochi://content/{settings,columns,gallery,tarot,instagram}`
+- **MCP リソース**: `ui://omochi-tune/dashboard.html`, `omochi://site/overview`, `omochi://site/kpi`, `omochi://content/{settings,columns,gallery,tarot,instagram}`
 
 ### MCP ビルド・単体・結合テスト
 

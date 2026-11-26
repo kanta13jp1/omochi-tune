@@ -11,6 +11,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { createOmochiMcpServer, DASHBOARD_URI } from '../mcp/core.mjs';
 import { startHttpServer } from '../mcp/http.mjs';
+import { fetchKpiSummary } from '../mcp/kpi.mjs';
 import { createRepoOps } from '../mcp/ops.mjs';
 import { getEventSchedule, getFirstThursdayOfMonth } from '../mcp/schedule.mjs';
 import {
@@ -47,12 +48,14 @@ const EXPECTED_TOOLS = [
   'validate_and_build',
   'get_publish_status',
   'publish_changes',
-  'open_dashboard'
+  'open_dashboard',
+  'get_kpi_summary'
 ];
 
 const EXPECTED_RESOURCES = [
   'ui://omochi-tune/dashboard.html',
   'omochi://site/overview',
+  'omochi://site/kpi',
   'omochi://content/settings',
   'omochi://content/columns',
   'omochi://content/gallery',
@@ -198,6 +201,7 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
       command: process.execPath,
       args: [join(REPO_ROOT, 'mcp', 'server.mjs'), '--repo', tmpRepo],
       cwd: REPO_ROOT,
+      env: { ...process.env, OMOCHI_TUNE_KPI_ENDPOINT: 'disabled' },
       stderr: 'pipe'
     });
 
@@ -239,6 +243,11 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     const settingsFromResource = JSON.parse(settingsResource.contents[0].text);
     assert.equal(settingsFromResource.instagramHandle, '@omochitune');
 
+    const kpiResource = await client.readResource({ uri: 'omochi://site/kpi' });
+    const kpiFromResource = JSON.parse(kpiResource.contents[0].text);
+    assert.equal(kpiFromResource.configured, false);
+    assert.equal(kpiFromResource.status, 'not-measured');
+
     // 2b. Verify MCP App UI resource & open_dashboard with empty args {}
     const uiResource = await client.readResource({ uri: DASHBOARD_URI });
     assert.equal(uiResource.contents[0].mimeType, 'text/html;profile=mcp-app');
@@ -250,6 +259,12 @@ test('stdio MCP integration: resources, all 22 tools, CRUD round-trips, build, a
     assert.equal(dashCall.structuredContent.tab, 'overview');
     assert.equal(dashCall.structuredContent.overview.counts.columns, initialColumns.length);
     assert.equal(dashCall.structuredContent.tarot.length, initialTarot.length);
+    assert.equal(dashCall.structuredContent.kpi.status, 'not-measured');
+
+    const kpiTool = parseToolPayload(await client.callTool({ name: 'get_kpi_summary', arguments: { days: 7 } }));
+    assert.equal(kpiTool.configured, false);
+    assert.equal(kpiTool.status, 'not-measured');
+    assert.equal(kpiTool.windowDays, 7);
 
     // 3. Overview, schedule, and tarot draw
     const overviewTool = parseToolPayload(await client.callTool({ name: 'get_site_overview', arguments: {} }));
@@ -644,5 +659,65 @@ test('Streamable HTTP transport: fail-closed auth, host/origin guards, and MCP c
       await client.close().catch(() => {});
     }
     await handle.close();
+  }
+});
+
+test('KPI summary helper: fetches mock endpoint with Bearer auth and fails open on error', async () => {
+  let seenAuth = '';
+  let seenDays = '';
+  const server = http.createServer((req, res) => {
+    const reqUrl = new URL(req.url, 'http://127.0.0.1');
+    seenAuth = req.headers.authorization || '';
+    seenDays = reqUrl.searchParams.get('days') || '';
+    if (reqUrl.pathname === '/ok/summary') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(
+        JSON.stringify({
+          allTimeTotal: 12,
+          firstEventAt: '2026-11-26T00:00:00Z',
+          lastEventAt: '2026-11-26T10:00:00Z',
+          totals: { lp_view: 8, tarot_draw: 6, booking_dm_click: 2, tarot_share_click: 1 },
+          daily: [{ date: '2026-11-26', lp_view: 8, tarot_draw: 6, booking_dm_click: 2, tarot_share_click: 1 }]
+        })
+      );
+      return;
+    }
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'internal error' }));
+  });
+
+  await new Promise((resolveListen) => server.listen(0, '127.0.0.1', resolveListen));
+  const port = server.address().port;
+
+  try {
+    const unconfigured = await fetchKpiSummary({ endpoint: '', days: 30, env: {} });
+    assert.equal(unconfigured.configured, false);
+    assert.equal(unconfigured.status, 'not-measured');
+
+    const okSummary = await fetchKpiSummary({
+      endpoint: `http://127.0.0.1:${port}/ok`,
+      readToken: 'kpi-read-secret',
+      days: 14,
+      env: {}
+    });
+    assert.equal(seenAuth, 'Bearer kpi-read-secret');
+    assert.equal(seenDays, '14');
+    assert.equal(okSummary.configured, true);
+    assert.equal(okSummary.status, 'measuring');
+    assert.equal(okSummary.allTimeTotal, 12);
+    assert.equal(okSummary.totals.booking_dm_click, 2);
+    assert.equal(okSummary.rates.tarotExperienceRate, 0.75);
+    assert.equal(okSummary.rates.bookingDmCtr, 0.25);
+
+    const errSummary = await fetchKpiSummary({
+      endpoint: `http://127.0.0.1:${port}/fail`,
+      days: 30,
+      env: {}
+    });
+    assert.equal(errSummary.configured, true);
+    assert.equal(errSummary.status, 'error');
+    assert.match(errSummary.error, /500/);
+  } finally {
+    await new Promise((r) => server.close(r));
   }
 });

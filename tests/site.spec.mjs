@@ -169,3 +169,44 @@ test('minimal KPI fails open when sendBeacon throws and fallback endpoint fails'
     .toBeGreaterThanOrEqual(1);
   expect(pageErrors).toEqual([]);
 });
+
+test('minimal KPI delivers clean zero-PII JSON payload when endpoint is configured', async ({ page }) => {
+  const pageErrors = [];
+  const captured = [];
+  page.on('pageerror', (err) => pageErrors.push(err.message));
+
+  await page.route('**/__kpi_ok', async (route) => {
+    const req = route.request();
+    captured.push({
+      method: req.method(),
+      contentType: req.headers()['content-type'] || '',
+      body: req.postData()
+    });
+    await route.fulfill({
+      status: 202,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: true, accepted: true })
+    });
+  });
+
+  await page.evaluate(() => {
+    window.__OMOCHI_KPI_CONFIG__ = { endpoint: '/__kpi_ok' };
+    window.__omochiKpi.resetTarotDraw();
+  });
+
+  await page.locator('.tarot-card').first().click();
+  await expect(page.locator('#tarotResult')).toBeVisible();
+
+  await expect.poll(() => captured.length).toBeGreaterThanOrEqual(1);
+  const parsed = JSON.parse(captured[0].body);
+  expect(captured[0].method).toBe('POST');
+  expect(Object.keys(parsed).sort()).toEqual(['event', 'mode', 'page', 'schemaVersion', 'ts']);
+  expect(parsed.schemaVersion).toBe(1);
+  expect(parsed.event).toBe('tarot_draw');
+  expect(parsed.page).toBe('lp');
+  expect(parsed.mode).toBe('daily');
+
+  const stats = await page.evaluate(() => window.__omochiKpi.getStats());
+  expect(stats.sent).toBeGreaterThanOrEqual(1);
+  expect(pageErrors).toEqual([]);
+});
