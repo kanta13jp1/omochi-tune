@@ -1,8 +1,10 @@
 # OMOCHI TUNE 最小KPI計測仕様（Issue #3）
 
 - **関連 Issue**: [#3 引継ぎ: 主導線の最小KPI計測を追加する](https://github.com/kanta13jp1/omochi-tune/issues/3)
-- **実装ファイル**: [js/kpi.js](../js/kpi.js), [index.html](../index.html), [scripts/build.mjs](../scripts/build.mjs)
-- **現行計測ステータス**: **未計測 (`not-measured`)** — 送信先エンドポイント未設定（`<meta name="omochi-kpi-endpoint" content="">` が空のため外部送信せず `skipped_unconfigured` として動作）。
+- **実装ファイル**: [js/kpi.js](../js/kpi.js), [index.html](../index.html), [scripts/build.mjs](../scripts/build.mjs), [workers/kpi/src/index.mjs](../workers/kpi/src/index.mjs), [workers/kpi/schema.sql](../workers/kpi/schema.sql)
+- **集計バックエンド**: Cloudflare Workers (`omochi-tune-kpi`) ＋ Cloudflare D1 (`omochi-tune-kpi-db`, UUID: `faa01ca1-7e5f-4d21-95be-e8c7c59e738e`, APAC)
+- **本番エンドポイント**: `https://omochi-tune-kpi.ai-park.workers.dev`
+- **現行計測ステータス**: **エンドポイント接続済み（本番公開ページでの実到達確認待ち / `ready_no_events`）** — `index.html` へ接続済み。`main` デプロイ完了後に本番アクセスによる `status: "measuring"` 確認を実施します。
 
 ---
 
@@ -39,22 +41,32 @@ OMOCHI TUNE はサーバーレス静的ランディングページであり、�
   ```
 * **Fail-Open 保証**: 送信先未設定・通信失敗・`navigator.sendBeacon` 例外・`fetch` 失敗のいずれの場合も例外を握りつぶし（`stats.failed` にのみ記録）、タロット表示や Instagram DM 遷移を一切阻害しません。
 * **CORS シンプルリクエスト & ローカルホスト保護**: `navigator.sendBeacon` はプリフライト不要な `text/plain;charset=UTF-8` で JSON 文字列を送信し（`fetch` フォールバックは `application/json` + `keepalive: true` + `credentials: 'omit'`）、`localhost` / `127.0.0.1` / `[::1]` での閲覧・Playwright E2E 実行時は `window.__OMOCHI_KPI_CONFIG__` 明示指定を除き送信を抑制して本番集計の汚染を防ぎます。
-* **CSP 準拠**: `js/kpi.js` は同一オリジン配信（`script-src 'self'`）。外部集計エンドポイントを設定するまで `connect-src 'self'` を維持します。
+* **CSP 準拠**: `js/kpi.js` は同一オリジン配信（`script-src 'self'`）。`connect-src` は `'self' https://omochi-tune-kpi.ai-park.workers.dev` の単一オリジンのみを明示許可しています。
 
 ---
 
-## 3. 集計先の接続手順・コントラクト仕様（運用開始時）
+## 3. 集計バックエンド構成・運用手順
 
-1. Cloudflare Workers + D1 または Supabase Edge Functions 等の集計エンドポイントを用意する：
-   * `POST <endpoint>`（または `<endpoint>/event`）: 上記 JSON ペイロードを受理し `202` 返却（未知キー・不正値・不許可 Origin 拒否）。
-   * `GET <endpoint>/summary?days=30`（任意で `Authorization: Bearer <token>` 保護、`OMOCHI_TUNE_KPI_READ_TOKEN` 連携）: 非 PII の日次・期間合計（`totals`, `rates`, `allTimeTotal`, `firstEventAt`, `lastEventAt`, `daily`）を JSON 返却。
-2. [index.html](../index.html) の `<meta name="omochi-kpi-endpoint" content="">` に HTTPS URL（または同一オリジンパス）を設定する。
-3. 外部オリジンを指定する場合は、同時に [index.html](../index.html) の CSP `connect-src 'self'` へ該当オリジン（例: `https://kpi.example.com`）のみを追記する。
-4. **Antigravity MCP 確認**: `get_kpi_summary`（リソース `omochi://site/kpi`）および `open_dashboard` の概要タブ「主導線 KPI」カードから集計値または未計測（`not-measured`）状態を参照可能（`OMOCHI_TUNE_KPI_ENDPOINT` で上書きも可）。接続前の初期値は **未計測 (`not-measured`)** として扱い、上記設定後に実イベント到達を確認した時点で計測開始日を記録する。
+1. **Cloudflare Workers + D1 構成**:
+   * `workers/kpi/schema.sql`: `kpi_events` テーブル（厳格 `CHECK` 制約＋インデックス）
+   * `workers/kpi/cloudflare.config.ts`: `observability`（Logs/Traces）および D1 バインディング `DB`
+   * `POST /`（または `POST /event`）: 許可 Origin (`https://kanta13jp1.github.io`) のみ受理、ボディ上限 2048B、未知キー/PII 拒否、D1 保存後に `202` 返却
+   * `GET /health`: D1 クエリ疎通確認（`200`）
+   * `GET /summary?days=30`: 非 PII の期間合計・CVR・内訳・JST 日次配列を返却（任意の `OMOCHI_KPI_READ_TOKEN` による SHA-256 定数時間 Bearer 保護に対応）
+2. **デプロイ手順（`cf` CLI）**:
+   ```powershell
+   npm run test:worker
+   Push-Location workers/kpi
+   node build.mjs
+   cf deploy --prebuilt --dry-run
+   cf deploy --prebuilt
+   Pop-Location
+   ```
+3. **Antigravity MCP 確認**: `get_kpi_summary`（リソース `omochi://site/kpi`）および `open_dashboard` の概要タブ「主導線 KPI」カードから集計値・体験率・DM CTR・初回/最終到達時刻を参照できます（`OMOCHI_TUNE_KPI_ENDPOINT` / `OMOCHI_TUNE_KPI_READ_TOKEN` による上書きも可能）。
 
 ---
 
 ## 4. 確認方法・実行環境メモ
 
-* **E2E 検証**: `npm test`（[tests/site.spec.mjs](../tests/site.spec.mjs)）で発火・重複排除・ゼロ PII・Fail-Open（`sendBeacon` 例外および `/__kpi_fail` 失敗時でも主機能動作）を自動検証。
+* **E2E / Worker / MCP 検証**: `npm test`（`tests/mcp.test.mjs`, [tests/kpi-worker.test.mjs](../tests/kpi-worker.test.mjs), [tests/site.spec.mjs](../tests/site.spec.mjs)）で発火・重複排除・ゼロ PII・CORS/容量ガード・Fail-Open・集計算出を自動検証。
 * **実行時資源確認（2026-11-24 時点）**: C ドライブ空き `18.82 GiB`、空き RAM `3.96 GiB / 31.69 GiB`（新規 worktree・バックグラウンドサーバー常駐を増やさず実装）。

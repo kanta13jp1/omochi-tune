@@ -10,7 +10,8 @@
     "mcp:build": "node scripts/build-mcp.mjs",
     "mcp:http": "node mcp/server.mjs --transport http",
     "test:mcp": "npm run mcp:build && node --test tests/mcp.test.mjs",
-    "test": "npm run test:mcp && npm run build && playwright test",
+    "test:worker": "node --test tests/kpi-worker.test.mjs",
+    "test": "npm run test:mcp && npm run test:worker && npm run build && playwright test",
     "test:e2e": "playwright test"
   },
   "devDependencies": {

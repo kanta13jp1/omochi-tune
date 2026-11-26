@@ -553,18 +553,31 @@ test('Streamable HTTP transport: fail-closed auth, host/origin guards, and MCP c
   const store = createFileRepositoryStore(REPO_ROOT);
   const ops = createRepoOps(REPO_ROOT);
   const token = 'omochi-test-bearer-token';
+  const offlineKpiStub = async ({ days = 30 } = {}) => ({
+    configured: false,
+    status: 'not-measured',
+    endpoint: null,
+    windowDays: days,
+    allTimeTotal: 0,
+    firstEventAt: null,
+    lastEventAt: null,
+    totals: null,
+    rates: null,
+    breakdowns: null,
+    daily: []
+  });
 
   // Non-loopback bind without token must fail closed
   await assert.rejects(() =>
     startHttpServer({
-      createServer: () => createOmochiMcpServer({ store, ops }),
+      createServer: () => createOmochiMcpServer({ store, ops, fetchKpiSummaryFn: offlineKpiStub }),
       host: '0.0.0.0',
       port: 0
     })
   );
 
   const handle = await startHttpServer({
-    createServer: () => createOmochiMcpServer({ store, ops }),
+    createServer: () => createOmochiMcpServer({ store, ops, fetchKpiSummaryFn: offlineKpiStub }),
     host: '127.0.0.1',
     port: 0,
     token
